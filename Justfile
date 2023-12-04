@@ -1,2 +1,8 @@
-run:
+run: 
     systemfd --no-pid -s http::4040 -- cargo watch -x run
+
+ci-dev: 
+    cargo build
+    cargo test
+    cargo fmt --all -- --check
+    cargo clippy -- -D warnings
