@@ -1,4 +1,4 @@
-use axum::{routing::get, Router};
+use axum::{debug_handler, routing::get, Router};
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
@@ -22,6 +22,7 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn hello() -> &'static str {
-    "Hello, Web!"
+#[debug_handler]
+async fn hello() -> bool {
+    true
 }
