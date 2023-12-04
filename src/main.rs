@@ -1,4 +1,5 @@
 use axum::{debug_handler, routing::get, Router};
+use listenfd::ListenFd;
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
@@ -15,14 +16,16 @@ async fn main() {
         .route("/", get(hello))
         .layer(TraceLayer::new_for_http());
 
-    let listener = tokio::net::TcpListener::bind("localhost:4040")
-        .await
-        .unwrap();
+    let mut listenfd = ListenFd::from_env();
+    let listener = match listenfd.take_tcp_listener(0).unwrap() {
+        Some(listener) => tokio::net::TcpListener::from_std(listener).unwrap(),
+        None => todo!(),
+    };
 
     axum::serve(listener, app).await.unwrap();
 }
 
 #[debug_handler]
-async fn hello() -> bool {
-    true
+async fn hello() -> &'static str {
+    "Hello, Web!"
 }

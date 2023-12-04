@@ -21,11 +21,19 @@ Install the dependencies:
 - [Latest stable version of Rust](https://www.rust-lang.org/learn/get-started) (An older version might work as well, but is not tested)
 - [just command runner](https://just.systems/man/en/chapter_1.html)
 
-In the root of the repository, launch the backend:
+Install dependencies available via cargo:
 
+```sh
+cargo install cargo-watch systemfd
 ```
+
+In the root of the repository, launch the server:
+
+```sh
 just run
 ```
+
+Then, open [http://localhost:4040] in your browser.
 
 ## Hosting Your Own Instance
 
