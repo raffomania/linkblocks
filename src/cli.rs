@@ -1,6 +1,6 @@
 use clap::{Parser, Subcommand};
 
-use crate::start;
+use crate::server;
 
 #[derive(Parser)]
 struct Cli {
@@ -17,6 +17,6 @@ pub async fn run() {
     let cli = Cli::parse();
 
     match cli.command {
-        Command::Start { host, port } => start::start(host, port).await,
+        Command::Start { host, port } => server::start(host, port).await,
     };
 }

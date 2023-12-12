@@ -1,5 +1,5 @@
 mod cli;
-mod start;
+mod server;
 
 #[tokio::main]
 async fn main() {
