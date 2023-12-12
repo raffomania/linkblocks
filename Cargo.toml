@@ -6,6 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+askama = { version = "0.12.1", features = ["with-axum"] }
+askama_axum = "0.4.0"
 axum = { version = "0.7.2", features = ["macros", "tracing"] }
 clap = { version = "4.4.11", features = ["derive", "env"] }
 listenfd = "1.0.1"

@@ -1,3 +1,4 @@
+use askama::Template;
 use axum::{debug_handler, routing::get, Router};
 use listenfd::ListenFd;
 use tower_http::trace::TraceLayer;
@@ -29,6 +30,10 @@ pub async fn start(listen_address: Option<String>) {
 }
 
 #[debug_handler]
-async fn hello() -> &'static str {
-    "Hello, Web!"
+async fn hello() -> HelloTemplate {
+    HelloTemplate {}
 }
+
+#[derive(Template)]
+#[template(path = "hello.html")]
+struct HelloTemplate {}
