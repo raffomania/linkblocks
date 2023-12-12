@@ -10,13 +10,18 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Command {
-    Start { host: String, port: u64 },
+    Start {
+        #[clap(long)]
+        listen: Option<String>,
+    },
 }
 
 pub async fn run() {
     let cli = Cli::parse();
 
     match cli.command {
-        Command::Start { host, port } => server::start(host, port).await,
+        Command::Start {
+            listen: listen_address,
+        } => server::start(listen_address).await,
     };
 }

@@ -1,5 +1,5 @@
 run: 
-    systemfd --no-pid -s http::4040 -- cargo watch -x run
+    systemfd --no-pid -s http::4040 -- cargo watch -- cargo run start
 
 ci-dev: 
     cargo build

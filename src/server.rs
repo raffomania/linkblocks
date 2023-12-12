@@ -3,7 +3,7 @@ use listenfd::ListenFd;
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
-pub async fn start(host: String, port: u64) {
+pub async fn start(listen_address: Option<String>) {
     tracing_subscriber::registry()
         .with(EnvFilter::from(
             "linkblocks=debug,tower_http=debug,axum::rejection=trace",
@@ -15,12 +15,14 @@ pub async fn start(host: String, port: u64) {
         .route("/", get(hello))
         .layer(TraceLayer::new_for_http());
 
-    let mut listenfd = ListenFd::from_env();
-    let listener = match listenfd.take_tcp_listener(0).unwrap() {
-        Some(listener) => tokio::net::TcpListener::from_std(listener).unwrap(),
-        None => tokio::net::TcpListener::bind(format!("{host}:{port}"))
+    let listener = if let Some(listen_address) = listen_address {
+        tokio::net::TcpListener::bind(format!("{listen_address}"))
             .await
-            .unwrap(),
+            .unwrap()
+    } else {
+        let mut listenfd = ListenFd::from_env();
+        let listener = listenfd.take_tcp_listener(0).unwrap().unwrap();
+        tokio::net::TcpListener::from_std(listener).unwrap()
     };
 
     axum::serve(listener, app).await.unwrap();
