@@ -1,10 +1,12 @@
+use std::net::SocketAddr;
+
 use askama::Template;
 use axum::{debug_handler, routing::get, Router};
 use listenfd::ListenFd;
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
-pub async fn start(listen_address: Option<String>) {
+pub async fn start(listen_address: Option<SocketAddr>) {
     tracing_subscriber::registry()
         .with(EnvFilter::from(
             "linkblocks=debug,tower_http=debug,axum::rejection=trace",

@@ -1,3 +1,5 @@
+use std::net::SocketAddr;
+
 use clap::{Parser, Subcommand};
 
 use crate::server;
@@ -12,7 +14,8 @@ struct Cli {
 enum Command {
     Start {
         #[clap(long)]
-        listen: Option<String>,
+        /// Format: `ip:port`. If omitted, try to obtain a port via the listenfd interface.
+        listen: Option<SocketAddr>,
     },
 }
 
