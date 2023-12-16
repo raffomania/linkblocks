@@ -1,6 +1,7 @@
+use anyhow::Result;
 use std::net::SocketAddr;
 
-use clap::{Parser, Subcommand};
+use clap::{Args, Parser, Subcommand};
 
 use crate::server;
 
@@ -13,18 +14,28 @@ struct Cli {
 #[derive(Subcommand)]
 enum Command {
     Start {
-        #[clap(long)]
-        /// Format: `ip:port`. If omitted, try to obtain a port via the listenfd interface.
-        listen: Option<SocketAddr>,
+        #[clap(flatten)]
+        listen: ListenArgs,
     },
 }
 
-pub async fn run() {
+#[derive(Args)]
+#[group(required = true, multiple = false)]
+pub struct ListenArgs {
+    #[clap(long, value_name = "SOCKET_ADDRESS")]
+    /// Format: `ip:port`. If omitted, try to obtain a port via the listenfd interface.
+    pub listen: Option<SocketAddr>,
+    #[clap(long)]
+    /// Take a socket using the systemd socket passing protocol and listen on it.
+    pub listenfd: bool,
+}
+
+pub async fn run() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
         Command::Start {
             listen: listen_address,
         } => server::start(listen_address).await,
-    };
+    }
 }
