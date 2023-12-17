@@ -2,6 +2,7 @@ use anyhow::Result;
 
 mod app_error;
 mod cli;
+mod routes;
 mod server;
 
 #[tokio::main]

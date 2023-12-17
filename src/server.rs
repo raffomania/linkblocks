@@ -1,10 +1,10 @@
 use anyhow::anyhow;
 
-use crate::{app_error::Result, cli::ListenArgs};
+use crate::{app_error::Result, cli::ListenArgs, routes};
 use askama::Template;
 use axum::{debug_handler, routing::get, Router};
 use listenfd::ListenFd;
-use tower_http::{services::ServeDir, trace::TraceLayer};
+use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
 pub async fn start(listen: ListenArgs) -> anyhow::Result<()> {
@@ -12,13 +12,13 @@ pub async fn start(listen: ListenArgs) -> anyhow::Result<()> {
         .with(EnvFilter::from(
             "linkblocks=debug,tower_http=debug,axum::rejection=trace",
         ))
-        .with(tracing_subscriber::fmt::layer().pretty())
+        .with(tracing_subscriber::fmt::layer())
         .init();
 
     let app = Router::new()
         .route("/", get(hello))
         .route("/htmx-fragment", get(htmx_fragment))
-        .nest_service("/static", ServeDir::new("static"))
+        .route("/assets/*path", get(routes::assets::assets))
         .layer(TraceLayer::new_for_http());
 
     let listener = if let Some(listen_address) = listen.listen {
