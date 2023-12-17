@@ -4,7 +4,7 @@ use crate::{app_error::Result, cli::ListenArgs};
 use askama::Template;
 use axum::{debug_handler, routing::get, Router};
 use listenfd::ListenFd;
-use tower_http::trace::TraceLayer;
+use tower_http::{services::ServeDir, trace::TraceLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
 pub async fn start(listen: ListenArgs) -> anyhow::Result<()> {
@@ -17,6 +17,8 @@ pub async fn start(listen: ListenArgs) -> anyhow::Result<()> {
 
     let app = Router::new()
         .route("/", get(hello))
+        .route("/htmx-fragment", get(htmx_fragment))
+        .nest_service("/static", ServeDir::new("static"))
         .layer(TraceLayer::new_for_http());
 
     let listener = if let Some(listen_address) = listen.listen {
@@ -42,3 +44,8 @@ async fn hello() -> Result<HelloTemplate> {
 #[derive(Template)]
 #[template(path = "hello.html")]
 struct HelloTemplate {}
+
+#[debug_handler]
+async fn htmx_fragment() -> &'static str {
+    "Here's some dynamically loaded content!"
+}

@@ -1,1 +1,12 @@
-Hello, templating!
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="static/htmx.1.9.9.js"></script>
+  </head>
+  <body>
+    <div>Hello, htmx!</div>
+    <button hx-get="/htmx-fragment" hx-swap="outerHTML">
+      load some stuff!
+    </button>
+  </body>
+</html>

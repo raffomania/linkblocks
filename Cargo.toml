@@ -13,6 +13,6 @@ axum = { version = "0.7.2", features = ["macros", "tracing"] }
 clap = { version = "4.4.11", features = ["derive", "env"] }
 listenfd = "1.0.1"
 tokio = { version = "1.35.0", features = ["macros", "rt-multi-thread"] }
-tower-http = { version = "0.5.0", features = ["tracing", "trace"] }
+tower-http = { version = "0.5.0", features = ["tracing", "trace", "fs"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
