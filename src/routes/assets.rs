@@ -27,7 +27,7 @@ pub async fn assets(Path(path): Path<PathBuf>) -> Result<(HeaderMap, &'static [u
     Ok((headers, body))
 }
 
-fn get_mime(path: &PathBuf) -> Result<Mime> {
+fn get_mime(path: &std::path::Path) -> Result<Mime> {
     let ext = path
         .extension()
         .ok_or(anyhow!("Included assets need an extension"))?
@@ -50,7 +50,7 @@ mod tests {
     fn all_assets_have_a_mime_type() -> Result<()> {
         fn check_dir(dir: &Dir) -> Result<()> {
             for asset in dir.files() {
-                get_mime(&asset.path().to_path_buf())?;
+                get_mime(&asset.path())?;
             }
 
             for dir in ASSETS_DIR.dirs() {
