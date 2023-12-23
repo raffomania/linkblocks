@@ -4,6 +4,9 @@ watch:
 run *args:
     cargo run -- {{args}}
 
+test:
+    cargo test
+
 ci-dev: 
     cargo build
     cargo test

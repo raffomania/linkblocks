@@ -8,12 +8,17 @@ pub type Result<T> = std::result::Result<T, AppError>;
 #[derive(Debug)]
 pub enum AppError {
     Anyhow(anyhow::Error),
+    NotFound(),
 }
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
         tracing::debug!("{self:?}");
-        (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error").into_response()
+        match self {
+            AppError::Anyhow(_) => (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error"),
+            AppError::NotFound() => (StatusCode::NOT_FOUND, "Not Found"),
+        }
+        .into_response()
     }
 }
 
