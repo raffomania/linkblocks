@@ -18,6 +18,10 @@ pub async fn start(listen: ListenArgs) -> anyhow::Result<()> {
     let app = Router::new()
         .route("/", get(hello))
         .route("/htmx-fragment", get(htmx_fragment))
+        .route(
+            "/assets/railwind.css",
+            get(routes::assets::railwind_generated_css),
+        )
         .route("/assets/*path", get(routes::assets::assets))
         .layer(TraceLayer::new_for_http());
 

@@ -18,3 +18,7 @@ tokio = { version = "1.35.0", features = ["macros", "rt-multi-thread"] }
 tower-http = { version = "0.5.0", features = ["tracing", "trace"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+
+[build-dependencies]
+railwind = "0.1.5"
+walkdir = "2"

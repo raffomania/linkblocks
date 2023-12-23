@@ -27,6 +27,17 @@ pub async fn assets(Path(path): Path<PathBuf>) -> Result<(HeaderMap, &'static [u
     Ok((headers, body))
 }
 
+pub async fn railwind_generated_css() -> Result<(HeaderMap, &'static [u8])> {
+    let body = include_bytes!(concat!(env!("OUT_DIR"), "/railwind.css"));
+
+    let mime_type = mime_guess::mime::TEXT_CSS;
+
+    let headers =
+        HeaderMap::from_iter([(header::CONTENT_TYPE, mime_type.to_string().parse()?)].into_iter());
+
+    Ok((headers, body))
+}
+
 fn get_mime(path: &std::path::Path) -> Result<Mime> {
     let ext = path
         .extension()
