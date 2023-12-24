@@ -24,7 +24,7 @@ Install the dependencies:
 Install dependencies available via cargo:
 
 ```sh
-cargo install cargo-watch systemfd
+cargo install cargo-watch systemfd sqlx-cli
 ```
 
 In the root of the repository, launch the server:

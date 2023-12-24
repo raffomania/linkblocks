@@ -1,20 +1,12 @@
 use anyhow::anyhow;
 
-use crate::{app_error::Result, cli::ListenArgs, routes};
+use crate::{app_error::Result, cli::ListenArgs, db::Transaction, routes};
 use askama::Template;
 use axum::{debug_handler, routing::get, Router};
 use listenfd::ListenFd;
 use tower_http::trace::TraceLayer;
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
-pub async fn start(listen: ListenArgs) -> anyhow::Result<()> {
-    tracing_subscriber::registry()
-        .with(EnvFilter::from(
-            "linkblocks=debug,tower_http=debug,axum::rejection=trace",
-        ))
-        .with(tracing_subscriber::fmt::layer())
-        .init();
-
+pub async fn start(listen: ListenArgs, pool: sqlx::PgPool) -> anyhow::Result<()> {
     let app = Router::new()
         .route("/", get(hello))
         .route("/htmx-fragment", get(htmx_fragment))
@@ -23,7 +15,8 @@ pub async fn start(listen: ListenArgs) -> anyhow::Result<()> {
             get(routes::assets::railwind_generated_css),
         )
         .route("/assets/*path", get(routes::assets::assets))
-        .layer(TraceLayer::new_for_http());
+        .layer(TraceLayer::new_for_http())
+        .with_state(pool);
 
     let listener = if let Some(listen_address) = listen.listen {
         tokio::net::TcpListener::bind(format!("{listen_address}")).await?
@@ -35,13 +28,20 @@ pub async fn start(listen: ListenArgs) -> anyhow::Result<()> {
         tokio::net::TcpListener::from_std(listener)?
     };
 
+    let listening_on = listener.local_addr()?;
+    tracing::info!("Listening on http://{listening_on}");
+
     axum::serve(listener, app).await?;
 
     Ok(())
 }
 
-#[debug_handler]
-async fn hello() -> Result<HelloTemplate> {
+#[debug_handler(state=sqlx::PgPool)]
+async fn hello(Transaction(mut tx): Transaction) -> Result<HelloTemplate> {
+    let users = sqlx::query!("select count(*) from users;")
+        .fetch_one(&mut *tx)
+        .await?;
+    dbg!(users);
     Ok(HelloTemplate {})
 }
 

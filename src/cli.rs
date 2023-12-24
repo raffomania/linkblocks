@@ -1,9 +1,10 @@
 use anyhow::Result;
 use std::net::SocketAddr;
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
 use clap::{Args, Parser, Subcommand};
 
-use crate::server;
+use crate::{db, server};
 
 #[derive(Parser)]
 struct Cli {
@@ -13,9 +14,12 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Command {
+    /// Migrate the database, then start the server
     Start {
         #[clap(flatten)]
         listen: ListenArgs,
+        #[clap(env, long, hide_env_values = true)]
+        database_url: String,
     },
 }
 
@@ -31,11 +35,23 @@ pub struct ListenArgs {
 }
 
 pub async fn run() -> Result<()> {
+    tracing_subscriber::registry()
+        .with(EnvFilter::from(
+            "linkblocks=debug,tower_http=debug,axum::rejection=trace",
+        ))
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+
     let cli = Cli::parse();
 
     match cli.command {
         Command::Start {
             listen: listen_address,
-        } => server::start(listen_address).await,
+            database_url,
+        } => {
+            let pool = db::pool(&database_url).await?;
+            db::migrate(&pool).await?;
+            server::start(listen_address, pool).await
+        }
     }
 }

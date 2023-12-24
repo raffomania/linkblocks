@@ -2,6 +2,10 @@ use railwind::{Source, SourceOptions};
 use std::{env, path::Path};
 
 fn main() {
+    // Without this, adding only a migration will not trigger a re-build
+    // https://docs.rs/sqlx/latest/sqlx/macro.migrate.html#stable-rust-cargo-build-script
+    println!("cargo:rerun-if-changed=migrations");
+
     println!("cargo:rerun-if-changed=templates");
 
     let out_dir = env::var("OUT_DIR").unwrap();
