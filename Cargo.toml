@@ -15,7 +15,7 @@ include_dir = "0.7.3"
 listenfd = "1.0.1"
 mime_guess = "2.0.4"
 sqlx = { version = "0.7.3", features = ["runtime-tokio", "postgres", "tls-rustls", "migrate", "uuid", "time"] }
-tokio = { version = "1.35.0", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.35.1", features = ["macros", "rt-multi-thread"] }
 tower-http = { version = "0.5.0", features = ["tracing", "trace"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
