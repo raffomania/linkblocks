@@ -35,7 +35,7 @@ pub async fn start(listen: ListenArgs, app: Router) -> anyhow::Result<()> {
     let listening_on = listener.local_addr()?;
     tracing::info!("Listening on http://{listening_on}");
 
-    axum::serve(listener, app);
+    axum::serve(listener, app).await?;
 
     Ok(())
 }
