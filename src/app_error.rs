@@ -24,7 +24,7 @@ impl IntoResponse for AppError {
 
 impl From<anyhow::Error> for AppError {
     fn from(value: anyhow::Error) -> Self {
-        Self::Anyhow(value.into())
+        Self::Anyhow(value)
     }
 }
 
