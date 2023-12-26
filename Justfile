@@ -38,8 +38,11 @@ start-database:
 stop-database:
     podman stop linkblocks_postgres
 
+wipe-database: stop-database
+    podman rm linkblocks_postgres
+
 migrate-database:
-    cargo run -- db migrate
+    cargo sqlx migrate run
 
 test:
     cargo test

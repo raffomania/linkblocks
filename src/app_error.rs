@@ -13,7 +13,7 @@ pub enum AppError {
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
-        tracing::debug!("{self:?}");
+        tracing::error!("{self:?}");
         match self {
             AppError::Anyhow(_) => (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error"),
             AppError::NotFound() => (StatusCode::NOT_FOUND, "Not Found"),
@@ -22,11 +22,17 @@ impl IntoResponse for AppError {
     }
 }
 
-impl<Error> From<Error> for AppError
-where
-    Error: Into<anyhow::Error>,
-{
-    fn from(value: Error) -> Self {
+impl From<anyhow::Error> for AppError {
+    fn from(value: anyhow::Error) -> Self {
         Self::Anyhow(value.into())
+    }
+}
+
+impl From<sqlx::Error> for AppError {
+    fn from(value: sqlx::Error) -> Self {
+        match value {
+            sqlx::Error::RowNotFound => Self::NotFound(),
+            other => Self::Anyhow(other.into()),
+        }
     }
 }

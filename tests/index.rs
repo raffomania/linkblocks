@@ -4,6 +4,7 @@ use axum::{
 };
 use sqlx::{Pool, Postgres};
 use tower::ServiceExt; // for `call`, `oneshot`, and `ready`
+
 #[sqlx::test]
 async fn index(pool: Pool<Postgres>) {
     let app = linkblocks::server::app(pool);

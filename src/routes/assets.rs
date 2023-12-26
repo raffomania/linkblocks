@@ -21,8 +21,16 @@ pub async fn assets(Path(path): Path<PathBuf>) -> Result<(HeaderMap, &'static [u
 
     let mime_type = get_mime(&path)?;
 
-    let headers =
-        HeaderMap::from_iter([(header::CONTENT_TYPE, mime_type.to_string().parse()?)].into_iter());
+    let headers = HeaderMap::from_iter(
+        [(
+            header::CONTENT_TYPE,
+            mime_type
+                .to_string()
+                .parse()
+                .context("Failed to convert mime type to header")?,
+        )]
+        .into_iter(),
+    );
 
     Ok((headers, body))
 }
@@ -32,8 +40,16 @@ pub async fn railwind_generated_css() -> Result<(HeaderMap, &'static [u8])> {
 
     let mime_type = mime_guess::mime::TEXT_CSS;
 
-    let headers =
-        HeaderMap::from_iter([(header::CONTENT_TYPE, mime_type.to_string().parse()?)].into_iter());
+    let headers = HeaderMap::from_iter(
+        [(
+            header::CONTENT_TYPE,
+            mime_type
+                .to_string()
+                .parse()
+                .context("Failed to convert mime type to header")?,
+        )]
+        .into_iter(),
+    );
 
     Ok((headers, body))
 }

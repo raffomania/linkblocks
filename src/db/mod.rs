@@ -8,6 +8,8 @@ use sqlx::PgPool;
 
 use crate::app_error::AppError;
 
+pub mod users;
+
 pub async fn migrate(pool: &PgPool) -> Result<()> {
     tracing::info!("Migrating the database...");
     sqlx::migrate!("./migrations").run(pool).await?;
