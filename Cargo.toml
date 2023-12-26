@@ -23,3 +23,6 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 [build-dependencies]
 railwind = "0.1.5"
 walkdir = "2"
+
+[dev-dependencies]
+tower = { version = "0.4.13", features = ["util"] }

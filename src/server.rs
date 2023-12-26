@@ -6,8 +6,8 @@ use axum::{debug_handler, routing::get, Router};
 use listenfd::ListenFd;
 use tower_http::trace::TraceLayer;
 
-pub async fn start(listen: ListenArgs, pool: sqlx::PgPool) -> anyhow::Result<()> {
-    let app = Router::new()
+pub fn app(pool: sqlx::PgPool) -> Router {
+    Router::new()
         .route("/", get(hello))
         .route("/htmx-fragment", get(htmx_fragment))
         .route(
@@ -16,8 +16,10 @@ pub async fn start(listen: ListenArgs, pool: sqlx::PgPool) -> anyhow::Result<()>
         )
         .route("/assets/*path", get(routes::assets::assets))
         .layer(TraceLayer::new_for_http())
-        .with_state(pool);
+        .with_state(pool)
+}
 
+pub async fn start(listen: ListenArgs, app: Router) -> anyhow::Result<()> {
     let listener = if let Some(listen_address) = listen.listen {
         tokio::net::TcpListener::bind(format!("{listen_address}")).await?
     } else {
@@ -31,7 +33,7 @@ pub async fn start(listen: ListenArgs, pool: sqlx::PgPool) -> anyhow::Result<()>
     let listening_on = listener.local_addr()?;
     tracing::info!("Listening on http://{listening_on}");
 
-    axum::serve(listener, app).await?;
+    axum::serve(listener, app);
 
     Ok(())
 }

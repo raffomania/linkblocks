@@ -7,7 +7,7 @@ watch:
 run *args:
     cargo run -- {{args}}
 
-generate-database-info: start-database
+generate-database-info: start-database migrate-database
     cargo sqlx prepare
 
 start-database:
@@ -19,17 +19,27 @@ start-database:
         exit
     fi
 
-    podman run \
-        --name linkblocks_postgres --detach \
-        --health-cmd pg_isready --health-interval 10s \
-        -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_DB=linkblocks \
-        -p ${DATABASE_PORT}:5432 docker.io/postgres:16 \
-        postgres
+    if ! podman inspect linkblocks_postgres &> /dev/null; then
+        podman create \
+            --name linkblocks_postgres \
+            --health-cmd pg_isready --health-interval 10s \
+            -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_DB=linkblocks \
+            -p ${DATABASE_PORT}:5432 docker.io/postgres:16 \
+            postgres
+    fi
+
+    podman start linkblocks_postgres
 
     for i in {1..20}; do 
         pg_isready -h localhost -p $DATABASE_PORT && break
         sleep 1
     done
+
+stop-database:
+    podman stop linkblocks_postgres
+
+migrate-database:
+    cargo run -- db migrate
 
 test:
     cargo test

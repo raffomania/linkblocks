@@ -2,4 +2,4 @@ mod app_error;
 pub mod cli;
 mod db;
 mod routes;
-mod server;
+pub mod server;

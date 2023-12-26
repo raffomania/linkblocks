@@ -10,6 +10,15 @@ use crate::{db, server};
 struct Cli {
     #[command(subcommand)]
     command: Command,
+
+    #[clap(flatten)]
+    config: SharedConfig,
+}
+
+#[derive(Args)]
+struct SharedConfig {
+    #[clap(env, long, hide_env_values = true)]
+    database_url: String,
 }
 
 #[derive(Subcommand)]
@@ -18,9 +27,16 @@ enum Command {
     Start {
         #[clap(flatten)]
         listen: ListenArgs,
-        #[clap(env, long, hide_env_values = true)]
-        database_url: String,
     },
+    Db {
+        #[clap(subcommand)]
+        command: DbCommand,
+    },
+}
+
+#[derive(Subcommand)]
+enum DbCommand {
+    Migrate,
 }
 
 #[derive(Args)]
@@ -47,11 +63,17 @@ pub async fn run() -> Result<()> {
     match cli.command {
         Command::Start {
             listen: listen_address,
-            database_url,
         } => {
-            let pool = db::pool(&database_url).await?;
+            let pool = db::pool(&cli.config.database_url).await?;
             db::migrate(&pool).await?;
-            server::start(listen_address, pool).await
+            let app = server::app(pool);
+            server::start(listen_address, app).await
+        }
+        Command::Db {
+            command: DbCommand::Migrate,
+        } => {
+            let pool = db::pool(&cli.config.database_url).await?;
+            db::migrate(&pool).await
         }
     }
 }
