@@ -1,15 +1,17 @@
 use anyhow::anyhow;
 
-use crate::{app_error::Result, cli::ListenArgs, db::Transaction, routes};
-use askama::Template;
-use axum::{debug_handler, routing::get, Router};
+use crate::{
+    cli::ListenArgs,
+    routes::{self, index},
+};
+
+use axum::{routing::get, Router};
 use listenfd::ListenFd;
 use tower_http::trace::TraceLayer;
 
 pub fn app(pool: sqlx::PgPool) -> Router {
     Router::new()
-        .route("/", get(hello))
-        .route("/htmx-fragment", get(htmx_fragment))
+        .route("/", get(index::index))
         .route(
             "/assets/railwind.css",
             get(routes::assets::railwind_generated_css),
@@ -36,22 +38,4 @@ pub async fn start(listen: ListenArgs, app: Router) -> anyhow::Result<()> {
     axum::serve(listener, app);
 
     Ok(())
-}
-
-#[debug_handler(state=sqlx::PgPool)]
-async fn hello(Transaction(mut tx): Transaction) -> Result<HelloTemplate> {
-    let users = sqlx::query!("select count(*) from users;")
-        .fetch_one(&mut *tx)
-        .await?;
-    dbg!(users);
-    Ok(HelloTemplate {})
-}
-
-#[derive(Template)]
-#[template(path = "hello.html")]
-struct HelloTemplate {}
-
-#[debug_handler]
-async fn htmx_fragment() -> &'static str {
-    "Here's some dynamically loaded content!"
 }
