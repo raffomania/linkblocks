@@ -1,7 +1,7 @@
 set dotenv-load := true
 set export := true
 
-watch: 
+watch: start-database
     systemfd --no-pid -s http::4040 -- cargo watch -- cargo run start --listenfd
 
 run *args:

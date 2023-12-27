@@ -20,6 +20,7 @@ Install the dependencies:
 
 - [Latest stable version of Rust](https://www.rust-lang.org/learn/get-started) (An older version might work as well, but is not tested)
 - [just command runner](https://just.systems/man/en/chapter_1.html)
+- [podman](http://podman.io/docs/installation)
 
 Install dependencies available via cargo:
 

@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <link rel="stylesheet" href="/assets/railwind.css" />
-    <script src="/assets/htmx.1.9.9.js"></script>
-  </head>
-  <body class="mx-auto max-w-lg">
-    <div>Hello, htmx!</div>
-    <button hx-get="/htmx-fragment" hx-swap="outerHTML">
-      load some stuff!
-    </button>
-  </body>
-</html>
+{% extends "_base.html" %} {% block content %}
+<div>Hello, htmx!</div>
+<button hx-get="/htmx-fragment" hx-swap="outerHTML">load some stuff!</button>
+{% endblock %}
