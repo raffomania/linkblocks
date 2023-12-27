@@ -97,7 +97,7 @@ pub async fn run() -> Result<()> {
                 tx.commit().await?;
             }
 
-            let app = server::app(pool);
+            let app = server::app(pool).await?;
             server::start(listen_address, app).await
         }
         Command::Db {

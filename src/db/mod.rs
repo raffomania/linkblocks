@@ -9,6 +9,7 @@ use sqlx::PgPool;
 use crate::app_error::AppError;
 
 pub mod users;
+pub use users::User;
 
 pub async fn migrate(pool: &PgPool) -> Result<()> {
     tracing::info!("Migrating the database...");

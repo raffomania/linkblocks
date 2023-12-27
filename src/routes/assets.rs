@@ -17,7 +17,7 @@ pub async fn assets(Path(path): Path<PathBuf>) -> Result<(HeaderMap, &'static [u
     let body = ASSETS_DIR
         .get_file(&path)
         .map(|f| f.contents())
-        .ok_or(AppError::NotFound())?;
+        .ok_or(AppError::NotFound)?;
 
     let mime_type = get_mime(&path)?;
 

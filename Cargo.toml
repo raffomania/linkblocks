@@ -15,9 +15,12 @@ clap = { version = "4.4.11", features = ["derive", "env"] }
 include_dir = "0.7.3"
 listenfd = "1.0.1"
 mime_guess = "2.0.4"
+serde = "1.0.193"
 sqlx = { version = "0.7.3", features = ["runtime-tokio", "postgres", "tls-rustls", "migrate", "uuid", "time"] }
 tokio = { version = "1.35.1", features = ["macros", "rt-multi-thread"] }
+tower = "0.4.13"
 tower-http = { version = "0.5.0", features = ["tracing", "trace"] }
+tower-sessions = { version = "0.8.2", features = ["postgres-store", "deletion-task"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 uuid = { version = "1.6.1", features = ["v4"] }
@@ -25,6 +28,3 @@ uuid = { version = "1.6.1", features = ["v4"] }
 [build-dependencies]
 railwind = "0.1.5"
 walkdir = "2"
-
-[dev-dependencies]
-tower = { version = "0.4.13", features = ["util"] }

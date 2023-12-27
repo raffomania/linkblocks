@@ -8,7 +8,8 @@ pub type Result<T> = std::result::Result<T, AppError>;
 #[derive(Debug)]
 pub enum AppError {
     Anyhow(anyhow::Error),
-    NotFound(),
+    NotFound,
+    NotAuthenticated,
 }
 
 impl IntoResponse for AppError {
@@ -16,7 +17,8 @@ impl IntoResponse for AppError {
         tracing::error!("{self:?}");
         match self {
             AppError::Anyhow(_) => (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error"),
-            AppError::NotFound() => (StatusCode::NOT_FOUND, "Not Found"),
+            AppError::NotFound => (StatusCode::NOT_FOUND, "Not Found"),
+            AppError::NotAuthenticated => (StatusCode::UNAUTHORIZED, "Authentication failed"),
         }
         .into_response()
     }
@@ -31,7 +33,7 @@ impl From<anyhow::Error> for AppError {
 impl From<sqlx::Error> for AppError {
     fn from(value: sqlx::Error) -> Self {
         match value {
-            sqlx::Error::RowNotFound => Self::NotFound(),
+            sqlx::Error::RowNotFound => Self::NotFound,
             other => Self::Anyhow(other.into()),
         }
     }
