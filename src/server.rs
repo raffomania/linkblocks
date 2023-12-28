@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, time::Duration};
 
 use anyhow::anyhow;
 use axum_server::tls_rustls::RustlsConfig;
@@ -61,12 +61,16 @@ pub async fn start(
 
     let listening_on = listener.local_addr()?;
 
+    let handle = axum_server::Handle::new();
+    tokio::spawn(shutdown_signal(handle.clone()));
+
     match (tls_cert, tls_key) {
         (Some(cert), Some(key)) => {
             tracing::info!("Using TLS files at: {cert:?}, {key:?}");
             let config = RustlsConfig::from_pem_file(cert, key).await?;
             tracing::info!("Listening on https://{listening_on}");
             axum_server::from_tcp_rustls(listener.into_std()?, config)
+                .handle(handle)
                 .serve(app.into_make_service())
                 .await?;
         }
@@ -74,10 +78,40 @@ pub async fn start(
             tracing::info!("No TLS certificate specified, not using TLS");
             tracing::info!("Listening on http://{listening_on}");
             axum_server::from_tcp(listener.into_std()?)
+                .handle(handle)
                 .serve(app.into_make_service())
                 .await?;
         }
     };
 
     Ok(())
+}
+
+async fn shutdown_signal(handle: axum_server::Handle) {
+    let ctrl_c = async {
+        tokio::signal::ctrl_c()
+            .await
+            .expect("failed to install Ctrl+C handler");
+    };
+
+    #[cfg(unix)]
+    let terminate = async {
+        tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
+            .expect("failed to install signal handler")
+            .recv()
+            .await;
+    };
+
+    #[cfg(not(unix))]
+    let terminate = std::future::pending::<()>();
+
+    tokio::select! {
+        _ = ctrl_c => {},
+        _ = terminate => {},
+    }
+
+    tracing::info!(
+        "Received termination signal - waiting 10 seconds to close existing connections"
+    );
+    handle.graceful_shutdown(Some(Duration::from_secs(10)));
 }
