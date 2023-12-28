@@ -41,3 +41,19 @@ Then, open [http://localhost:4040] in your browser.
 ## Hosting Your Own Instance
 
 🏗️ coming soon!
+
+## Technical Details
+
+This web app is implemented using technologies hand-picked for a smooth development and deployment workflow. Here are some of the features of the stack:
+
+- Type-safe and fast, implemented in [Rust](https://www.rust-lang.org/) using the [axum framework](https://github.com/tokio-rs/axum)
+- Snappy interactivity using [htmx](https://htmx.org/) with almost zero client-side code
+- [Tailwind styles without NodeJS](https://github.com/pintariching/railwind), integrated into the cargo build process using [build scripts](https://doc.rust-lang.org/cargo/reference/build-scripts.html)
+- Compile-time verified HTML templates using [Askama](https://github.com/djc/askama)
+- Compile-time verified database queries using [SQLx](https://github.com/launchbadge/sqlx)
+- Concurrent, isolated integration tests with per-test in-memory postgres databases
+- Single-binary deployment; all assets baked in
+- Integrated TLS; can run without a reverse proxy
+- PostgreSQL as the only service dependency
+- Built-in CLI for production maintenance
+- Auto-reload in development [without dropped connections](https://github.com/mitsuhiko/listenfd)
