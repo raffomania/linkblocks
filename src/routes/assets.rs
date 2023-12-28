@@ -3,17 +3,23 @@ use std::path::PathBuf;
 use crate::app_error::{AppError, Result};
 use anyhow::{anyhow, Context};
 use axum::{
-    debug_handler,
     extract::Path,
     http::{header, HeaderMap},
+    routing::get,
+    Router,
 };
 use include_dir::{include_dir, Dir};
 use mime_guess::Mime;
 
+pub fn router() -> Router {
+    Router::new()
+        .route("/assets/railwind.css", get(railwind_generated_css))
+        .route("/assets/*path", get(assets))
+}
+
 static ASSETS_DIR: Dir = include_dir!("assets");
 
-#[debug_handler]
-pub async fn assets(Path(path): Path<PathBuf>) -> Result<(HeaderMap, &'static [u8])> {
+async fn assets(Path(path): Path<PathBuf>) -> Result<(HeaderMap, &'static [u8])> {
     let body = ASSETS_DIR
         .get_file(&path)
         .map(|f| f.contents())
@@ -35,7 +41,7 @@ pub async fn assets(Path(path): Path<PathBuf>) -> Result<(HeaderMap, &'static [u
     Ok((headers, body))
 }
 
-pub async fn railwind_generated_css() -> Result<(HeaderMap, &'static [u8])> {
+async fn railwind_generated_css() -> Result<(HeaderMap, &'static [u8])> {
     let body = include_bytes!(concat!(env!("OUT_DIR"), "/railwind.css"));
 
     let mime_type = mime_guess::mime::TEXT_CSS;
