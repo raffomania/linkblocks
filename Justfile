@@ -1,10 +1,10 @@
 set dotenv-load := true
 set export := true
 
-watch: start-database
+watch: development-cert start-database
     systemfd --no-pid -s http::4040 -- cargo watch -- cargo run start --listenfd
 
-run *args:
+run *args: development-cert
     cargo run -- {{args}}
 
 generate-database-info: start-database migrate-database
@@ -46,6 +46,10 @@ migrate-database:
 
 test:
     cargo test
+
+development-cert:
+    mkdir -p development_cert
+    test -f development_cert/localhost.crt || mkcert -cert-file development_cert/localhost.crt -key-file development_cert/localhost.key localhost 127.0.0.1 ::1
 
 ci-dev: 
     cargo build

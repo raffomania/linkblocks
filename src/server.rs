@@ -1,4 +1,7 @@
+use std::path::PathBuf;
+
 use anyhow::anyhow;
+use axum_server::tls_rustls::RustlsConfig;
 use tower_sessions::ExpiredDeletion;
 
 use crate::{
@@ -40,7 +43,12 @@ pub async fn app(pool: sqlx::PgPool) -> anyhow::Result<Router> {
         .with_state(pool))
 }
 
-pub async fn start(listen: ListenArgs, app: Router) -> anyhow::Result<()> {
+pub async fn start(
+    listen: ListenArgs,
+    app: Router,
+    tls_cert: Option<PathBuf>,
+    tls_key: Option<PathBuf>,
+) -> anyhow::Result<()> {
     let listener = if let Some(listen_address) = listen.listen {
         tokio::net::TcpListener::bind(format!("{listen_address}")).await?
     } else {
@@ -52,9 +60,24 @@ pub async fn start(listen: ListenArgs, app: Router) -> anyhow::Result<()> {
     };
 
     let listening_on = listener.local_addr()?;
-    tracing::info!("Listening on http://{listening_on}");
 
-    axum::serve(listener, app).await?;
+    match (tls_cert, tls_key) {
+        (Some(cert), Some(key)) => {
+            tracing::info!("Using TLS files at: {cert:?}, {key:?}");
+            let config = RustlsConfig::from_pem_file(cert, key).await?;
+            tracing::info!("Listening on https://{listening_on}");
+            axum_server::from_tcp_rustls(listener.into_std()?, config)
+                .serve(app.into_make_service())
+                .await?;
+        }
+        _ => {
+            tracing::info!("No TLS certificate specified, not using TLS");
+            tracing::info!("Listening on http://{listening_on}");
+            axum_server::from_tcp(listener.into_std()?)
+                .serve(app.into_make_service())
+                .await?;
+        }
+    };
 
     Ok(())
 }

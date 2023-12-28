@@ -21,6 +21,8 @@ Install the dependencies:
 - [Latest stable version of Rust](https://www.rust-lang.org/learn/get-started) (An older version might work as well, but is not tested)
 - [just command runner](https://just.systems/man/en/chapter_1.html)
 - [podman](http://podman.io/docs/installation)
+- [mkcert](https://github.com/FiloSottile/mkcert#installation)
+    - Don't forget to run `mkcert -install`
 
 Install dependencies available via cargo:
 

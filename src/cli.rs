@@ -1,5 +1,5 @@
 use anyhow::Result;
-use std::net::SocketAddr;
+use std::{net::SocketAddr, path::PathBuf};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
 use clap::{Args, Parser, Subcommand};
@@ -28,6 +28,16 @@ enum Command {
     Start {
         #[clap(flatten)]
         listen: ListenArgs,
+        /// TLS cert location.
+        /// If set, requires `tls-key` to be set as well.
+        /// If both `tls-key` and `tls-cert` are unset, no TLS is used.
+        #[clap(long, env, requires = "tls_key")]
+        tls_cert: Option<PathBuf>,
+        /// TLS key location.
+        /// If set, requires `tls-cert` to be set as well.
+        /// If both `tls-key` and `tls-cert` are unset, no TLS is used.
+        #[clap(long, env, requires = "tls_cert")]
+        tls_key: Option<PathBuf>,
         #[clap(flatten)]
         admin_credentials: AdminCredentials,
     },
@@ -60,11 +70,11 @@ enum DbCommand {
 #[derive(Args)]
 #[group(required = true, multiple = false)]
 pub struct ListenArgs {
-    #[clap(long, value_name = "SOCKET_ADDRESS")]
     /// Format: `ip:port`. If omitted, try to obtain a port via the listenfd interface.
+    #[clap(long, value_name = "SOCKET_ADDRESS")]
     pub listen: Option<SocketAddr>,
-    #[clap(long)]
     /// Take a socket using the systemd socket passing protocol and listen on it.
+    #[clap(long)]
     pub listenfd: bool,
 }
 
@@ -82,6 +92,8 @@ pub async fn run() -> Result<()> {
         Command::Start {
             listen: listen_address,
             admin_credentials,
+            tls_cert,
+            tls_key,
         } => {
             let pool = db::pool(&cli.config.database_url).await?;
 
@@ -98,7 +110,7 @@ pub async fn run() -> Result<()> {
             }
 
             let app = server::app(pool).await?;
-            server::start(listen_address, app).await
+            server::start(listen_address, app, tls_cert, tls_key).await
         }
         Command::Db {
             command: DbCommand::Migrate,
