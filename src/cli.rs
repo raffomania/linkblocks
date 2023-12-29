@@ -80,9 +80,7 @@ pub struct ListenArgs {
 
 pub async fn run() -> Result<()> {
     tracing_subscriber::registry()
-        .with(EnvFilter::from(
-            "linkblocks=debug,tower_http=debug,axum::rejection=trace",
-        ))
+        .with(EnvFilter::from_default_env())
         .with(tracing_subscriber::fmt::layer())
         .init();
 
