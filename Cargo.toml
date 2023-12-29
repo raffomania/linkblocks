@@ -7,6 +7,10 @@ edition = "2021"
 # Doctests are slow, so we don't use them
 doctest = false
 
+# Speed up askama macros
+[profile.dev.package.askama_derive]
+opt-level = 3
+
 [dependencies]
 anyhow = { version = "1.0.76"}
 argon2 = "0.5.2"
