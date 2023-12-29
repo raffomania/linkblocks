@@ -2,21 +2,21 @@
 <form
   action="/login"
   method="post"
-  class="flex flex-col justify-center flex-1 max-w-lg min-h-full mx-auto"
+  class="flex flex-col justify-center flex-1 max-w-md min-h-full mx-auto"
   hx-boost="true"
   hx-disabled-elt="button"
 >
   <h2 class="text-2xl font-bold tracking-tight text-center">
     Sign in to your account
   </h2>
-  <label class="mt-10" ="username">Username</label>
+  <label class="mt-10 text-neutral-400" name="username">Username</label>
   <input
     type="text"
     name="username"
     required
     class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
   />
-  <label for="password" class="mt-4">Password</label>
+  <label for="password" class="mt-4 text-neutral-400">Password</label>
   <input
     type="password"
     name="password"
@@ -25,7 +25,7 @@
   />
   <button
     type="submit"
-    class="leading-6 bg-stone-500 mt-6 font-semibold rounded py-1.5 flex items-center justify-center disabled:bg-slate-400"
+    class="leading-6 bg-neutral-300 mt-5 font-semibold rounded py-1.5 flex items-center justify-center disabled:bg-slate-800 text-neutral-900"
   >
     <span class="inline-block w-0 h-4">
       <span
