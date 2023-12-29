@@ -49,7 +49,7 @@ pub async fn login(
 
     verify_password(&user, &creds.password)?;
 
-    AuthUser::insert(&session, &user.id).await?;
+    AuthUser::save_in_session(&session, &user.id).await?;
 
     Ok(())
 }
@@ -57,12 +57,13 @@ pub async fn login(
 #[derive(Debug)]
 pub struct AuthUser {
     pub user_id: Uuid,
+    session: Session,
 }
 
 impl AuthUser {
     const SESSION_KEY: &'static str = "auth_user_id";
 
-    pub async fn insert(session: &Session, id: &Uuid) -> Result<()> {
+    pub async fn save_in_session(session: &Session, id: &Uuid) -> Result<()> {
         session
             .insert(Self::SESSION_KEY, id)
             .await
@@ -78,7 +79,15 @@ impl AuthUser {
             .context("Failed to load authenticated user id")?
             .ok_or(AppError::NotAuthenticated)?;
 
-        Ok(Self { user_id })
+        Ok(Self { user_id, session })
+    }
+
+    pub async fn logout(self) -> Result<()> {
+        self.session
+            .remove::<Uuid>(Self::SESSION_KEY)
+            .await
+            .context("Failed to remove user id from session")?;
+        Ok(())
     }
 }
 

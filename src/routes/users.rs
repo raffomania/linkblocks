@@ -1,12 +1,23 @@
 use askama::Template;
-use axum::{response::Redirect, routing::get, Form, Router};
+use axum::{
+    response::Redirect,
+    routing::{get, post},
+    Form, Router,
+};
 use sqlx::{Pool, Postgres};
 use tower_sessions::Session;
 
-use crate::{app_error::Result, authentication, db::Transaction, schemas::users::Credentials};
+use crate::{
+    app_error::Result,
+    authentication::{self, AuthUser},
+    db::Transaction,
+    schemas::users::Credentials,
+};
 
 pub fn router() -> Router<Pool<Postgres>> {
-    Router::new().route("/login", get(get_login).post(post_login))
+    Router::new()
+        .route("/login", get(get_login).post(post_login))
+        .route("/logout", post(logout))
 }
 
 async fn post_login(
@@ -25,4 +36,9 @@ struct LoginTemplate {}
 
 async fn get_login() -> Result<LoginTemplate> {
     Ok(LoginTemplate {})
+}
+
+async fn logout(auth_user: AuthUser) -> Result<Redirect> {
+    auth_user.logout().await?;
+    Ok(Redirect::to("/login"))
 }
