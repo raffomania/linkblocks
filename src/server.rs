@@ -49,9 +49,14 @@ pub async fn start(
     tls_cert: Option<PathBuf>,
     tls_key: Option<PathBuf>,
 ) -> anyhow::Result<()> {
+    let handle = axum_server::Handle::new();
+
     let listener = if let Some(listen_address) = listen.listen {
+        tokio::spawn(shutdown_signal(handle.clone(), true));
         tokio::net::TcpListener::bind(format!("{listen_address}")).await?
     } else {
+        // Graceful shutdown is somehow broken with listenfd at the moment
+        tokio::spawn(shutdown_signal(handle.clone(), false));
         let mut listenfd = ListenFd::from_env();
         let listener = listenfd
             .take_tcp_listener(0)?
@@ -60,9 +65,6 @@ pub async fn start(
     };
 
     let listening_on = listener.local_addr()?;
-
-    let handle = axum_server::Handle::new();
-    tokio::spawn(shutdown_signal(handle.clone()));
 
     match (tls_cert, tls_key) {
         (Some(cert), Some(key)) => {
@@ -87,7 +89,7 @@ pub async fn start(
     Ok(())
 }
 
-async fn shutdown_signal(handle: axum_server::Handle) {
+async fn shutdown_signal(handle: axum_server::Handle, graceful: bool) {
     let ctrl_c = async {
         tokio::signal::ctrl_c()
             .await
@@ -113,5 +115,9 @@ async fn shutdown_signal(handle: axum_server::Handle) {
     tracing::info!(
         "Received termination signal - waiting 10 seconds to close existing connections"
     );
-    handle.graceful_shutdown(Some(Duration::from_secs(10)));
+    if graceful {
+        handle.graceful_shutdown(Some(Duration::from_secs(10)));
+    } else {
+        handle.shutdown();
+    }
 }
