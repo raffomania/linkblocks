@@ -1,9 +1,38 @@
 {% extends "_base.html" %} {% block content %}
-<form action="/login" method="post">
-  <label for="username">Username</label>
-  <input type="text" name="username" />
-  <label for="password">Password</label>
-  <input type="password" name="password" />
-  <input type="submit" />
+<form
+  action="/login"
+  method="post"
+  class="flex flex-col justify-center flex-1 max-w-lg min-h-full mx-auto"
+  hx-boost="true"
+  hx-disabled-elt="button"
+>
+  <h2 class="text-2xl font-bold tracking-tight text-center">
+    Sign in to your account
+  </h2>
+  <label class="mt-10" ="username">Username</label>
+  <input
+    type="text"
+    name="username"
+    required
+    class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
+  />
+  <label for="password" class="mt-4">Password</label>
+  <input
+    type="password"
+    name="password"
+    required
+    class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
+  />
+  <button
+    type="submit"
+    class="leading-6 bg-stone-500 mt-6 font-semibold rounded py-1.5 flex items-center justify-center disabled:bg-slate-400"
+  >
+    <span class="inline-block w-0 h-4">
+      <span
+        class="block w-4 h-4 -ml-6 border-2 border-white rounded-full animate-spin border-t-transparent htmx-indicator"
+      ></span
+    ></span>
+    Sign in
+  </button>
 </form>
 {% endblock %}
