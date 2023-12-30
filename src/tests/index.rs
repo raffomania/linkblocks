@@ -7,7 +7,7 @@ use tower::ServiceExt; // for `call`, `oneshot`, and `ready`
 
 #[sqlx::test]
 async fn index(pool: Pool<Postgres>) {
-    let app = linkblocks::server::app(pool).await.unwrap();
+    let app = crate::server::app(pool).await.unwrap();
 
     let response = app
         .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())

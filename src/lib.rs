@@ -5,3 +5,6 @@ mod db;
 mod routes;
 mod schemas;
 pub mod server;
+
+#[cfg(test)]
+mod tests;
