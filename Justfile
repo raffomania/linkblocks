@@ -44,8 +44,8 @@ wipe-database: stop-database
 migrate-database:
     cargo sqlx migrate run
 
-test: start-database
-    cargo test
+test *args: start-database
+    cargo test {{args}}
 
 development-cert:
     mkdir -p development_cert

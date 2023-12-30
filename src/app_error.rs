@@ -2,25 +2,29 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
+use thiserror::Error;
 
 pub type Result<T> = std::result::Result<T, AppError>;
 
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum AppError {
+    #[error("Unknown Error")]
     Anyhow(anyhow::Error),
+    #[error("Not Found")]
     NotFound,
+    #[error("Authentication Failed")]
     NotAuthenticated,
 }
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
         tracing::error!("{self:?}");
-        match self {
-            AppError::Anyhow(_) => (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error"),
-            AppError::NotFound => (StatusCode::NOT_FOUND, "Not Found"),
-            AppError::NotAuthenticated => (StatusCode::UNAUTHORIZED, "Authentication failed"),
-        }
-        .into_response()
+        let status = match self {
+            AppError::Anyhow(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::NotFound => StatusCode::NOT_FOUND,
+            AppError::NotAuthenticated => StatusCode::UNAUTHORIZED,
+        };
+        (status, self.to_string()).into_response()
     }
 }
 

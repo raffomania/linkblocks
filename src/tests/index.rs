@@ -6,7 +6,7 @@ use sqlx::{Pool, Postgres};
 use tower::ServiceExt; // for `call`, `oneshot`, and `ready`
 
 #[sqlx::test]
-async fn index(pool: Pool<Postgres>) {
+async fn index(pool: Pool<Postgres>) -> anyhow::Result<()> {
     let app = crate::server::app(pool).await.unwrap();
 
     let response = app
@@ -15,4 +15,6 @@ async fn index(pool: Pool<Postgres>) {
         .unwrap();
 
     assert_eq!(response.status(), StatusCode::SEE_OTHER);
+
+    Ok(())
 }

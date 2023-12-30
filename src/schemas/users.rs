@@ -1,11 +1,11 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 pub struct CreateUser {
     pub username: String,
     pub password: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Credentials {
     pub username: String,
     pub password: String,
