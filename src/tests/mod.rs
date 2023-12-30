@@ -2,3 +2,4 @@
 //! for information on why our tests are inside the `src` folder.
 mod index;
 mod users;
+mod util;

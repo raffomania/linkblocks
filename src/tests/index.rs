@@ -1,20 +1,16 @@
-use axum::{
-    body::Body,
-    http::{Request, StatusCode},
-};
+use axum::http::StatusCode;
 use sqlx::{Pool, Postgres};
-use tower::ServiceExt; // for `call`, `oneshot`, and `ready`
 
-#[sqlx::test]
+use super::util::TestApp;
+
+#[test_log::test(sqlx::test)]
 async fn index(pool: Pool<Postgres>) -> anyhow::Result<()> {
-    let app = crate::server::app(pool).await.unwrap();
+    let mut app = TestApp::new(pool).await;
 
-    let response = app
-        .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
-
-    assert_eq!(response.status(), StatusCode::SEE_OTHER);
+    app.req()
+        .expect_status(StatusCode::SEE_OTHER)
+        .get("/")
+        .await;
 
     Ok(())
 }
