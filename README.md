@@ -30,10 +30,12 @@ Install dependencies available via cargo:
 cargo install cargo-watch systemfd sqlx-cli
 ```
 
+Copy `.env.example` to `.env` and edit it to your liking.
+
 In the root of the repository, launch the server:
 
 ```sh
-just run
+just watch
 ```
 
 Then, open [http://localhost:4040] in your browser.

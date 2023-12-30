@@ -32,7 +32,7 @@ start-database:
 
     for i in {1..20}; do 
         pg_isready -h localhost -p $DATABASE_PORT && break
-        sleep 1
+        sleep 2
     done
 
 stop-database:
@@ -44,7 +44,7 @@ wipe-database: stop-database
 migrate-database:
     cargo sqlx migrate run
 
-test:
+test: start-database
     cargo test
 
 development-cert:
