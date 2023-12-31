@@ -5,6 +5,7 @@ use crate::server::app;
 
 use self::request_builder::RequestBuilder;
 
+pub mod dom;
 pub mod request_builder;
 
 pub struct TestApp {

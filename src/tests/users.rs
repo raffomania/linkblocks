@@ -3,7 +3,7 @@ use sqlx::{Pool, Postgres};
 
 use crate::{
     schemas::users::{CreateUser, Credentials},
-    tests::util::TestApp,
+    tests::util::{dom::assert_form_matches, TestApp},
 };
 
 #[test_log::test(sqlx::test)]
@@ -24,15 +24,12 @@ async fn can_login(pool: Pool<Postgres>) -> anyhow::Result<()> {
     let login_page = app.req().get("/login").await.dom().await;
 
     let form = login_page.find("form");
-    let username = form.find("input[name='username'][type='text'][required]");
-    assert!(!username.is_empty());
-    let password = form.find("input[name='password'][type='password'][required]");
-    assert!(!password.is_empty());
 
     let creds = Credentials {
         username: "test".to_string(),
         password: "test".to_string(),
     };
+    assert_form_matches(form, &creds);
 
     let login_response = app
         .req()
