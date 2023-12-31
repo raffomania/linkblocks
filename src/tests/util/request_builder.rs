@@ -1,7 +1,7 @@
 use askama_axum::IntoResponse;
 use axum::{
     body::Body,
-    http::{self, HeaderMap, Request, Response, StatusCode},
+    http::{self, request, HeaderMap, HeaderName, HeaderValue, Request, Response, StatusCode},
     Form, Router,
 };
 use http_body_util::BodyExt;
@@ -15,6 +15,7 @@ pub struct RequestBuilder<'app> {
     /// This is the HTTP status that we expect the backend to return.
     /// If it returns a different status, we'll panic.
     expected_status: StatusCode,
+    request: request::Builder,
 }
 
 impl<'app> RequestBuilder<'app> {
@@ -22,6 +23,7 @@ impl<'app> RequestBuilder<'app> {
         RequestBuilder {
             router: router,
             expected_status: StatusCode::OK,
+            request: Request::builder(),
         }
     }
 
@@ -30,11 +32,21 @@ impl<'app> RequestBuilder<'app> {
         self
     }
 
+    pub fn header<V>(mut self, key: HeaderName, val: V) -> Self
+    where
+        HeaderValue: TryFrom<V>,
+        <HeaderValue as TryFrom<V>>::Error: Into<http::Error>,
+    {
+        self.request = self.request.header(key, val);
+        self
+    }
+
     pub async fn post<Input>(mut self, url: &str, input: &Input) -> TestResponse
     where
         Input: Serialize,
     {
-        let request = Request::builder()
+        let request = self
+            .request
             .method(http::Method::POST)
             .uri(url)
             .header(
@@ -57,7 +69,7 @@ impl<'app> RequestBuilder<'app> {
     }
 
     pub async fn get(mut self, url: &str) -> TestResponse {
-        let request = Request::builder().uri(url).body(Body::empty()).unwrap();
+        let request = self.request.uri(url).body(Body::empty()).unwrap();
 
         let response = ServiceExt::<Request<Body>>::ready(&mut self.router)
             .await

@@ -1,4 +1,4 @@
-use axum::http::StatusCode;
+use axum::http::{header, StatusCode};
 use sqlx::{Pool, Postgres};
 
 use crate::{
@@ -42,6 +42,10 @@ async fn can_login(pool: Pool<Postgres>) -> anyhow::Result<()> {
 
     let cookie = login_response.headers().get("Set-Cookie").unwrap();
     assert!(!cookie.is_empty());
+    let cookie = cookie.to_str()?.split_once(";").unwrap().0;
+
+    // Check that we can access the index using the auth cookie
+    app.req().header(header::COOKIE, cookie).get("/").await;
 
     Ok(())
 }
