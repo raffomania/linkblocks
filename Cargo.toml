@@ -19,6 +19,7 @@ askama_axum = "0.4.0"
 axum = { version = "0.7.2", features = ["macros", "tracing"] }
 axum-server = { version = "0.6.0", features = ["tls-rustls"] }
 clap = { version = "4.4.11", features = ["derive", "env"] }
+garde = { version = "0.16.3", default-features = false, features = ["derive"]}
 include_dir = "0.7.3"
 listenfd = "1.0.1"
 mime_guess = "2.0.4"

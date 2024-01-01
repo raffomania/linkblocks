@@ -1,4 +1,5 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
+use garde::Validate;
 use std::{net::SocketAddr, path::PathBuf};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
@@ -100,21 +101,27 @@ pub async fn run() -> Result<()> {
             if let (Some(username), Some(password)) =
                 (admin_credentials.username, admin_credentials.password)
             {
+                let create = CreateUser { password, username };
+                if let Err(e) = create.validate(&()) {
+                    return Err(anyhow!("Invalid credentials for admin user provided:\n{e}"));
+                }
                 let mut tx = pool.begin().await?;
-                db::users::create_user_if_not_exists(&mut tx, CreateUser { password, username })
+                db::users::create_user_if_not_exists(&mut tx, create)
                     .await
                     .unwrap();
                 tx.commit().await?;
             }
 
             let app = server::app(pool).await?;
-            server::start(listen_address, app, tls_cert, tls_key).await
+            server::start(listen_address, app, tls_cert, tls_key).await?;
         }
         Command::Db {
             command: DbCommand::Migrate,
         } => {
             let pool = db::pool(&cli.config.database_url).await?;
-            db::migrate(&pool).await
+            db::migrate(&pool).await?;
         }
-    }
+    };
+
+    Ok(())
 }

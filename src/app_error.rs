@@ -6,6 +6,7 @@ use thiserror::Error;
 
 pub type Result<T> = std::result::Result<T, AppError>;
 
+// TODO rename this to ErrorResponse / ResponseError
 #[derive(Debug, Error)]
 pub enum AppError {
     #[error("Unknown Error")]

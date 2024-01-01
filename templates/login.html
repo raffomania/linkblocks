@@ -1,4 +1,4 @@
-{% extends "_base.html" %} {% block content %}
+{% import "_form.html" as form %} {% extends "_base.html" %} {% block content %}
 <form
   action="/login"
   method="post"
@@ -10,18 +10,22 @@
     Sign in to your account
   </h2>
   <label class="mt-10 text-neutral-400" name="username">Username</label>
+  {% call form::errors(errors, "root") %} {% call form::errors(errors,
+  "username") %}
   <input
     type="text"
     name="username"
-    required
     class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
+    value="{{ input.username }}"
+    required
   />
   <label for="password" class="mt-4 text-neutral-400">Password</label>
+  {% call form::errors(errors, "password") %}
   <input
     type="password"
     name="password"
-    required
     class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
+    required
   />
   <button
     type="submit"

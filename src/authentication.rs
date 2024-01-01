@@ -43,7 +43,7 @@ pub fn verify_password(user: &db::User, password: &str) -> Result<()> {
 pub async fn login(
     db: &mut Transaction<'_, Postgres>,
     session: Session,
-    creds: Credentials,
+    creds: &Credentials,
 ) -> Result<()> {
     let user = db::users::by_username(db, &creds.username).await?;
 
