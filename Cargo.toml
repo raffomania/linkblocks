@@ -12,7 +12,7 @@ doctest = false
 opt-level = 3
 
 [dependencies]
-anyhow = { version = "1.0.76"}
+anyhow = { version = "1.0.78"}
 argon2 = "0.5.2"
 askama = { version = "0.12.1", features = ["with-axum"] }
 askama_axum = "0.4.0"
