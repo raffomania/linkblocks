@@ -40,6 +40,6 @@ walkdir = "2"
 
 [dev-dependencies]
 http-body-util = "0.1.0"
-serde_json = "1.0.108"
+serde_json = "1.0.109"
 test-log = { version = "0.2.14", features = ["trace"], default-features = false }
 itertools = "0.12.0"
