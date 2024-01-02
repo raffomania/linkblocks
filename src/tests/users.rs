@@ -13,7 +13,7 @@ async fn can_login(pool: Pool<Postgres>) -> anyhow::Result<()> {
         &mut tx,
         CreateUser {
             username: "test".to_string(),
-            password: "test".to_string(),
+            password: "testpassword".to_string(),
         },
     )
     .await?;
@@ -27,7 +27,7 @@ async fn can_login(pool: Pool<Postgres>) -> anyhow::Result<()> {
 
     let creds = Credentials {
         username: "test".to_string(),
-        password: "test".to_string(),
+        password: "testpassword".to_string(),
     };
     assert_form_matches(form, &creds);
 

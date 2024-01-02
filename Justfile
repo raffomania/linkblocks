@@ -51,7 +51,7 @@ development-cert:
     mkdir -p development_cert
     test -f development_cert/localhost.crt || mkcert -cert-file development_cert/localhost.crt -key-file development_cert/localhost.key localhost 127.0.0.1 ::1
 
-ci-dev:
+ci-dev: start-database
     export RUSTFLAGS="-D warnings"
     cargo build
     cargo test

@@ -35,7 +35,7 @@ async fn post_login(
     };
 
     let logged_in = authentication::login(&mut tx, session, &creds).await;
-    if let Err(_) = logged_in {
+    if logged_in.is_err() {
         let mut errors = Report::new();
         errors.append(
             garde::Path::new("root"),

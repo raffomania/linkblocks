@@ -29,7 +29,7 @@ thiserror = "1.0.52"
 tokio = { version = "1.35.1", features = ["macros", "rt-multi-thread", "signal"] }
 tower = "0.4.13"
 tower-http = { version = "0.5.0", features = ["tracing", "trace"] }
-tower-sessions = { version = "0.8.2", features = ["postgres-store", "deletion-task"] }
+tower-sessions = { version = "0.9", features = ["postgres-store", "deletion-task"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 uuid = { version = "1.6.1", features = ["v4"] }

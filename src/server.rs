@@ -9,7 +9,7 @@ use crate::{
     routes::{self},
 };
 
-use axum::{error_handling::HandleErrorLayer, http::StatusCode, Router};
+use axum::Router;
 use listenfd::ListenFd;
 use tower_http::trace::TraceLayer;
 
@@ -22,17 +22,11 @@ pub async fn app(pool: sqlx::PgPool) -> anyhow::Result<Router> {
             .continuously_delete_expired(tokio::time::Duration::from_secs(3600)),
     );
 
-    let session_service = tower::ServiceBuilder::new()
-        .layer(HandleErrorLayer::new(|_: axum::BoxError| async {
-            StatusCode::BAD_REQUEST
-        }))
-        .layer(
-            tower_sessions::SessionManagerLayer::new(session_store)
-                .with_secure(false)
-                .with_expiry(tower_sessions::Expiry::OnInactivity(
-                    tower_sessions::cookie::time::Duration::weeks(2),
-                )),
-        );
+    let session_service = tower_sessions::SessionManagerLayer::new(session_store)
+        .with_secure(true)
+        .with_expiry(tower_sessions::Expiry::OnInactivity(
+            tower_sessions::cookie::time::Duration::weeks(2),
+        ));
 
     Ok(Router::new()
         .merge(routes::users::router())
