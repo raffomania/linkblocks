@@ -44,14 +44,45 @@ migrate-database:
 generate-database-info: start-database migrate-database
     cargo bin sqlx prepare
 
-test *args: start-database
-    cargo test {{args}}
+start-test-database:
+    #!/usr/bin/env bash
+    set -euxo pipefail
+
+    if podman ps --format "{{{{.Names}}" | grep -wq linkblocks_postgres_test; then
+        echo "Test database is running."
+        exit
+    fi
+
+    if ! podman inspect linkblocks_postgres_test &> /dev/null; then
+        podman create \
+            --replace --name linkblocks_postgres_test --image-volume tmpfs \
+            --health-cmd pg_isready --health-interval 10s \
+            -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_DB=linkblocks_test \
+            -p ${DATABASE_PORT_TEST}:5432 --rm docker.io/postgres:16 \
+            postgres \
+            -c fsync=off \
+            -c synchronous_commit=off \
+            -c full_page_writes=off \
+            -c autovacuum=off
+    fi
+
+    podman start linkblocks_postgres_test
+
+    for i in {1..20}; do 
+        pg_isready -h localhost -p $DATABASE_PORT_TEST && break
+        sleep 2
+    done
+
+test *args: start-test-database
+    DATABASE_URL=${DATABASE_URL_TEST} cargo test {{args}}
 
 development-cert:
     mkdir -p development_cert
     test -f development_cert/localhost.crt || mkcert -cert-file development_cert/localhost.crt -key-file development_cert/localhost.key localhost 127.0.0.1 ::1
 
 ci-dev: start-database
+    #!/usr/bin/env bash
+
     export RUSTFLAGS="-D warnings"
     cargo build
     cargo test
