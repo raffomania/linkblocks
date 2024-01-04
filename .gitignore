@@ -1,5 +1,11 @@
+# Compiled artifacts
 /target
 
+# Configuration
 .env
 
+# TLS certificates created by mkcert
 development_cert
+
+# cargo-run-bin
+.bin/

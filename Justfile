@@ -2,13 +2,10 @@ set dotenv-load := true
 set export := true
 
 watch: development-cert start-database
-    systemfd --no-pid -s http::4040 -- cargo watch -- cargo run start --listenfd
+    cargo bin systemfd --no-pid -s http::4040 -- cargo bin cargo-watch -- cargo run start --listenfd
 
 run *args: development-cert
     cargo run -- {{args}}
-
-generate-database-info: start-database migrate-database
-    cargo sqlx prepare
 
 start-database:
     #!/usr/bin/env bash
@@ -42,7 +39,10 @@ wipe-database: stop-database
     podman rm linkblocks_postgres
 
 migrate-database:
-    cargo sqlx migrate run
+    cargo bin sqlx migrate run
+
+generate-database-info: start-database migrate-database
+    cargo bin sqlx prepare
 
 test *args: start-database
     cargo test {{args}}

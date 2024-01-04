@@ -19,15 +19,14 @@ It's getting harder and harder to find good web pages. When you do find good one
 Install the dependencies:
 
 - [Latest stable version of Rust](https://www.rust-lang.org/learn/get-started) (An older version might work as well, but is not tested)
-- [just command runner](https://just.systems/man/en/chapter_1.html)
-- [podman](http://podman.io/docs/installation)
+- [podman](http://podman.io/docs/installation) (Optional, for conveniently running postgres for development and tests)
 - [mkcert](https://github.com/FiloSottile/mkcert#installation)
     - Don't forget to run `mkcert -install`
 
 Install dependencies available via cargo:
 
 ```sh
-cargo install cargo-watch systemfd sqlx-cli
+cargo install cargo-run-bin
 ```
 
 Copy `.env.example` to `.env` and edit it to your liking.
@@ -35,7 +34,7 @@ Copy `.env.example` to `.env` and edit it to your liking.
 In the root of the repository, launch the server:
 
 ```sh
-just watch
+cargo bin just watch
 ```
 
 Then, open [http://localhost:4040] in your browser.
