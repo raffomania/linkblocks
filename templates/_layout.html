@@ -1,0 +1,10 @@
+{% extends "_base.html" %} {% block body %}
+
+<div class="flex h-full">
+  <aside class="bg-neutral-900 border-r border-neutral-400">
+    <header>{{ layout.logged_in_username }}</header>
+  </aside>
+  <main>{% block content %}{% endblock %}</main>
+</div>
+
+{% endblock %}

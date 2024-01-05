@@ -1,4 +1,3 @@
-use askama::Template;
 use askama_axum::IntoResponse;
 use axum::{
     extract::Form,
@@ -15,8 +14,8 @@ use crate::{
     app_error::Result,
     authentication::{self, AuthUser},
     db::Transaction,
-    form_errors::FormErrors,
     schemas::users::Credentials,
+    views::users::LoginTemplate,
 };
 
 pub fn router() -> Router<Pool<Postgres>> {
@@ -45,26 +44,6 @@ async fn post_login(
     }
 
     Ok(Redirect::to("/").into_response())
-}
-
-#[derive(Template, Default)]
-#[template(path = "login.html")]
-struct LoginTemplate {
-    errors: FormErrors,
-    input: Credentials,
-}
-
-impl LoginTemplate {
-    fn new(errors: Report, input: Credentials) -> Self {
-        Self {
-            errors: errors.into(),
-            input: Credentials {
-                username: input.username,
-                // Never render the password we got from the user
-                password: String::new(),
-            },
-        }
-    }
 }
 
 async fn get_login() -> Result<LoginTemplate> {

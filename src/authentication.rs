@@ -1,6 +1,6 @@
 use crate::{
     app_error::{AppError, Result},
-    db,
+    db::{self},
     schemas::users::Credentials,
 };
 use anyhow::{anyhow, Context};
@@ -12,7 +12,6 @@ use axum::{
     http::request::Parts,
     response::{Redirect, Response},
 };
-use sqlx::{Postgres, Transaction};
 use tower_sessions::Session;
 use uuid::Uuid;
 
@@ -41,7 +40,7 @@ pub fn verify_password(user: &db::User, password: &str) -> Result<()> {
 }
 
 pub async fn login(
-    db: &mut Transaction<'_, Postgres>,
+    db: &mut sqlx::Transaction<'_, sqlx::Postgres>,
     session: Session,
     creds: &Credentials,
 ) -> Result<()> {

@@ -30,6 +30,20 @@ pub async fn insert(db: &mut Transaction<'_, Postgres>, create: CreateUser) -> R
     Ok(())
 }
 
+pub async fn by_id(db: &mut Transaction<'_, Postgres>, id: Uuid) -> Result<User> {
+    let user = query_as!(
+        User,
+        r#"
+        select * from users
+        where id = $1
+    "#,
+        id
+    )
+    .fetch_one(&mut **db)
+    .await?;
+
+    Ok(user)
+}
 pub async fn by_username(db: &mut Transaction<'_, Postgres>, username: &str) -> Result<User> {
     let user = query_as!(
         User,
