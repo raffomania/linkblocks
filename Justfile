@@ -39,10 +39,10 @@ wipe-database: stop-database
     podman rm linkblocks_postgres
 
 migrate-database:
-    cargo bin sqlx migrate run
+    cargo bin sqlx-cli migrate run
 
 generate-database-info: start-database migrate-database
-    cargo bin sqlx prepare
+    cargo bin sqlx-cli prepare
 
 start-test-database:
     #!/usr/bin/env bash

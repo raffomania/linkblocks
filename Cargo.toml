@@ -49,4 +49,4 @@ itertools = "0.12.0"
 just = { version = "1.21.0", locked = true }
 cargo-watch = { version = "8.5.1", locked = true }
 systemfd = { version = "0.4.1", locked = true }
-sqlx-cli = { version = "0.7.3", locked = true }
+sqlx-cli = { version = "0.7.3", locked = true, bins = ["sqlx"] }
