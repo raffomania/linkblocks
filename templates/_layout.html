@@ -1,8 +1,16 @@
 {% extends "_base.html" %} {% block body %}
 
 <div class="flex h-full">
-  <aside class="bg-neutral-900 border-r border-neutral-400">
-    <header>{{ layout.logged_in_username }}</header>
+  <aside class="bg-neutral-900 border-r border-neutral-700 shrink w-64">
+    <header class="py-2 pl-4 pr-2 flex justify-between leading-8">
+      <p class="font-bold">{{ layout.logged_in_username }}</p>
+
+      <form action="/logout" method="post">
+        <button class="text-neutral-400 hover:bg-neutral-800 rounded px-3">
+          Logout
+        </button>
+      </form>
+    </header>
   </aside>
   <main>{% block content %}{% endblock %}</main>
 </div>
