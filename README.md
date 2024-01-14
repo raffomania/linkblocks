@@ -14,6 +14,10 @@ It's getting harder and harder to find good web pages. When you do find good one
 - Annotate, highlight and discuss web pages together with your friends.
 - Mark users as trusted whose standards for web pages match yours - and then search through all trusted bookmarks to find good pages on a specific topic. Add trusted users of your trusted users to your search range to cast a wider net.
 
+## Related Reading
+
+- [Where have all the Websites gone?](https://www.fromjason.xyz/p/notebook/where-have-all-the-websites-gone/) talks about the importance of curation for finding good websites. Linkblock is a tool for publicly curating websites.
+
 ## Development Setup
 
 Install the dependencies:
