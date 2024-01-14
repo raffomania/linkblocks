@@ -16,7 +16,7 @@ It's getting harder and harder to find good web pages. When you do find good one
 
 ## Related Reading
 
-- [Where have all the Websites gone?](https://www.fromjason.xyz/p/notebook/where-have-all-the-websites-gone/) talks about the importance of curation for finding good websites. Linkblock is a tool for publicly curating websites.
+- [Where have all the Websites gone?](https://www.fromjason.xyz/p/notebook/where-have-all-the-websites-gone/) talks about the importance of website curation. Linkblocks is for publicly curating websites.
 
 ## Development Setup
 
