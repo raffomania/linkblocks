@@ -5,6 +5,6 @@ updates:
     schedule:
       interval: "weekly"
     groups:
-      production-dependencies:
+      all-dependencies:
         patterns:
           - "*"
