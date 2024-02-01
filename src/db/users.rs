@@ -64,15 +64,14 @@ pub async fn create_user_if_not_exists(
     create: CreateUser,
 ) -> Result<()> {
     let username = create.username.clone();
-    tracing::info!("Checking if admin user '{username}' exists...");
     let user = by_username(tx, &username).await;
     match user {
         Err(AppError::NotFound) => {
-            tracing::info!("Creating admin user");
+            tracing::info!("Creating admin user '{username}'");
             insert(tx, create).await?;
         }
         Ok(_) => {
-            tracing::info!("User already exists")
+            tracing::info!("Admin user '{username}' already exists")
         }
         Err(other) => return Err(other),
     }
