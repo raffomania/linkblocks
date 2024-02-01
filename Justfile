@@ -77,17 +77,16 @@ start-test-database:
     done
 
 test *args: start-test-database
-    DATABASE_URL=${DATABASE_URL_TEST} cargo test {{args}}
+    DATABASE_URL=${DATABASE_URL_TEST} SQLX_OFFLINE=true cargo test {{args}}
 
 development-cert:
     mkdir -p development_cert
     test -f development_cert/localhost.crt || mkcert -cert-file development_cert/localhost.crt -key-file development_cert/localhost.key localhost 127.0.0.1 ::1
 
-ci-dev: start-database
+ci-dev: start-database start-test-database
     #!/usr/bin/env bash
 
-    export RUSTFLAGS="-D warnings"
     cargo build
-    cargo test
+    just test
     cargo fmt --all -- --check
     cargo clippy -- -D warnings
