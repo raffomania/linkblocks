@@ -11,7 +11,32 @@ env:
 
 jobs:
   ci:
-    name: CI
+    name: Build & lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup rust cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: cargo build
+        run: cargo build
+        env:
+          SQLX_OFFLINE: true
+
+      - name: cargo fmt
+        run: cargo fmt --all -- --check
+
+      - name: cargo clippy
+        run: cargo clippy -- -D warnings
+
+  ci:
+    name: Test
     runs-on: ubuntu-latest
 
     services:
@@ -36,17 +61,6 @@ jobs:
 
       - name: Setup rust cache
         uses: Swatinem/rust-cache@v2
-
-      - name: cargo build
-        run: cargo build
-        env:
-          SQLX_OFFLINE: true
-
-      - name: cargo fmt
-        run: cargo fmt --all -- --check
-
-      - name: cargo clippy
-        run: cargo clippy -- -D warnings
 
       - name: cargo test
         run: cargo test
