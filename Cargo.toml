@@ -19,13 +19,14 @@ askama_axum = "0.4.0"
 axum = { version = "0.7.4", features = ["macros", "tracing"] }
 axum-server = { version = "0.6.0", features = ["tls-rustls"] }
 clap = { version = "4.4.18", features = ["derive", "env"] }
-garde = { version = "0.18.0", default-features = false, features = ["derive"]}
+garde = { version = "0.18.0", default-features = false, features = ["derive", "url"]}
 include_dir = "0.7.3"
 listenfd = "1.0.1"
 mime_guess = "2.0.4"
 serde = "1.0.196"
 sqlx = { version = "0.7.3", features = ["runtime-tokio", "postgres", "tls-rustls", "migrate", "uuid", "time"] }
 thiserror = "1.0.52"
+time = { version = "0.3.32", default-features = false }
 tokio = { version = "1.35.1", features = ["macros", "rt-multi-thread", "signal"] }
 tower = "0.4.13"
 tower-http = { version = "0.5.1", features = ["tracing", "trace"] }

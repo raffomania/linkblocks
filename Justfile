@@ -7,6 +7,9 @@ watch: development-cert start-database
 run *args: development-cert
     cargo run -- {{args}}
 
+insert-demo-data:
+    cargo run -- insert-demo-data
+
 start-database:
     #!/usr/bin/env bash
     set -euxo pipefail
@@ -38,7 +41,7 @@ stop-database:
 wipe-database: stop-database
     podman rm linkblocks_postgres
 
-migrate-database:
+migrate-database: start-database
     cargo bin sqlx-cli migrate run
 
 generate-database-info: start-database migrate-database

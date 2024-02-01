@@ -8,5 +8,6 @@ mod schemas;
 pub mod server;
 mod views;
 
+pub mod insert_demo_data;
 #[cfg(test)]
 mod tests;

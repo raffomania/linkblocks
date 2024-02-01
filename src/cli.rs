@@ -5,7 +5,7 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilte
 
 use clap::{Args, Parser, Subcommand};
 
-use crate::{db, schemas::users::CreateUser, server};
+use crate::{db, insert_demo_data::insert_demo_data, schemas::users::CreateUser, server};
 
 #[derive(Parser)]
 #[clap(version)]
@@ -46,6 +46,9 @@ enum Command {
         #[clap(subcommand)]
         command: DbCommand,
     },
+    #[cfg(debug_assertions)]
+    /// Put some demo data into the database
+    InsertDemoData,
 }
 
 #[derive(Args)]
@@ -120,6 +123,10 @@ pub async fn run() -> Result<()> {
         } => {
             let pool = db::pool(&cli.config.database_url).await?;
             db::migrate(&pool).await?;
+        }
+        Command::InsertDemoData => {
+            let pool = db::pool(&cli.config.database_url).await?;
+            insert_demo_data(&pool).await?;
         }
     };
 

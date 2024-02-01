@@ -1,5 +1,4 @@
-use sqlx::prelude::FromRow;
-use sqlx::{query, query_as, Postgres, Transaction};
+use sqlx::{query_as, FromRow, Postgres, Transaction};
 use uuid::Uuid;
 
 use crate::app_error::{AppError, Result};
@@ -13,21 +12,23 @@ pub struct User {
     pub password_hash: String,
 }
 
-pub async fn insert(db: &mut Transaction<'_, Postgres>, create: CreateUser) -> Result<()> {
+pub async fn insert(db: &mut Transaction<'_, Postgres>, create: CreateUser) -> Result<User> {
     let hashed_password = hash_password(create.password)?;
 
-    query!(
+    let user = query_as!(
+        User,
         r#"
         insert into users 
         (password_hash, username) 
-        values ($1, $2)"#,
+        values ($1, $2)
+        returning *"#,
         hashed_password,
         create.username
     )
-    .execute(&mut **db)
+    .fetch_one(&mut **db)
     .await?;
 
-    Ok(())
+    Ok(user)
 }
 
 pub async fn by_id(db: &mut Transaction<'_, Postgres>, id: Uuid) -> Result<User> {
