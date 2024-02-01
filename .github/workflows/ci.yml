@@ -10,8 +10,8 @@ env:
   RUSTFLAGS: "-D warnings"
 
 jobs:
-  ci:
-    name: Build & lint
+  build-lint:
+    name: Build & Lint
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +35,7 @@ jobs:
       - name: cargo clippy
         run: cargo clippy -- -D warnings
 
-  ci:
+  test:
     name: Test
     runs-on: ubuntu-latest
 
