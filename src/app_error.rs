@@ -10,7 +10,7 @@ pub type Result<T> = std::result::Result<T, AppError>;
 #[derive(Debug, Error)]
 pub enum AppError {
     #[error("Unknown Error")]
-    Anyhow(anyhow::Error),
+    Anyhow(#[source] anyhow::Error),
     #[error("Not Found")]
     NotFound,
     #[error("Authentication Failed")]
