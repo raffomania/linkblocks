@@ -37,7 +37,7 @@ pub async fn insert_demo_data(
     let mut lists = Vec::new();
     for user in users.iter() {
         for _ in 0..10 {
-            let title: String = fake::faker::lorem::en::Sentence(1..3).fake();
+            let title: String = fake::faker::lorem::en::Sentence(1..10).fake();
             let create_list = CreateList { title };
             lists.push(db::lists::insert(&mut tx, user.id, create_list).await?);
         }

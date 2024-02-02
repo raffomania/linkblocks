@@ -34,3 +34,19 @@ pub async fn insert(
 
     Ok(list)
 }
+
+pub async fn list_by_user(
+    db: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+) -> AppResult<Vec<List>> {
+    Ok(query_as!(
+        List,
+        r#"
+        select * from lists
+        where user_id = $1
+        "#,
+        user_id
+    )
+    .fetch_all(&mut **db)
+    .await?)
+}
