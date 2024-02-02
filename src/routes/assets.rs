@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use crate::app_error::{AppError, Result};
+use crate::app_error::{AppError, AppResult};
 use anyhow::{anyhow, Context};
 use axum::{
     extract::Path,
@@ -19,7 +19,7 @@ pub fn router() -> Router {
 
 static ASSETS_DIR: Dir = include_dir!("assets");
 
-async fn assets(Path(path): Path<PathBuf>) -> Result<(HeaderMap, &'static [u8])> {
+async fn assets(Path(path): Path<PathBuf>) -> AppResult<(HeaderMap, &'static [u8])> {
     let body = ASSETS_DIR
         .get_file(&path)
         .map(|f| f.contents())
@@ -41,7 +41,7 @@ async fn assets(Path(path): Path<PathBuf>) -> Result<(HeaderMap, &'static [u8])>
     Ok((headers, body))
 }
 
-async fn railwind_generated_css() -> Result<(HeaderMap, &'static [u8])> {
+async fn railwind_generated_css() -> AppResult<(HeaderMap, &'static [u8])> {
     let body = include_bytes!(concat!(env!("OUT_DIR"), "/railwind.css"));
 
     let mime_type = mime_guess::mime::TEXT_CSS;
@@ -60,7 +60,7 @@ async fn railwind_generated_css() -> Result<(HeaderMap, &'static [u8])> {
     Ok((headers, body))
 }
 
-fn get_mime(path: &std::path::Path) -> Result<Mime> {
+fn get_mime(path: &std::path::Path) -> AppResult<Mime> {
     let ext = path
         .extension()
         .ok_or(anyhow!("Included assets need an extension"))?
@@ -76,12 +76,12 @@ fn get_mime(path: &std::path::Path) -> Result<Mime> {
 mod tests {
     use include_dir::Dir;
 
-    use super::Result;
+    use super::AppResult;
     use super::{get_mime, ASSETS_DIR};
 
     #[test]
-    fn all_assets_have_a_mime_type() -> Result<()> {
-        fn check_dir(dir: &Dir) -> Result<()> {
+    fn all_assets_have_a_mime_type() -> AppResult<()> {
+        fn check_dir(dir: &Dir) -> AppResult<()> {
             for asset in dir.files() {
                 get_mime(&asset.path())?;
             }

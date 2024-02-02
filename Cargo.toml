@@ -7,10 +7,6 @@ edition = "2021"
 # Doctests are slow, so we don't use them
 doctest = false
 
-# Speed up askama macros
-[profile.dev.package.askama_derive]
-opt-level = 3
-
 [dependencies]
 anyhow = { version = "1.0.76"}
 argon2 = "0.5.3"
@@ -19,6 +15,7 @@ askama_axum = "0.4.0"
 axum = { version = "0.7.4", features = ["macros", "tracing"] }
 axum-server = { version = "0.6.0", features = ["tls-rustls"] }
 clap = { version = "4.4.18", features = ["derive", "env"] }
+fake = { version = "2.9.2", default-features = false }
 garde = { version = "0.18.0", default-features = false, features = ["derive", "url"]}
 include_dir = "0.7.3"
 listenfd = "1.0.1"

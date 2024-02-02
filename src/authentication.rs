@@ -1,5 +1,5 @@
 use crate::{
-    app_error::{AppError, Result},
+    app_error::{AppError, AppResult},
     db::{self},
     schemas::users::Credentials,
 };
@@ -15,7 +15,7 @@ use axum::{
 use tower_sessions::Session;
 use uuid::Uuid;
 
-pub fn hash_password(password: String) -> Result<String> {
+pub fn hash_password(password: String) -> AppResult<String> {
     let salt =
         argon2::password_hash::SaltString::generate(&mut argon2::password_hash::rand_core::OsRng);
 
@@ -28,7 +28,7 @@ pub fn hash_password(password: String) -> Result<String> {
     )
 }
 
-pub fn verify_password(user: &db::User, password: &str) -> Result<()> {
+pub fn verify_password(user: &db::User, password: &str) -> AppResult<()> {
     let password_hash = &argon2::PasswordHash::new(&user.password_hash)
         .map_err(|e| anyhow!("Failed to create password hash: {e}"))?;
 
@@ -43,7 +43,7 @@ pub async fn login(
     db: &mut sqlx::Transaction<'_, sqlx::Postgres>,
     session: Session,
     creds: &Credentials,
-) -> Result<()> {
+) -> AppResult<()> {
     let user = db::users::by_username(db, &creds.username).await?;
 
     verify_password(&user, &creds.password)?;
@@ -62,7 +62,7 @@ pub struct AuthUser {
 impl AuthUser {
     const SESSION_KEY: &'static str = "auth_user_id";
 
-    pub async fn save_in_session(session: &Session, id: &Uuid) -> Result<()> {
+    pub async fn save_in_session(session: &Session, id: &Uuid) -> AppResult<()> {
         session
             .insert(Self::SESSION_KEY, id)
             .await
@@ -71,7 +71,7 @@ impl AuthUser {
         Ok(())
     }
 
-    pub async fn from_session(session: Session) -> Result<Self> {
+    pub async fn from_session(session: Session) -> AppResult<Self> {
         let user_id: Uuid = session
             .get("auth_user_id")
             .await
@@ -81,7 +81,7 @@ impl AuthUser {
         Ok(Self { user_id, session })
     }
 
-    pub async fn logout(self) -> Result<()> {
+    pub async fn logout(self) -> AppResult<()> {
         self.session
             .remove::<Uuid>(Self::SESSION_KEY)
             .await

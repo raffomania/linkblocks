@@ -48,7 +48,10 @@ enum Command {
     },
     #[cfg(debug_assertions)]
     /// Put some demo data into the database
-    InsertDemoData,
+    InsertDemoData {
+        #[clap(flatten)]
+        dev_user_credentials: AdminCredentials,
+    },
 }
 
 #[derive(Args)]
@@ -64,6 +67,16 @@ struct AdminCredentials {
     )]
     /// Password for the admin user.
     password: Option<String>,
+}
+
+impl From<AdminCredentials> for Option<CreateUser> {
+    fn from(value: AdminCredentials) -> Self {
+        if let (Some(username), Some(password)) = (value.username, value.password) {
+            Some(CreateUser { username, password })
+        } else {
+            None
+        }
+    }
 }
 
 #[derive(Subcommand)]
@@ -101,10 +114,7 @@ pub async fn run() -> Result<()> {
 
             db::migrate(&pool).await?;
 
-            if let (Some(username), Some(password)) =
-                (admin_credentials.username, admin_credentials.password)
-            {
-                let create = CreateUser { password, username };
+            if let Some(create) = Option::<CreateUser>::from(admin_credentials) {
                 if let Err(e) = create.validate(&()) {
                     return Err(anyhow!("Invalid credentials for admin user provided:\n{e}"));
                 }
@@ -124,9 +134,11 @@ pub async fn run() -> Result<()> {
             let pool = db::pool(&cli.config.database_url).await?;
             db::migrate(&pool).await?;
         }
-        Command::InsertDemoData => {
+        Command::InsertDemoData {
+            dev_user_credentials,
+        } => {
             let pool = db::pool(&cli.config.database_url).await?;
-            insert_demo_data(&pool).await?;
+            insert_demo_data(&pool, Option::<CreateUser>::from(dev_user_credentials)).await?;
         }
     };
 

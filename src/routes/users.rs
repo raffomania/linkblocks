@@ -11,7 +11,7 @@ use sqlx::{Pool, Postgres};
 use tower_sessions::Session;
 
 use crate::{
-    app_error::Result,
+    app_error::AppResult,
     authentication::{self, AuthUser},
     db::Transaction,
     schemas::users::Credentials,
@@ -28,7 +28,7 @@ async fn post_login(
     Transaction(mut tx): Transaction,
     session: Session,
     Form(creds): Form<Credentials>,
-) -> Result<Response> {
+) -> AppResult<Response> {
     if let Err(errors) = creds.validate(&()) {
         return Ok(LoginTemplate::new(errors, creds).into_response());
     };
@@ -46,11 +46,11 @@ async fn post_login(
     Ok(Redirect::to("/").into_response())
 }
 
-async fn get_login() -> Result<LoginTemplate> {
+async fn get_login() -> AppResult<LoginTemplate> {
     Ok(LoginTemplate::default())
 }
 
-async fn logout(auth_user: AuthUser) -> Result<Redirect> {
+async fn logout(auth_user: AuthUser) -> AppResult<Redirect> {
     auth_user.logout().await?;
     Ok(Redirect::to("/login"))
 }

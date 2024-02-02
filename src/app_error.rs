@@ -4,7 +4,7 @@ use axum::{
 };
 use thiserror::Error;
 
-pub type Result<T> = std::result::Result<T, AppError>;
+pub type AppResult<T> = std::result::Result<T, AppError>;
 
 // TODO rename this to ErrorResponse / ResponseError
 #[derive(Debug, Error)]

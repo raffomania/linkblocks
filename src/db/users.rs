@@ -1,7 +1,7 @@
 use sqlx::{query_as, FromRow, Postgres, Transaction};
 use uuid::Uuid;
 
-use crate::app_error::{AppError, Result};
+use crate::app_error::{AppError, AppResult};
 use crate::authentication::hash_password;
 use crate::schemas::users::CreateUser;
 
@@ -12,7 +12,7 @@ pub struct User {
     pub password_hash: String,
 }
 
-pub async fn insert(db: &mut Transaction<'_, Postgres>, create: CreateUser) -> Result<User> {
+pub async fn insert(db: &mut Transaction<'_, Postgres>, create: CreateUser) -> AppResult<User> {
     let hashed_password = hash_password(create.password)?;
 
     let user = query_as!(
@@ -31,7 +31,7 @@ pub async fn insert(db: &mut Transaction<'_, Postgres>, create: CreateUser) -> R
     Ok(user)
 }
 
-pub async fn by_id(db: &mut Transaction<'_, Postgres>, id: Uuid) -> Result<User> {
+pub async fn by_id(db: &mut Transaction<'_, Postgres>, id: Uuid) -> AppResult<User> {
     let user = query_as!(
         User,
         r#"
@@ -45,7 +45,7 @@ pub async fn by_id(db: &mut Transaction<'_, Postgres>, id: Uuid) -> Result<User>
 
     Ok(user)
 }
-pub async fn by_username(db: &mut Transaction<'_, Postgres>, username: &str) -> Result<User> {
+pub async fn by_username(db: &mut Transaction<'_, Postgres>, username: &str) -> AppResult<User> {
     let user = query_as!(
         User,
         r#"
@@ -63,18 +63,19 @@ pub async fn by_username(db: &mut Transaction<'_, Postgres>, username: &str) -> 
 pub async fn create_user_if_not_exists(
     tx: &mut Transaction<'_, Postgres>,
     create: CreateUser,
-) -> Result<()> {
+) -> AppResult<User> {
     let username = create.username.clone();
     let user = by_username(tx, &username).await;
-    match user {
+    let actual_user = match user {
         Err(AppError::NotFound) => {
             tracing::info!("Creating admin user '{username}'");
-            insert(tx, create).await?;
+            insert(tx, create).await?
         }
-        Ok(_) => {
-            tracing::info!("Admin user '{username}' already exists")
+        Ok(actual_user) => {
+            tracing::info!("Admin user '{username}' already exists");
+            actual_user
         }
         Err(other) => return Err(other),
-    }
-    Ok(())
+    };
+    Ok(actual_user)
 }
