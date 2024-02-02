@@ -1,7 +1,9 @@
 {% extends "_base.html" %} {% block body %}
 
-<div class="flex h-full">
-  <aside class="w-64 border-r bg-neutral-900 border-neutral-700 shrink">
+<div class="h-full sm:flex">
+  <aside
+    class="bg-neutral-900 sm:max-w-[18rem] sm:w-1/3 sm:max-h-full sm:flex sm:flex-col sm:border-r sm:border-neutral-700"
+  >
     <header class="flex justify-between py-2 pl-4 pr-2 leading-8">
       <p class="font-bold">{{ layout.logged_in_username }}</p>
 
@@ -11,9 +13,13 @@
         </button>
       </form>
     </header>
-    <ul>
+    <ul class="overflow-y-auto">
       {% for list in layout.lists %}
-      <li>{{ list.title }}</li>
+      <li
+        class="px-4 py-1 overflow-hidden text-ellipsis whitespace-nowrap hover:bg-neutral-800"
+      >
+        {{ list.title }}
+      </li>
       {% endfor %}
     </ul>
   </aside>
