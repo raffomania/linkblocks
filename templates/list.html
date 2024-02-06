@@ -2,10 +2,22 @@
 <h1 class="px-4 py-2 font-bold leading-8">{{ list.title}}</h1>
 {% for link in links %}
 <section class="px-4 py-4 border-t border-neutral-700">
-  {% match link.dest %} 
+  {% match link.dest %}
     {% when db::LinkDestination::Note with (note) %}
+      <p class="font-bold">
+        {% for link in note.links %}
+          {% match link %}
+            {% when db::LinkDestination::Bookmark with (bookmark) %}
+              <a class="leading-8" href="{{ bookmark.url }}">{{ bookmark.title }}</a>
+              {%- if !loop.last -%}
+              <span class="text-neutral-500">, </span>
+              {% endif %}
+            {% when _ %}
+          {% endmatch %}
+        {% endfor %}
+      </p>
       <p>
-        {{- note.content -}}
+        {{- note.note.content -}}
       </p>
     {% when db::LinkDestination::Bookmark with (bookmark) %}
       <a href="{{ bookmark.url }}">{{ bookmark.title }}</a>

@@ -1,3 +1,4 @@
+use serde::Deserialize;
 use sqlx::{query_as, FromRow};
 use time::OffsetDateTime;
 use uuid::Uuid;
@@ -7,9 +8,10 @@ use crate::schemas::bookmarks::CreateBookmark;
 
 use super::AppTx;
 
-#[derive(FromRow, Debug)]
+#[derive(FromRow, Debug, Deserialize)]
 pub struct Bookmark {
     pub id: Uuid,
+    #[serde(with = "time::serde::iso8601")]
     pub created_at: OffsetDateTime,
     pub user_id: Uuid,
 

@@ -8,7 +8,7 @@ use crate::{
     schemas::links::{CreateLink, ReferenceType},
 };
 
-use super::AppTx;
+use super::{AppTx, Bookmark};
 
 #[derive(FromRow)]
 pub struct Link {
@@ -27,7 +27,7 @@ pub struct Link {
 
 pub enum LinkDestination {
     Bookmark(db::Bookmark),
-    Note(db::Note),
+    Note(db::NoteWithLinks),
     List(db::List),
 }
 
@@ -91,14 +91,18 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
             coalesce(notes.user_id, bookmarks.user_id, lists.user_id) as "dest_user_id!",
 
             notes.content as "note_content?",
+            json_agg(notes_bookmarks.*) as "notes_bookmarks",
             bookmarks.url as "bookmark_url?",
             bookmarks.title as "bookmark_title?",
             lists.title as "list_title?"
         from links
         left join notes on notes.id = links.dest_note_id
+        left join links as notes_links on notes_links.src_note_id = notes.id
+        left join bookmarks as notes_bookmarks on notes_bookmarks.id = notes_links.dest_bookmark_id
         left join bookmarks on bookmarks.id = links.dest_bookmark_id
         left join lists on lists.id = links.dest_list_id
         where links.src_list_id = $1
+        group by links.id, notes.id, bookmarks.id, lists.id
         -- temporary hack for random ordering of demo data
         order by link_id
         "#,
@@ -113,12 +117,24 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
             let id = row.dest_id;
             let created_at = row.dest_created_at;
             let user_id = row.dest_user_id;
-            let dest = if let Some(content) = row.note_content {
-                LinkDestination::Note(db::Note {
-                    id,
-                    created_at,
-                    user_id,
-                    content,
+            let dest = if let (Some(content), Some(linked_bookmarks)) =
+                (row.note_content, row.notes_bookmarks)
+            {
+                let linked_bookmarks: Vec<Option<Bookmark>> =
+                    serde_json::from_value(linked_bookmarks)?;
+                let links = linked_bookmarks
+                    .into_iter()
+                    .filter_map(|bm| bm.map(LinkDestination::Bookmark))
+                    .collect();
+
+                LinkDestination::Note(db::NoteWithLinks {
+                    note: db::Note {
+                        id,
+                        created_at,
+                        user_id,
+                        content,
+                    },
+                    links,
                 })
             } else if let (Some(url), Some(title)) = (row.bookmark_url, row.bookmark_title) {
                 LinkDestination::Bookmark(db::Bookmark {

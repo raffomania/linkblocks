@@ -22,10 +22,11 @@ listenfd = "1.0.1"
 mime_guess = "2.0.4"
 rand = { version = "0.8.5", default-features = false }
 serde = "1.0.196"
+serde_json = "1.0.113"
 sqlx = { version = "0.7.3", features = ["runtime-tokio", "postgres", "tls-rustls", "migrate", "uuid", "time"] }
 strum = { version = "0.26.1", features = ["derive"] }
 thiserror = "1.0.52"
-time = { version = "0.3.34", default-features = false }
+time = { version = "0.3.34", default-features = false, features = ["serde"] }
 tokio = { version = "1.36.0", features = ["macros", "rt-multi-thread", "signal"] }
 tower = "0.4.13"
 tower-http = { version = "0.5.1", features = ["tracing", "trace"] }

@@ -7,6 +7,7 @@ use crate::response_error::ResponseResult;
 use crate::schemas::notes::CreateNote;
 
 use super::AppTx;
+use super::LinkDestination;
 
 #[derive(FromRow, Debug)]
 pub struct Note {
@@ -15,6 +16,12 @@ pub struct Note {
     pub user_id: Uuid,
 
     pub content: String,
+}
+
+pub struct NoteWithLinks {
+    pub note: Note,
+
+    pub links: Vec<LinkDestination>,
 }
 
 pub async fn insert(

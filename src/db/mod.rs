@@ -15,6 +15,7 @@ pub mod lists;
 pub use lists::List;
 pub mod notes;
 pub use notes::Note;
+pub use notes::NoteWithLinks;
 pub mod users;
 pub use users::User;
 pub mod bookmarks;
