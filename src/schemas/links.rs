@@ -1,7 +1,9 @@
 use garde::Validate;
+use strum::EnumIter;
 use uuid::Uuid;
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, EnumIter)]
+
 pub enum ReferenceType {
     Bookmark,
     Note,
