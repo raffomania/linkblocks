@@ -13,7 +13,7 @@ use tower_sessions::Session;
 use crate::{
     app_error::AppResult,
     authentication::{self, AuthUser},
-    db::Transaction,
+    db::ReqTransaction,
     schemas::users::Credentials,
     views::users::LoginTemplate,
 };
@@ -25,7 +25,7 @@ pub fn router() -> Router<Pool<Postgres>> {
 }
 
 async fn post_login(
-    Transaction(mut tx): Transaction,
+    ReqTransaction(mut tx): ReqTransaction,
     session: Session,
     Form(creds): Form<Credentials>,
 ) -> AppResult<Response> {

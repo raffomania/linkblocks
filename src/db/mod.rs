@@ -37,11 +37,10 @@ pub async fn pool(url: &str) -> Result<sqlx::PgPool> {
 }
 
 // TODO move into own file
-// TODO rename to RequestTransaction or AppTransaction to prevent conflict with sqlx::Transaction
-pub struct Transaction(pub sqlx::Transaction<'static, sqlx::Postgres>);
+pub struct ReqTransaction(pub sqlx::Transaction<'static, sqlx::Postgres>);
 
 #[async_trait]
-impl<S> FromRequestParts<S> for Transaction
+impl<S> FromRequestParts<S> for ReqTransaction
 where
     PgPool: FromRef<S>,
     S: Send + Sync,
