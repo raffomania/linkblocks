@@ -1,9 +1,11 @@
-use sqlx::{query_as, FromRow, Postgres, Transaction};
+use sqlx::{query_as, FromRow};
 use uuid::Uuid;
 
 use crate::app_error::{AppError, AppResult};
 use crate::authentication::hash_password;
 use crate::schemas::users::CreateUser;
+
+use super::AppTx;
 
 #[derive(FromRow, Debug)]
 pub struct User {
@@ -12,26 +14,26 @@ pub struct User {
     pub password_hash: String,
 }
 
-pub async fn insert(db: &mut Transaction<'_, Postgres>, create: CreateUser) -> AppResult<User> {
+pub async fn insert(tx: &mut AppTx, create: CreateUser) -> AppResult<User> {
     let hashed_password = hash_password(create.password)?;
 
     let user = query_as!(
         User,
         r#"
-        insert into users 
-        (password_hash, username) 
+        insert into users
+        (password_hash, username)
         values ($1, $2)
         returning *"#,
         hashed_password,
         create.username
     )
-    .fetch_one(&mut **db)
+    .fetch_one(&mut **tx)
     .await?;
 
     Ok(user)
 }
 
-pub async fn by_id(db: &mut Transaction<'_, Postgres>, id: Uuid) -> AppResult<User> {
+pub async fn by_id(tx: &mut AppTx, id: Uuid) -> AppResult<User> {
     let user = query_as!(
         User,
         r#"
@@ -40,12 +42,12 @@ pub async fn by_id(db: &mut Transaction<'_, Postgres>, id: Uuid) -> AppResult<Us
     "#,
         id
     )
-    .fetch_one(&mut **db)
+    .fetch_one(&mut **tx)
     .await?;
 
     Ok(user)
 }
-pub async fn by_username(db: &mut Transaction<'_, Postgres>, username: &str) -> AppResult<User> {
+pub async fn by_username(tx: &mut AppTx, username: &str) -> AppResult<User> {
     let user = query_as!(
         User,
         r#"
@@ -54,16 +56,13 @@ pub async fn by_username(db: &mut Transaction<'_, Postgres>, username: &str) -> 
     "#,
         username
     )
-    .fetch_one(&mut **db)
+    .fetch_one(&mut **tx)
     .await?;
 
     Ok(user)
 }
 
-pub async fn create_user_if_not_exists(
-    tx: &mut Transaction<'_, Postgres>,
-    create: CreateUser,
-) -> AppResult<User> {
+pub async fn create_user_if_not_exists(tx: &mut AppTx, create: CreateUser) -> AppResult<User> {
     let username = create.username.clone();
     let user = by_username(tx, &username).await;
     let actual_user = match user {

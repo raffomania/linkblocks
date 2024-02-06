@@ -36,11 +36,13 @@ pub async fn pool(url: &str) -> Result<sqlx::PgPool> {
         .context("Failed to create database connection pool")
 }
 
+pub type AppTx = sqlx::Transaction<'static, sqlx::Postgres>;
+
 // TODO move into own file
-pub struct ReqTransaction(pub sqlx::Transaction<'static, sqlx::Postgres>);
+pub struct ExtractTx(pub AppTx);
 
 #[async_trait]
-impl<S> FromRequestParts<S> for ReqTransaction
+impl<S> FromRequestParts<S> for ExtractTx
 where
     PgPool: FromRef<S>,
     S: Send + Sync,

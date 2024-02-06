@@ -1,7 +1,7 @@
 use crate::{
     app_error::AppResult,
     authentication::AuthUser,
-    db::{self, ReqTransaction},
+    db::{self, ExtractTx},
     views::{layout::LayoutTemplate, list::ListTemplate},
 };
 use axum::{extract::Path, routing::get, Router};
@@ -14,7 +14,7 @@ pub fn router() -> Router<Pool<Postgres>> {
 
 async fn list(
     auth_user: AuthUser,
-    ReqTransaction(mut tx): ReqTransaction,
+    ExtractTx(mut tx): ExtractTx,
     Path(list_id): Path<Uuid>,
 ) -> AppResult<ListTemplate> {
     let user = db::users::by_id(&mut tx, auth_user.user_id).await?;

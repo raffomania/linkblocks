@@ -1,6 +1,6 @@
 use crate::{
     app_error::{AppError, AppResult},
-    db::{self},
+    db::{self, AppTx},
     schemas::users::Credentials,
 };
 use anyhow::{anyhow, Context};
@@ -39,12 +39,8 @@ pub fn verify_password(user: &db::User, password: &str) -> AppResult<()> {
     Ok(())
 }
 
-pub async fn login(
-    db: &mut sqlx::Transaction<'_, sqlx::Postgres>,
-    session: Session,
-    creds: &Credentials,
-) -> AppResult<()> {
-    let user = db::users::by_username(db, &creds.username).await?;
+pub async fn login(tx: &mut AppTx, session: Session, creds: &Credentials) -> AppResult<()> {
+    let user = db::users::by_username(tx, &creds.username).await?;
 
     verify_password(&user, &creds.password)?;
 

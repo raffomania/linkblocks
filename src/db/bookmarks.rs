@@ -1,9 +1,11 @@
-use sqlx::{query_as, FromRow, Postgres, Transaction};
+use sqlx::{query_as, FromRow};
 use time::OffsetDateTime;
 use uuid::Uuid;
 
 use crate::app_error::AppResult;
 use crate::schemas::bookmarks::CreateBookmark;
+
+use super::AppTx;
 
 #[derive(FromRow, Debug)]
 pub struct Bookmark {
@@ -15,23 +17,19 @@ pub struct Bookmark {
     pub title: String,
 }
 
-pub async fn insert(
-    db: &mut Transaction<'_, Postgres>,
-    user_id: Uuid,
-    create: CreateBookmark,
-) -> AppResult<Bookmark> {
+pub async fn insert(tx: &mut AppTx, user_id: Uuid, create: CreateBookmark) -> AppResult<Bookmark> {
     let bookmark = query_as!(
         Bookmark,
         r#"
-        insert into bookmarks 
-        (user_id, url, title) 
+        insert into bookmarks
+        (user_id, url, title)
         values ($1, $2, $3)
         returning *"#,
         user_id,
         create.url,
         create.title
     )
-    .fetch_one(&mut **db)
+    .fetch_one(&mut **tx)
     .await?;
 
     Ok(bookmark)

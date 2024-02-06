@@ -1,4 +1,4 @@
-use sqlx::{query, query_as, FromRow, Postgres, Transaction};
+use sqlx::{query, query_as, FromRow};
 use time::OffsetDateTime;
 use uuid::Uuid;
 
@@ -7,6 +7,8 @@ use crate::{
     db,
     schemas::links::{CreateLink, ReferenceType},
 };
+
+use super::AppTx;
 
 #[derive(FromRow)]
 pub struct Link {
@@ -37,11 +39,7 @@ pub struct LinkWithContent {
     pub dest: LinkDestination,
 }
 
-pub async fn insert(
-    db: &mut Transaction<'_, Postgres>,
-    user_id: Uuid,
-    create: CreateLink,
-) -> AppResult<Link> {
+pub async fn insert(tx: &mut AppTx, user_id: Uuid, create: CreateLink) -> AppResult<Link> {
     let src_bookmark_id = (create.src_ref_type == ReferenceType::Bookmark).then_some(create.src_id);
     let src_note_id = (create.src_ref_type == ReferenceType::Note).then_some(create.src_id);
     let src_list_id = (create.src_ref_type == ReferenceType::List).then_some(create.src_id);
@@ -74,25 +72,22 @@ pub async fn insert(
         dest_note_id,
         dest_list_id
     )
-    .fetch_one(&mut **db)
+    .fetch_one(&mut **tx)
     .await?;
 
     Ok(list)
 }
 
-pub async fn list_by_list(
-    db: &mut Transaction<'_, Postgres>,
-    list_id: Uuid,
-) -> AppResult<Vec<LinkWithContent>> {
+pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> AppResult<Vec<LinkWithContent>> {
     let rows = query!(
         r#"
-        select 
-            links.id as link_id, 
-            links.created_at as link_created_at, 
+        select
+            links.id as link_id,
+            links.created_at as link_created_at,
             links.user_id as link_user_id,
 
             coalesce(notes.id, bookmarks.id, lists.id) as "dest_id!",
-            coalesce(notes.created_at, bookmarks.created_at, lists.created_at) as "dest_created_at!", 
+            coalesce(notes.created_at, bookmarks.created_at, lists.created_at) as "dest_created_at!",
             coalesce(notes.user_id, bookmarks.user_id, lists.user_id) as "dest_user_id!",
 
             notes.content as "note_content?",
@@ -109,7 +104,7 @@ pub async fn list_by_list(
         "#,
         list_id
     )
-    .fetch_all(&mut **db)
+    .fetch_all(&mut **tx)
     .await?;
 
     let results = rows

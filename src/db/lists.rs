@@ -1,9 +1,11 @@
-use sqlx::{query_as, FromRow, Postgres, Transaction};
+use sqlx::{query_as, FromRow};
 use time::OffsetDateTime;
 use uuid::Uuid;
 
 use crate::app_error::AppResult;
 use crate::schemas::lists::CreateList;
+
+use super::AppTx;
 
 #[derive(FromRow, Debug)]
 pub struct List {
@@ -14,31 +16,24 @@ pub struct List {
     pub title: String,
 }
 
-pub async fn insert(
-    db: &mut Transaction<'_, Postgres>,
-    user_id: Uuid,
-    create: CreateList,
-) -> AppResult<List> {
+pub async fn insert(tx: &mut AppTx, user_id: Uuid, create: CreateList) -> AppResult<List> {
     let list = query_as!(
         List,
         r#"
-        insert into lists 
-        (user_id, title) 
+        insert into lists
+        (user_id, title)
         values ($1, $2)
         returning *"#,
         user_id,
         create.title
     )
-    .fetch_one(&mut **db)
+    .fetch_one(&mut **tx)
     .await?;
 
     Ok(list)
 }
 
-pub async fn list_by_user(
-    db: &mut Transaction<'_, Postgres>,
-    user_id: Uuid,
-) -> AppResult<Vec<List>> {
+pub async fn list_by_user(tx: &mut AppTx, user_id: Uuid) -> AppResult<Vec<List>> {
     Ok(query_as!(
         List,
         r#"
@@ -47,11 +42,11 @@ pub async fn list_by_user(
         "#,
         user_id
     )
-    .fetch_all(&mut **db)
+    .fetch_all(&mut **tx)
     .await?)
 }
 
-pub async fn by_id(db: &mut Transaction<'_, Postgres>, list_id: Uuid) -> AppResult<List> {
+pub async fn by_id(tx: &mut AppTx, list_id: Uuid) -> AppResult<List> {
     Ok(query_as!(
         List,
         r#"
@@ -60,6 +55,6 @@ pub async fn by_id(db: &mut Transaction<'_, Postgres>, list_id: Uuid) -> AppResu
         "#,
         list_id
     )
-    .fetch_one(&mut **db)
+    .fetch_one(&mut **tx)
     .await?)
 }
