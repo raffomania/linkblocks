@@ -1,0 +1,18 @@
+{% extends "_layout.html" %} {% block content %}
+<h1 class="px-4 py-2 font-bold leading-8">{{ list.title}}</h1>
+{% for link in links %}
+<section class="px-4 py-4 border-t border-neutral-700">
+  {% match link.dest %} 
+    {% when db::LinkDestination::Note with (note) %}
+      <p>
+        {{- note.content -}}
+      </p>
+    {% when db::LinkDestination::Bookmark with (bookmark) %}
+      <a href="{{ bookmark.url }}">{{ bookmark.title }}</a>
+      <p class="text-neutral-600">{{ bookmark.url|truncate(25) }}</p>
+    {% when db::LinkDestination::List with (list) %}
+      <a href="/lists/{{ list.id }}">{{ list.title }}</a>
+  {% endmatch %}
+  <p class="text-neutral-600">{{ link.created_at }}</p>
+</section>
+{% endfor %} {% endblock %}

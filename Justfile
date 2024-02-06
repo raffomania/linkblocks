@@ -7,7 +7,7 @@ watch: development-cert start-database
 run *args: development-cert
     cargo run -- {{args}}
 
-insert-demo-data:
+insert-demo-data: migrate-database
     cargo run -- insert-demo-data
 
 start-database:

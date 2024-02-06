@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        insert into bookmarks \n        (user_id, url) \n        values ($1, $2)\n        returning *",
+  "query": "\n        insert into bookmarks \n        (user_id, url, title) \n        values ($1, $2, $3)\n        returning *",
   "describe": {
     "columns": [
       {
@@ -22,11 +22,17 @@
         "ordinal": 3,
         "name": "url",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "title",
+        "type_info": "Text"
       }
     ],
     "parameters": {
       "Left": [
         "Uuid",
+        "Text",
         "Text"
       ]
     },
@@ -34,8 +40,9 @@
       false,
       false,
       false,
+      false,
       false
     ]
   },
-  "hash": "243922e8776ee2ff704386bf4d9696cb7e77b16a33a31c2350bf42d394560061"
+  "hash": "2e0e65f90a2f9d59e5040a2c8bd74697cdc337c8ec20af97a77245da13081923"
 }

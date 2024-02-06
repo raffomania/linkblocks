@@ -12,6 +12,7 @@ pub struct Bookmark {
     pub user_id: Uuid,
 
     pub url: String,
+    pub title: String,
 }
 
 pub async fn insert(
@@ -23,11 +24,12 @@ pub async fn insert(
         Bookmark,
         r#"
         insert into bookmarks 
-        (user_id, url) 
-        values ($1, $2)
+        (user_id, url, title) 
+        values ($1, $2, $3)
         returning *"#,
         user_id,
-        create.url
+        create.url,
+        create.title
     )
     .fetch_one(&mut **db)
     .await?;

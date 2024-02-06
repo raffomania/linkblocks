@@ -9,11 +9,16 @@ use sqlx::PgPool;
 use crate::app_error::AppError;
 
 pub mod links;
+pub use links::LinkDestination;
+pub use links::LinkWithContent;
 pub mod lists;
+pub use lists::List;
 pub mod notes;
+pub use notes::Note;
 pub mod users;
 pub use users::User;
 pub mod bookmarks;
+pub use bookmarks::Bookmark;
 
 pub async fn migrate(pool: &PgPool) -> Result<()> {
     tracing::info!("Migrating the database...");
@@ -31,6 +36,8 @@ pub async fn pool(url: &str) -> Result<sqlx::PgPool> {
         .context("Failed to create database connection pool")
 }
 
+// TODO move into own file
+// TODO rename to RequestTransaction or AppTransaction to prevent conflict with sqlx::Transaction
 pub struct Transaction(pub sqlx::Transaction<'static, sqlx::Postgres>);
 
 #[async_trait]

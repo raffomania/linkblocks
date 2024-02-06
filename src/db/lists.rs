@@ -50,3 +50,16 @@ pub async fn list_by_user(
     .fetch_all(&mut **db)
     .await?)
 }
+
+pub async fn by_id(db: &mut Transaction<'_, Postgres>, list_id: Uuid) -> AppResult<List> {
+    Ok(query_as!(
+        List,
+        r#"
+        select * from lists
+        where id = $1
+        "#,
+        list_id
+    )
+    .fetch_one(&mut **db)
+    .await?)
+}

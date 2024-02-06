@@ -11,6 +11,8 @@ create table bookmarks (
         not null,
 
     url text
+        not null,
+    title text
         not null
 );
 
