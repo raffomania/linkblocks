@@ -1,6 +1,6 @@
 use crate::{
-    app_error::{AppError, AppResult},
     db::{self, AppTx},
+    response_error::{ResponseError, ResponseResult},
     schemas::users::Credentials,
 };
 use anyhow::{anyhow, Context};
@@ -15,7 +15,7 @@ use axum::{
 use tower_sessions::Session;
 use uuid::Uuid;
 
-pub fn hash_password(password: String) -> AppResult<String> {
+pub fn hash_password(password: String) -> ResponseResult<String> {
     let salt =
         argon2::password_hash::SaltString::generate(&mut argon2::password_hash::rand_core::OsRng);
 
@@ -28,18 +28,18 @@ pub fn hash_password(password: String) -> AppResult<String> {
     )
 }
 
-pub fn verify_password(user: &db::User, password: &str) -> AppResult<()> {
+pub fn verify_password(user: &db::User, password: &str) -> ResponseResult<()> {
     let password_hash = &argon2::PasswordHash::new(&user.password_hash)
         .map_err(|e| anyhow!("Failed to create password hash: {e}"))?;
 
     argon2::Argon2::default()
         .verify_password(password.as_bytes(), password_hash)
-        .map_err(|_e| AppError::NotAuthenticated)?;
+        .map_err(|_e| ResponseError::NotAuthenticated)?;
 
     Ok(())
 }
 
-pub async fn login(tx: &mut AppTx, session: Session, creds: &Credentials) -> AppResult<()> {
+pub async fn login(tx: &mut AppTx, session: Session, creds: &Credentials) -> ResponseResult<()> {
     let user = db::users::by_username(tx, &creds.username).await?;
 
     verify_password(&user, &creds.password)?;
@@ -58,7 +58,7 @@ pub struct AuthUser {
 impl AuthUser {
     const SESSION_KEY: &'static str = "auth_user_id";
 
-    pub async fn save_in_session(session: &Session, id: &Uuid) -> AppResult<()> {
+    pub async fn save_in_session(session: &Session, id: &Uuid) -> ResponseResult<()> {
         session
             .insert(Self::SESSION_KEY, id)
             .await
@@ -67,17 +67,17 @@ impl AuthUser {
         Ok(())
     }
 
-    pub async fn from_session(session: Session) -> AppResult<Self> {
+    pub async fn from_session(session: Session) -> ResponseResult<Self> {
         let user_id: Uuid = session
             .get("auth_user_id")
             .await
             .context("Failed to load authenticated user id")?
-            .ok_or(AppError::NotAuthenticated)?;
+            .ok_or(ResponseError::NotAuthenticated)?;
 
         Ok(Self { user_id, session })
     }
 
-    pub async fn logout(self) -> AppResult<()> {
+    pub async fn logout(self) -> ResponseResult<()> {
         self.session
             .remove::<Uuid>(Self::SESSION_KEY)
             .await
@@ -100,10 +100,10 @@ where
         let session = Session::from_request_parts(req, state)
             .await
             .map_err(|_| anyhow!("Failed to extract session"))
-            .map_err(|e| AppError::from(e).into_response())?;
+            .map_err(|e| ResponseError::from(e).into_response())?;
 
         let auth_user = AuthUser::from_session(session).await;
-        if let Err(AppError::NotAuthenticated) = auth_user {
+        if let Err(ResponseError::NotAuthenticated) = auth_user {
             return Err(Redirect::to("/login").into_response());
         }
 

@@ -1,7 +1,7 @@
 use crate::{
-    app_error::AppResult,
     authentication::AuthUser,
     db::{self, ExtractTx},
+    response_error::ResponseResult,
     views::{layout::LayoutTemplate, list::ListTemplate},
 };
 use axum::{extract::Path, routing::get, Router};
@@ -16,7 +16,7 @@ async fn list(
     auth_user: AuthUser,
     ExtractTx(mut tx): ExtractTx,
     Path(list_id): Path<Uuid>,
-) -> AppResult<ListTemplate> {
+) -> ResponseResult<ListTemplate> {
     let user = db::users::by_id(&mut tx, auth_user.user_id).await?;
     let links = db::links::list_by_list(&mut tx, list_id).await?;
     let lists = db::lists::list_by_user(&mut tx, auth_user.user_id).await?;

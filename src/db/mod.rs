@@ -6,7 +6,7 @@ use axum::{
 };
 use sqlx::PgPool;
 
-use crate::app_error::AppError;
+use crate::response_error::ResponseError;
 
 pub mod links;
 pub use links::LinkDestination;
@@ -47,7 +47,7 @@ where
     PgPool: FromRef<S>,
     S: Send + Sync,
 {
-    type Rejection = AppError;
+    type Rejection = ResponseError;
 
     async fn from_request_parts(_parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
         let pool = PgPool::from_ref(state);

@@ -3,8 +3,8 @@ use time::OffsetDateTime;
 use uuid::Uuid;
 
 use crate::{
-    app_error::AppResult,
     db,
+    response_error::ResponseResult,
     schemas::links::{CreateLink, ReferenceType},
 };
 
@@ -39,7 +39,7 @@ pub struct LinkWithContent {
     pub dest: LinkDestination,
 }
 
-pub async fn insert(tx: &mut AppTx, user_id: Uuid, create: CreateLink) -> AppResult<Link> {
+pub async fn insert(tx: &mut AppTx, user_id: Uuid, create: CreateLink) -> ResponseResult<Link> {
     let src_bookmark_id = (create.src_ref_type == ReferenceType::Bookmark).then_some(create.src_id);
     let src_note_id = (create.src_ref_type == ReferenceType::Note).then_some(create.src_id);
     let src_list_id = (create.src_ref_type == ReferenceType::List).then_some(create.src_id);
@@ -78,7 +78,7 @@ pub async fn insert(tx: &mut AppTx, user_id: Uuid, create: CreateLink) -> AppRes
     Ok(list)
 }
 
-pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> AppResult<Vec<LinkWithContent>> {
+pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<LinkWithContent>> {
     let rows = query!(
         r#"
         select

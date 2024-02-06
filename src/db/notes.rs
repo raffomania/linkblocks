@@ -3,7 +3,7 @@ use sqlx::FromRow;
 use time::OffsetDateTime;
 use uuid::Uuid;
 
-use crate::app_error::AppResult;
+use crate::response_error::ResponseResult;
 use crate::schemas::notes::CreateNote;
 
 use super::AppTx;
@@ -22,7 +22,7 @@ pub async fn insert(
     user_id: Uuid,
     // TODO rename to create_<entity> everywhere
     create: CreateNote,
-) -> AppResult<Note> {
+) -> ResponseResult<Note> {
     let note = query_as!(
         Note,
         r#"

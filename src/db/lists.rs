@@ -2,7 +2,7 @@ use sqlx::{query_as, FromRow};
 use time::OffsetDateTime;
 use uuid::Uuid;
 
-use crate::app_error::AppResult;
+use crate::response_error::ResponseResult;
 use crate::schemas::lists::CreateList;
 
 use super::AppTx;
@@ -16,7 +16,7 @@ pub struct List {
     pub title: String,
 }
 
-pub async fn insert(tx: &mut AppTx, user_id: Uuid, create: CreateList) -> AppResult<List> {
+pub async fn insert(tx: &mut AppTx, user_id: Uuid, create: CreateList) -> ResponseResult<List> {
     let list = query_as!(
         List,
         r#"
@@ -33,7 +33,7 @@ pub async fn insert(tx: &mut AppTx, user_id: Uuid, create: CreateList) -> AppRes
     Ok(list)
 }
 
-pub async fn list_by_user(tx: &mut AppTx, user_id: Uuid) -> AppResult<Vec<List>> {
+pub async fn list_by_user(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<List>> {
     Ok(query_as!(
         List,
         r#"
@@ -46,7 +46,7 @@ pub async fn list_by_user(tx: &mut AppTx, user_id: Uuid) -> AppResult<Vec<List>>
     .await?)
 }
 
-pub async fn by_id(tx: &mut AppTx, list_id: Uuid) -> AppResult<List> {
+pub async fn by_id(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<List> {
     Ok(query_as!(
         List,
         r#"

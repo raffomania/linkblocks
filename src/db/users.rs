@@ -1,8 +1,8 @@
 use sqlx::{query_as, FromRow};
 use uuid::Uuid;
 
-use crate::app_error::{AppError, AppResult};
 use crate::authentication::hash_password;
+use crate::response_error::{ResponseError, ResponseResult};
 use crate::schemas::users::CreateUser;
 
 use super::AppTx;
@@ -14,7 +14,7 @@ pub struct User {
     pub password_hash: String,
 }
 
-pub async fn insert(tx: &mut AppTx, create: CreateUser) -> AppResult<User> {
+pub async fn insert(tx: &mut AppTx, create: CreateUser) -> ResponseResult<User> {
     let hashed_password = hash_password(create.password)?;
 
     let user = query_as!(
@@ -33,7 +33,7 @@ pub async fn insert(tx: &mut AppTx, create: CreateUser) -> AppResult<User> {
     Ok(user)
 }
 
-pub async fn by_id(tx: &mut AppTx, id: Uuid) -> AppResult<User> {
+pub async fn by_id(tx: &mut AppTx, id: Uuid) -> ResponseResult<User> {
     let user = query_as!(
         User,
         r#"
@@ -47,7 +47,7 @@ pub async fn by_id(tx: &mut AppTx, id: Uuid) -> AppResult<User> {
 
     Ok(user)
 }
-pub async fn by_username(tx: &mut AppTx, username: &str) -> AppResult<User> {
+pub async fn by_username(tx: &mut AppTx, username: &str) -> ResponseResult<User> {
     let user = query_as!(
         User,
         r#"
@@ -62,11 +62,11 @@ pub async fn by_username(tx: &mut AppTx, username: &str) -> AppResult<User> {
     Ok(user)
 }
 
-pub async fn create_user_if_not_exists(tx: &mut AppTx, create: CreateUser) -> AppResult<User> {
+pub async fn create_user_if_not_exists(tx: &mut AppTx, create: CreateUser) -> ResponseResult<User> {
     let username = create.username.clone();
     let user = by_username(tx, &username).await;
     let actual_user = match user {
-        Err(AppError::NotFound) => {
+        Err(ResponseError::NotFound) => {
             tracing::info!("Creating admin user '{username}'");
             insert(tx, create).await?
         }

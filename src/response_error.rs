@@ -4,11 +4,10 @@ use axum::{
 };
 use thiserror::Error;
 
-pub type AppResult<T> = std::result::Result<T, AppError>;
+pub type ResponseResult<T> = std::result::Result<T, ResponseError>;
 
-// TODO rename this to ErrorResponse / ResponseError
 #[derive(Debug, Error)]
-pub enum AppError {
+pub enum ResponseError {
     #[error("Unknown Error")]
     Anyhow(#[source] anyhow::Error),
     #[error("Not Found")]
@@ -17,25 +16,25 @@ pub enum AppError {
     NotAuthenticated,
 }
 
-impl IntoResponse for AppError {
+impl IntoResponse for ResponseError {
     fn into_response(self) -> Response {
         tracing::error!("{self:?}");
         let status = match self {
-            AppError::Anyhow(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            AppError::NotFound => StatusCode::NOT_FOUND,
-            AppError::NotAuthenticated => StatusCode::UNAUTHORIZED,
+            ResponseError::Anyhow(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            ResponseError::NotFound => StatusCode::NOT_FOUND,
+            ResponseError::NotAuthenticated => StatusCode::UNAUTHORIZED,
         };
         (status, self.to_string()).into_response()
     }
 }
 
-impl From<anyhow::Error> for AppError {
+impl From<anyhow::Error> for ResponseError {
     fn from(value: anyhow::Error) -> Self {
         Self::Anyhow(value)
     }
 }
 
-impl From<sqlx::Error> for AppError {
+impl From<sqlx::Error> for ResponseError {
     fn from(value: sqlx::Error) -> Self {
         match value {
             sqlx::Error::RowNotFound => Self::NotFound,

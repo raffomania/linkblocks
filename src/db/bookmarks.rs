@@ -2,7 +2,7 @@ use sqlx::{query_as, FromRow};
 use time::OffsetDateTime;
 use uuid::Uuid;
 
-use crate::app_error::AppResult;
+use crate::response_error::ResponseResult;
 use crate::schemas::bookmarks::CreateBookmark;
 
 use super::AppTx;
@@ -17,7 +17,11 @@ pub struct Bookmark {
     pub title: String,
 }
 
-pub async fn insert(tx: &mut AppTx, user_id: Uuid, create: CreateBookmark) -> AppResult<Bookmark> {
+pub async fn insert(
+    tx: &mut AppTx,
+    user_id: Uuid,
+    create: CreateBookmark,
+) -> ResponseResult<Bookmark> {
     let bookmark = query_as!(
         Bookmark,
         r#"
