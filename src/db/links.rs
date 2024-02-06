@@ -110,26 +110,29 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
     let results = rows
         .into_iter()
         .map(|row| {
+            let id = row.dest_id;
+            let created_at = row.dest_created_at;
+            let user_id = row.dest_user_id;
             let dest = if let Some(content) = row.note_content {
                 LinkDestination::Note(db::Note {
-                    id: row.dest_id,
-                    created_at: row.dest_created_at,
-                    user_id: row.dest_user_id,
+                    id,
+                    created_at,
+                    user_id,
                     content,
                 })
             } else if let (Some(url), Some(title)) = (row.bookmark_url, row.bookmark_title) {
                 LinkDestination::Bookmark(db::Bookmark {
-                    id: row.dest_id,
-                    created_at: row.dest_created_at,
-                    user_id: row.dest_user_id,
+                    id,
+                    created_at,
+                    user_id,
                     url,
                     title,
                 })
             } else if let Some(title) = row.list_title {
                 LinkDestination::List(db::List {
-                    id: row.dest_id,
-                    created_at: row.dest_created_at,
-                    user_id: row.dest_user_id,
+                    id,
+                    created_at,
+                    user_id,
                     title,
                 })
             } else {
