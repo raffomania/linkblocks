@@ -54,7 +54,9 @@ pub async fn insert_demo_data(
         for _ in 0..500 {
             let tld: String = fake::faker::internet::en::DomainSuffix().fake();
             let word: String = fake::faker::lorem::en::Word().fake();
-            let title: String = fake::faker::lorem::en::Sentence(1..5).fake();
+            let title: String = fake::faker::lorem::en::Words(1..5)
+                .fake::<Vec<_>>()
+                .join(" ");
             let create_bookmark = CreateBookmark {
                 url: format!("https://{word}.{tld}"),
                 title,

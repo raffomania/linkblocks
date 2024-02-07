@@ -96,11 +96,16 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
             bookmarks.title as "bookmark_title?",
             lists.title as "list_title?"
         from links
+
         left join notes on notes.id = links.dest_note_id
         left join links as notes_links on notes_links.src_note_id = notes.id
         left join bookmarks as notes_bookmarks on notes_bookmarks.id = notes_links.dest_bookmark_id
+        left join notes as notes_notes on notes_notes.id = notes_links.dest_note_id
+
         left join bookmarks on bookmarks.id = links.dest_bookmark_id
+
         left join lists on lists.id = links.dest_list_id
+
         where links.src_list_id = $1
         group by links.id, notes.id, bookmarks.id, lists.id
         -- temporary hack for random ordering of demo data
