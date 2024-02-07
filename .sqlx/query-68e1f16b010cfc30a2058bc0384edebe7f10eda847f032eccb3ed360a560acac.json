@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        insert into notes \n        (user_id, content) \n        values ($1, $2)\n        returning *",
+  "query": "\n        insert into notes\n        (user_id, content)\n        values ($1, $2)\n        returning *",
   "describe": {
     "columns": [
       {
@@ -37,5 +37,5 @@
       false
     ]
   },
-  "hash": "86bf75e05e3eecc84b27bfd8b9e51adaefa9cd8cbdc369a19af26e97e298bcc9"
+  "hash": "68e1f16b010cfc30a2058bc0384edebe7f10eda847f032eccb3ed360a560acac"
 }
