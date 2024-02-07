@@ -1,3 +1,4 @@
+use serde::Deserialize;
 use sqlx::query_as;
 use sqlx::FromRow;
 use time::OffsetDateTime;
@@ -9,15 +10,17 @@ use crate::schemas::notes::CreateNote;
 use super::AppTx;
 use super::LinkDestination;
 
-#[derive(FromRow, Debug)]
+#[derive(FromRow, Debug, Deserialize)]
 pub struct Note {
     pub id: Uuid,
+    #[serde(with = "time::serde::iso8601")]
     pub created_at: OffsetDateTime,
     pub user_id: Uuid,
 
     pub content: String,
 }
 
+#[derive(Deserialize)]
 pub struct NoteWithLinks {
     pub note: Note,
 

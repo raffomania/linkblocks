@@ -1,3 +1,6 @@
+use std::convert::identity;
+
+use serde::Deserialize;
 use sqlx::{query, query_as, FromRow};
 use time::OffsetDateTime;
 use uuid::Uuid;
@@ -8,7 +11,7 @@ use crate::{
     schemas::links::{CreateLink, ReferenceType},
 };
 
-use super::{AppTx, Bookmark};
+use super::AppTx;
 
 #[derive(FromRow)]
 pub struct Link {
@@ -25,9 +28,19 @@ pub struct Link {
     pub dest_list_id: Option<Uuid>,
 }
 
-pub enum LinkDestination {
+#[derive(Deserialize)]
+#[serde(untagged)]
+pub enum LinkDestinationWithChildren {
     Bookmark(db::Bookmark),
     Note(db::NoteWithLinks),
+    List(db::List),
+}
+
+#[derive(Deserialize)]
+#[serde(untagged)]
+pub enum LinkDestination {
+    Bookmark(db::Bookmark),
+    Note(db::Note),
     List(db::List),
 }
 
@@ -36,7 +49,7 @@ pub struct LinkWithContent {
     pub created_at: OffsetDateTime,
     pub user_id: Uuid,
 
-    pub dest: LinkDestination,
+    pub dest: LinkDestinationWithChildren,
 }
 
 pub async fn insert(tx: &mut AppTx, user_id: Uuid, create: CreateLink) -> ResponseResult<Link> {
@@ -91,7 +104,7 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
             coalesce(notes.user_id, bookmarks.user_id, lists.user_id) as "dest_user_id!",
 
             notes.content as "note_content?",
-            json_agg(notes_bookmarks.*) as "notes_bookmarks",
+            jsonb_agg(notes_bookmarks.*) || jsonb_agg(notes_notes.*) || jsonb_agg(notes_lists.*) as "notes_children",
             bookmarks.url as "bookmark_url?",
             bookmarks.title as "bookmark_title?",
             lists.title as "list_title?"
@@ -101,6 +114,7 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
         left join links as notes_links on notes_links.src_note_id = notes.id
         left join bookmarks as notes_bookmarks on notes_bookmarks.id = notes_links.dest_bookmark_id
         left join notes as notes_notes on notes_notes.id = notes_links.dest_note_id
+        left join lists as notes_lists on notes_lists.id = notes_links.dest_list_id
 
         left join bookmarks on bookmarks.id = links.dest_bookmark_id
 
@@ -122,17 +136,13 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
             let id = row.dest_id;
             let created_at = row.dest_created_at;
             let user_id = row.dest_user_id;
-            let dest = if let (Some(content), Some(linked_bookmarks)) =
-                (row.note_content, row.notes_bookmarks)
+            let dest = if let (Some(content), Some(links)) = (row.note_content, row.notes_children)
             {
-                let linked_bookmarks: Vec<Option<Bookmark>> =
-                    serde_json::from_value(linked_bookmarks)?;
-                let links = linked_bookmarks
-                    .into_iter()
-                    .filter_map(|bm| bm.map(LinkDestination::Bookmark))
-                    .collect();
+                dbg!(links.clone());
+                let links: Vec<Option<LinkDestination>> = serde_json::from_value(links)?;
+                let links = links.into_iter().filter_map(identity).collect::<Vec<_>>();
 
-                LinkDestination::Note(db::NoteWithLinks {
+                LinkDestinationWithChildren::Note(db::NoteWithLinks {
                     note: db::Note {
                         id,
                         created_at,
@@ -142,7 +152,7 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
                     links,
                 })
             } else if let (Some(url), Some(title)) = (row.bookmark_url, row.bookmark_title) {
-                LinkDestination::Bookmark(db::Bookmark {
+                LinkDestinationWithChildren::Bookmark(db::Bookmark {
                     id,
                     created_at,
                     user_id,
@@ -150,7 +160,7 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
                     title,
                 })
             } else if let Some(title) = row.list_title {
-                LinkDestination::List(db::List {
+                LinkDestinationWithChildren::List(db::List {
                     id,
                     created_at,
                     user_id,

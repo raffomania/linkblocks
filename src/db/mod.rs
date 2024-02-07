@@ -10,6 +10,7 @@ use crate::response_error::ResponseError;
 
 pub mod links;
 pub use links::LinkDestination;
+pub use links::LinkDestinationWithChildren;
 pub use links::LinkWithContent;
 pub mod lists;
 pub use lists::List;
