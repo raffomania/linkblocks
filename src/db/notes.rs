@@ -24,6 +24,7 @@ pub struct Note {
 pub struct NoteWithLinks {
     pub note: Note,
 
+    #[serde(deserialize_with = "serde_aux::field_attributes::deserialize_default_from_null")]
     pub links: Vec<LinkDestination>,
 }
 

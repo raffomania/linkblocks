@@ -1,5 +1,3 @@
-use std::convert::identity;
-
 use serde::Deserialize;
 use sqlx::{query, query_as, FromRow};
 use time::OffsetDateTime;
@@ -103,10 +101,18 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
             coalesce(notes.created_at, bookmarks.created_at, lists.created_at) as "dest_created_at!",
             coalesce(notes.user_id, bookmarks.user_id, lists.user_id) as "dest_user_id!",
 
-            notes.content as "note_content?",
-            jsonb_agg(notes_bookmarks.*) || jsonb_agg(notes_notes.*) || jsonb_agg(notes_lists.*) as "notes_children",
-            bookmarks.url as "bookmark_url?",
-            bookmarks.title as "bookmark_title?",
+            case when notes.id is not null then
+                json_object(
+                    'note': to_json(notes.*),
+                    'links':
+                        jsonb_agg(notes_bookmarks.*) filter (where notes_bookmarks.id is not null)
+                        || jsonb_agg(notes_notes.*) filter (where notes_notes.id is not null)
+                        || jsonb_agg(notes_lists.*) filter (where notes_lists.id is not null)
+                )
+            else null end as note_with_links,
+            case when bookmarks.id is not null then
+                to_json(bookmarks.*)
+            else null end as bookmark,
             lists.title as "list_title?"
         from links
 
@@ -136,29 +142,12 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
             let id = row.dest_id;
             let created_at = row.dest_created_at;
             let user_id = row.dest_user_id;
-            let dest = if let (Some(content), Some(links)) = (row.note_content, row.notes_children)
-            {
-                dbg!(links.clone());
-                let links: Vec<Option<LinkDestination>> = serde_json::from_value(links)?;
-                let links = links.into_iter().filter_map(identity).collect::<Vec<_>>();
+            let dest = if let Some(note) = row.note_with_links {
+                let note: db::NoteWithLinks = serde_json::from_value(note)?;
 
-                LinkDestinationWithChildren::Note(db::NoteWithLinks {
-                    note: db::Note {
-                        id,
-                        created_at,
-                        user_id,
-                        content,
-                    },
-                    links,
-                })
-            } else if let (Some(url), Some(title)) = (row.bookmark_url, row.bookmark_title) {
-                LinkDestinationWithChildren::Bookmark(db::Bookmark {
-                    id,
-                    created_at,
-                    user_id,
-                    url,
-                    title,
-                })
+                LinkDestinationWithChildren::Note(note)
+            } else if let Some(bookmark) = row.bookmark {
+                LinkDestinationWithChildren::Bookmark(serde_json::from_value(bookmark)?)
             } else if let Some(title) = row.list_title {
                 LinkDestinationWithChildren::List(db::List {
                     id,
