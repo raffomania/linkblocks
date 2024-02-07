@@ -4,9 +4,10 @@ use garde::Validate;
 use rand::seq::{IteratorRandom, SliceRandom};
 use sqlx::PgPool;
 use strum::IntoEnumIterator;
+use uuid::Uuid;
 
 use crate::{
-    db::{self, bookmarks},
+    db::{self},
     schemas::{
         bookmarks::CreateBookmark,
         links::{CreateLink, ReferenceType},
@@ -50,7 +51,7 @@ pub async fn insert_demo_data(
             lists.push(db::lists::insert(&mut tx, user.id, create_list).await?);
         }
 
-        for _ in 0..100 {
+        for _ in 0..500 {
             let tld: String = fake::faker::internet::en::DomainSuffix().fake();
             let word: String = fake::faker::lorem::en::Word().fake();
             let title: String = fake::faker::lorem::en::Sentence(1..5).fake();
@@ -60,11 +61,11 @@ pub async fn insert_demo_data(
             };
             create_bookmark.validate(&())?;
 
-            let bookmark = bookmarks::insert(&mut tx, user.id, create_bookmark).await?;
+            let bookmark = db::bookmarks::insert(&mut tx, user.id, create_bookmark).await?;
             bookmarks.push(bookmark);
         }
 
-        for _ in 0..30 {
+        for _ in 0..100 {
             let content: Vec<_> = fake::faker::lorem::en::Paragraphs(1..3).fake();
             let create_note = CreateNote {
                 content: content.join("\n\n"),
@@ -76,49 +77,11 @@ pub async fn insert_demo_data(
     }
 
     for user in users.iter() {
-        for _ in 0..200 {
+        for _ in 0..1000 {
             let src_ref_type = random_reference_type()?;
             let dest_ref_type = random_reference_type()?;
-            let src_id = match src_ref_type {
-                ReferenceType::Bookmark => {
-                    bookmarks
-                        .choose(&mut rand::thread_rng())
-                        .ok_or(anyhow!("Found no random bookmark to put into a link"))?
-                        .id
-                }
-                ReferenceType::Note => {
-                    notes
-                        .choose(&mut rand::thread_rng())
-                        .ok_or(anyhow!("Found no random note to put into a link"))?
-                        .id
-                }
-                ReferenceType::List => {
-                    lists
-                        .choose(&mut rand::thread_rng())
-                        .ok_or(anyhow!("Found no random list to put into a link"))?
-                        .id
-                }
-            };
-            let dest_id = match dest_ref_type {
-                ReferenceType::Bookmark => {
-                    bookmarks
-                        .choose(&mut rand::thread_rng())
-                        .ok_or(anyhow!("Found no random bookmark to put into a link"))?
-                        .id
-                }
-                ReferenceType::Note => {
-                    notes
-                        .choose(&mut rand::thread_rng())
-                        .ok_or(anyhow!("Found no random note to put into a link"))?
-                        .id
-                }
-                ReferenceType::List => {
-                    lists
-                        .choose(&mut rand::thread_rng())
-                        .ok_or(anyhow!("Found no random list to put into a link"))?
-                        .id
-                }
-            };
+            let src_id = random_reference_entity_id(&src_ref_type, &bookmarks, &notes, &lists)?;
+            let dest_id = random_reference_entity_id(&dest_ref_type, &bookmarks, &notes, &lists)?;
 
             let create_link = CreateLink {
                 src_id,
@@ -139,4 +102,32 @@ fn random_reference_type() -> Result<ReferenceType> {
     ReferenceType::iter()
         .choose(&mut rand::thread_rng())
         .ok_or(anyhow!("Failed to choose a random reference type"))
+}
+
+fn random_reference_entity_id(
+    dest_ref_type: &ReferenceType,
+    bookmarks: &Vec<db::Bookmark>,
+    notes: &Vec<db::Note>,
+    lists: &Vec<db::List>,
+) -> Result<Uuid> {
+    Ok(match dest_ref_type {
+        ReferenceType::Bookmark => {
+            bookmarks
+                .choose(&mut rand::thread_rng())
+                .ok_or(anyhow!("Found no random bookmark to put into a link"))?
+                .id
+        }
+        ReferenceType::Note => {
+            notes
+                .choose(&mut rand::thread_rng())
+                .ok_or(anyhow!("Found no random note to put into a link"))?
+                .id
+        }
+        ReferenceType::List => {
+            lists
+                .choose(&mut rand::thread_rng())
+                .ok_or(anyhow!("Found no random list to put into a link"))?
+                .id
+        }
+    })
 }
