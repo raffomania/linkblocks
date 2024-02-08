@@ -1,7 +1,7 @@
 use askama::Template;
 use garde::Report;
 
-use crate::{form_errors::FormErrors, schemas::users::Credentials};
+use crate::{form_errors::FormErrors, forms::users::Credentials};
 
 #[derive(Template, Default)]
 #[template(path = "login.html")]

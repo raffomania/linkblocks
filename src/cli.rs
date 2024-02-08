@@ -5,7 +5,7 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilte
 
 use clap::{Args, Parser, Subcommand};
 
-use crate::{db, insert_demo_data::insert_demo_data, schemas::users::CreateUser, server};
+use crate::{db, forms::users::CreateUser, insert_demo_data::insert_demo_data, server};
 
 #[derive(Parser)]
 #[clap(version)]

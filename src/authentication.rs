@@ -1,7 +1,7 @@
 use crate::{
     db::{self, AppTx},
+    forms::users::Credentials,
     response_error::{ResponseError, ResponseResult},
-    schemas::users::Credentials,
 };
 use anyhow::{anyhow, Context};
 use argon2::PasswordVerifier;

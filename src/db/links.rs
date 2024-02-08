@@ -5,8 +5,8 @@ use uuid::Uuid;
 
 use crate::{
     db,
+    forms::links::{CreateLink, ReferenceType},
     response_error::ResponseResult,
-    schemas::links::{CreateLink, ReferenceType},
 };
 
 use super::AppTx;

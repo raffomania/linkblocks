@@ -2,8 +2,8 @@ use sqlx::{query_as, FromRow};
 use uuid::Uuid;
 
 use crate::authentication::hash_password;
+use crate::forms::users::CreateUser;
 use crate::response_error::{ResponseError, ResponseResult};
-use crate::schemas::users::CreateUser;
 
 use super::AppTx;
 

@@ -8,7 +8,7 @@ use uuid::Uuid;
 
 use crate::{
     db::{self},
-    schemas::{
+    forms::{
         bookmarks::CreateBookmark,
         links::{CreateLink, ReferenceType},
         notes::CreateNote,

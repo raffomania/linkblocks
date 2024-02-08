@@ -2,7 +2,7 @@ use axum::http::{header, StatusCode};
 use sqlx::{Pool, Postgres};
 
 use crate::{
-    schemas::users::{CreateUser, Credentials},
+    forms::users::{CreateUser, Credentials},
     tests::util::{dom::assert_form_matches, TestApp},
 };
 

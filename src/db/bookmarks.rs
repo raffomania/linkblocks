@@ -3,8 +3,8 @@ use sqlx::{query_as, FromRow};
 use time::OffsetDateTime;
 use uuid::Uuid;
 
+use crate::forms::bookmarks::CreateBookmark;
 use crate::response_error::ResponseResult;
-use crate::schemas::bookmarks::CreateBookmark;
 
 use super::AppTx;
 

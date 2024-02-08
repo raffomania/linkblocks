@@ -13,8 +13,8 @@ use tower_sessions::Session;
 use crate::{
     authentication::{self, AuthUser},
     db::ExtractTx,
+    forms::users::Credentials,
     response_error::ResponseResult,
-    schemas::users::Credentials,
     views::users::LoginTemplate,
 };
 

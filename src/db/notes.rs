@@ -4,8 +4,8 @@ use sqlx::FromRow;
 use time::OffsetDateTime;
 use uuid::Uuid;
 
+use crate::forms::notes::CreateNote;
 use crate::response_error::ResponseResult;
-use crate::schemas::notes::CreateNote;
 
 use super::AppTx;
 use super::LinkDestination;
