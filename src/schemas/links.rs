@@ -7,7 +7,6 @@ use uuid::Uuid;
 pub enum ReferenceType {
     Bookmark,
     Note,
-    List,
 }
 
 #[derive(Validate, Debug)]

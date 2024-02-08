@@ -1,6 +1,6 @@
-use crate::db::lists::List;
+use crate::db;
 
 pub struct LayoutTemplate {
     pub logged_in_username: String,
-    pub lists: Vec<List>,
+    pub notes: Vec<db::Note>,
 }

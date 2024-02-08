@@ -11,7 +11,6 @@ use crate::{
     schemas::{
         bookmarks::CreateBookmark,
         links::{CreateLink, ReferenceType},
-        lists::CreateList,
         notes::CreateNote,
         users::CreateUser,
     },
@@ -38,19 +37,10 @@ pub async fn insert_demo_data(
         users.push(db::users::create_user_if_not_exists(&mut tx, create_dev_user).await?);
     }
 
-    let mut lists = Vec::new();
     let mut bookmarks = Vec::new();
     let mut notes = Vec::new();
 
     for user in users.iter() {
-        for _ in 0..10 {
-            let title: String = fake::faker::lorem::en::Words(1..10)
-                .fake::<Vec<_>>()
-                .join(" ");
-            let create_list = CreateList { title };
-            lists.push(db::lists::insert(&mut tx, user.id, create_list).await?);
-        }
-
         for _ in 0..500 {
             let tld: String = fake::faker::internet::en::DomainSuffix().fake();
             let word: String = fake::faker::lorem::en::Word().fake();
@@ -68,9 +58,12 @@ pub async fn insert_demo_data(
         }
 
         for _ in 0..100 {
-            let content: Vec<_> = fake::faker::lorem::en::Paragraphs(1..3).fake();
+            let content: Option<Vec<_>> = fake::faker::lorem::en::Paragraphs(1..3).fake();
+            let title: Vec<_> = fake::faker::lorem::en::Words(1..8).fake();
+            let title = title.join(" ");
             let create_note = CreateNote {
-                content: content.join("\n\n"),
+                title,
+                content: content.map(|c| c.join("\n\n")),
             };
             let note = db::notes::insert(&mut tx, user.id, create_note).await?;
 
@@ -82,8 +75,8 @@ pub async fn insert_demo_data(
         for _ in 0..1000 {
             let src_ref_type = random_reference_type()?;
             let dest_ref_type = random_reference_type()?;
-            let src_id = random_reference_entity_id(&src_ref_type, &bookmarks, &notes, &lists)?;
-            let dest_id = random_reference_entity_id(&dest_ref_type, &bookmarks, &notes, &lists)?;
+            let src_id = random_reference_entity_id(&src_ref_type, &bookmarks, &notes)?;
+            let dest_id = random_reference_entity_id(&dest_ref_type, &bookmarks, &notes)?;
 
             let create_link = CreateLink {
                 src_id,
@@ -110,7 +103,6 @@ fn random_reference_entity_id(
     dest_ref_type: &ReferenceType,
     bookmarks: &Vec<db::Bookmark>,
     notes: &Vec<db::Note>,
-    lists: &Vec<db::List>,
 ) -> Result<Uuid> {
     Ok(match dest_ref_type {
         ReferenceType::Bookmark => {
@@ -123,12 +115,6 @@ fn random_reference_entity_id(
             notes
                 .choose(&mut rand::thread_rng())
                 .ok_or(anyhow!("Found no random note to put into a link"))?
-                .id
-        }
-        ReferenceType::List => {
-            lists
-                .choose(&mut rand::thread_rng())
-                .ok_or(anyhow!("Found no random list to put into a link"))?
                 .id
         }
     })

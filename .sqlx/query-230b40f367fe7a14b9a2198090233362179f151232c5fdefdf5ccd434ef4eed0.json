@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select * from lists\n        where user_id = $1\n        ",
+  "query": "\n        select * from notes\n        where id = $1\n        ",
   "describe": {
     "columns": [
       {
@@ -22,6 +22,11 @@
         "ordinal": 3,
         "name": "title",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "content",
+        "type_info": "Text"
       }
     ],
     "parameters": {
@@ -33,8 +38,9 @@
       false,
       false,
       false,
-      false
+      false,
+      true
     ]
   },
-  "hash": "84b7723d8cf4570bc9bc05aa184d9cd0c4d6cab797c1f3cfc0ef2b3164def183"
+  "hash": "230b40f367fe7a14b9a2198090233362179f151232c5fdefdf5ccd434ef4eed0"
 }

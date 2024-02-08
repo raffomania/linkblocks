@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        insert into notes\n        (user_id, content)\n        values ($1, $2)\n        returning *",
+  "query": "\n        insert into notes\n        (user_id, title, content)\n        values ($1, $2, $3)\n        returning *",
   "describe": {
     "columns": [
       {
@@ -20,6 +20,11 @@
       },
       {
         "ordinal": 3,
+        "name": "title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
         "name": "content",
         "type_info": "Text"
       }
@@ -27,6 +32,7 @@
     "parameters": {
       "Left": [
         "Uuid",
+        "Text",
         "Text"
       ]
     },
@@ -34,8 +40,9 @@
       false,
       false,
       false,
-      false
+      false,
+      true
     ]
   },
-  "hash": "68e1f16b010cfc30a2058bc0384edebe7f10eda847f032eccb3ed360a560acac"
+  "hash": "a1370bc5282c31a9c4b33a1c388b149ca61ffb0922c122a357af77495be190dd"
 }

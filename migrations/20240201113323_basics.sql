@@ -28,23 +28,10 @@ create table notes (
         references users(id)
         not null,
 
-    content text
-        not null
-);
-
-create table lists (
-    id uuid primary key
-        default gen_random_uuid()
-        not null,
-    created_at timestamp with time zone
-        default current_timestamp
-        not null,
-    user_id uuid
-        references users(id)
-        not null,
-
     title text
-        not null
+        not null,
+    content text
+        default null
 );
 
 create table links (
@@ -65,13 +52,10 @@ create table links (
     src_note_id uuid
         references notes(id)
         default null,
-    src_list_id uuid
-        references lists(id)
-        default null,
 
     check (
         num_nonnulls(
-            src_bookmark_id, src_note_id, src_list_id
+            src_bookmark_id, src_note_id
         ) = 1
     ),
 
@@ -81,13 +65,10 @@ create table links (
     dest_note_id uuid
         references notes(id)
         default null,
-    dest_list_id uuid
-        references lists(id)
-        default null,
 
     check (
         num_nonnulls(
-            dest_bookmark_id, dest_note_id, dest_list_id
+            dest_bookmark_id, dest_note_id
         ) = 1
     )
 )

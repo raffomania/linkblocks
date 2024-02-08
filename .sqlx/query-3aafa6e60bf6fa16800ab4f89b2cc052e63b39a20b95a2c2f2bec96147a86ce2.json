@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        insert into links\n        (\n            user_id,\n            src_bookmark_id,\n            src_note_id,\n            src_list_id,\n            dest_bookmark_id,\n            dest_note_id,\n            dest_list_id\n        )\n        values ($1, $2, $3, $4, $5, $6, $7)\n        returning *",
+  "query": "\n        insert into links\n        (\n            user_id,\n            src_bookmark_id,\n            src_note_id,\n            dest_bookmark_id,\n            dest_note_id\n        )\n        values ($1, $2, $3, $4, $5)\n        returning *",
   "describe": {
     "columns": [
       {
@@ -30,29 +30,17 @@
       },
       {
         "ordinal": 5,
-        "name": "src_list_id",
-        "type_info": "Uuid"
-      },
-      {
-        "ordinal": 6,
         "name": "dest_bookmark_id",
         "type_info": "Uuid"
       },
       {
-        "ordinal": 7,
+        "ordinal": 6,
         "name": "dest_note_id",
-        "type_info": "Uuid"
-      },
-      {
-        "ordinal": 8,
-        "name": "dest_list_id",
         "type_info": "Uuid"
       }
     ],
     "parameters": {
       "Left": [
-        "Uuid",
-        "Uuid",
         "Uuid",
         "Uuid",
         "Uuid",
@@ -67,10 +55,8 @@
       true,
       true,
       true,
-      true,
-      true,
       true
     ]
   },
-  "hash": "67028f3adf2a78b02d448e455be9b3398d75bf325e9aeb60811f355c1d439bb7"
+  "hash": "3aafa6e60bf6fa16800ab4f89b2cc052e63b39a20b95a2c2f2bec96147a86ce2"
 }

@@ -12,8 +12,6 @@ pub mod links;
 pub use links::LinkDestination;
 pub use links::LinkDestinationWithChildren;
 pub use links::LinkWithContent;
-pub mod lists;
-pub use lists::List;
 pub mod notes;
 pub use notes::Note;
 pub use notes::NoteWithLinks;

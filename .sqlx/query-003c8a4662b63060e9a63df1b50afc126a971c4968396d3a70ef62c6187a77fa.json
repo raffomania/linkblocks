@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        insert into lists\n        (user_id, title)\n        values ($1, $2)\n        returning *",
+  "query": "\n        select * from notes\n        where user_id = $1\n        ",
   "describe": {
     "columns": [
       {
@@ -22,20 +22,25 @@
         "ordinal": 3,
         "name": "title",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "content",
+        "type_info": "Text"
       }
     ],
     "parameters": {
       "Left": [
-        "Uuid",
-        "Text"
+        "Uuid"
       ]
     },
     "nullable": [
       false,
       false,
       false,
-      false
+      false,
+      true
     ]
   },
-  "hash": "5be4bb6dd872ebbf234d8d5dc8551d6d5ddbf47d219aee7a6b5215d49bd6ca7f"
+  "hash": "003c8a4662b63060e9a63df1b50afc126a971c4968396d3a70ef62c6187a77fa"
 }

@@ -14,13 +14,13 @@
       </form>
     </header>
     <ul class="overflow-y-auto">
-      {% for list in layout.lists %}
+      {% for note in layout.notes %}
       <li>
         <a
           class="block px-4 py-1 overflow-hidden text-ellipsis whitespace-nowrap hover:bg-neutral-800"
-          href="/lists/{{ list.id }}"
+          href="/notes/{{ note.id }}"
         >
-          {{ list.title }}
+          {{ note.title }}
         </a>
       </li>
       {% endfor %}

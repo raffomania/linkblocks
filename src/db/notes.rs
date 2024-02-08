@@ -17,7 +17,8 @@ pub struct Note {
     pub created_at: OffsetDateTime,
     pub user_id: Uuid,
 
-    pub content: String,
+    pub title: String,
+    pub content: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -38,14 +39,45 @@ pub async fn insert(
         Note,
         r#"
         insert into notes
-        (user_id, content)
-        values ($1, $2)
+        (user_id, title, content)
+        values ($1, $2, $3)
         returning *"#,
         user_id,
-        create.content
+        create.title,
+        create.content,
     )
     .fetch_one(&mut **tx)
     .await?;
 
     Ok(note)
+}
+
+pub async fn by_id(tx: &mut AppTx, note_id: Uuid) -> ResponseResult<Note> {
+    let note = query_as!(
+        Note,
+        r#"
+        select * from notes
+        where id = $1
+        "#,
+        note_id,
+    )
+    .fetch_one(&mut **tx)
+    .await?;
+
+    Ok(note)
+}
+
+pub async fn list_pinned_by_user(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<Note>> {
+    let notes = query_as!(
+        Note,
+        r#"
+        select * from notes
+        where user_id = $1
+        "#,
+        user_id,
+    )
+    .fetch_all(&mut **tx)
+    .await?;
+
+    Ok(notes)
 }
