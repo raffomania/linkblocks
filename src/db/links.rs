@@ -34,7 +34,7 @@ pub enum LinkDestinationWithChildren {
     List(db::List),
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 #[serde(untagged)]
 pub enum LinkDestination {
     Bookmark(db::Bookmark),
@@ -97,10 +97,6 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
             links.created_at as link_created_at,
             links.user_id as link_user_id,
 
-            coalesce(notes.id, bookmarks.id, lists.id) as "dest_id!",
-            coalesce(notes.created_at, bookmarks.created_at, lists.created_at) as "dest_created_at!",
-            coalesce(notes.user_id, bookmarks.user_id, lists.user_id) as "dest_user_id!",
-
             case when notes.id is not null then
                 json_object(
                     'note': to_json(notes.*),
@@ -109,11 +105,11 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
                         || jsonb_agg(notes_notes.*) filter (where notes_notes.id is not null)
                         || jsonb_agg(notes_lists.*) filter (where notes_lists.id is not null)
                 )
-            else null end as note_with_links,
-            case when bookmarks.id is not null then
-                to_json(bookmarks.*)
-            else null end as bookmark,
-            lists.title as "list_title?"
+            when bookmarks.id is not null then
+                to_jsonb(bookmarks.*)
+            when lists.id is not null then
+                to_jsonb(lists.*)
+            else null end as dest
         from links
 
         left join notes on notes.id = links.dest_note_id
@@ -139,27 +135,7 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
     let results = rows
         .into_iter()
         .map(|row| {
-            let id = row.dest_id;
-            let created_at = row.dest_created_at;
-            let user_id = row.dest_user_id;
-            let dest = if let Some(note) = row.note_with_links {
-                let note: db::NoteWithLinks = serde_json::from_value(note)?;
-
-                LinkDestinationWithChildren::Note(note)
-            } else if let Some(bookmark) = row.bookmark {
-                LinkDestinationWithChildren::Bookmark(serde_json::from_value(bookmark)?)
-            } else if let Some(title) = row.list_title {
-                LinkDestinationWithChildren::List(db::List {
-                    id,
-                    created_at,
-                    user_id,
-                    title,
-                })
-            } else {
-                return Err(anyhow::anyhow!(
-                    "Don't know how to convert row into LinkDestination struct"
-                ));
-            };
+            let dest: LinkDestinationWithChildren = serde_json::from_value(row.dest.into())?;
             Ok(LinkWithContent {
                 id: row.link_id,
                 created_at: row.link_created_at,
