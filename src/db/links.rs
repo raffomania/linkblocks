@@ -46,13 +46,20 @@ pub struct LinkWithContent {
     pub dest: LinkDestinationWithChildren,
 }
 
-pub async fn insert(tx: &mut AppTx, user_id: Uuid, create: CreateLink) -> ResponseResult<Link> {
-    let src_bookmark_id = (create.src_ref_type == ReferenceType::Bookmark).then_some(create.src_id);
-    let src_note_id = (create.src_ref_type == ReferenceType::Note).then_some(create.src_id);
+pub async fn insert(
+    tx: &mut AppTx,
+    user_id: Uuid,
+    create_link: CreateLink,
+) -> ResponseResult<Link> {
+    let src_bookmark_id =
+        (create_link.src_ref_type == ReferenceType::Bookmark).then_some(create_link.src_id);
+    let src_note_id =
+        (create_link.src_ref_type == ReferenceType::Note).then_some(create_link.src_id);
 
     let dest_bookmark_id =
-        (create.dest_ref_type == ReferenceType::Bookmark).then_some(create.dest_id);
-    let dest_note_id = (create.dest_ref_type == ReferenceType::Note).then_some(create.dest_id);
+        (create_link.dest_ref_type == ReferenceType::Bookmark).then_some(create_link.dest_id);
+    let dest_note_id =
+        (create_link.dest_ref_type == ReferenceType::Note).then_some(create_link.dest_id);
 
     let list = query_as!(
         Link,

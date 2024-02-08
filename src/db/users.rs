@@ -14,8 +14,8 @@ pub struct User {
     pub password_hash: String,
 }
 
-pub async fn insert(tx: &mut AppTx, create: CreateUser) -> ResponseResult<User> {
-    let hashed_password = hash_password(create.password)?;
+pub async fn insert(tx: &mut AppTx, create_user: CreateUser) -> ResponseResult<User> {
+    let hashed_password = hash_password(create_user.password)?;
 
     let user = query_as!(
         User,
@@ -25,7 +25,7 @@ pub async fn insert(tx: &mut AppTx, create: CreateUser) -> ResponseResult<User> 
         values ($1, $2)
         returning *"#,
         hashed_password,
-        create.username
+        create_user.username
     )
     .fetch_one(&mut **tx)
     .await?;

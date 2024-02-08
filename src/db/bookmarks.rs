@@ -22,7 +22,7 @@ pub struct Bookmark {
 pub async fn insert(
     tx: &mut AppTx,
     user_id: Uuid,
-    create: CreateBookmark,
+    create_bookmark: CreateBookmark,
 ) -> ResponseResult<Bookmark> {
     let bookmark = query_as!(
         Bookmark,
@@ -32,8 +32,8 @@ pub async fn insert(
         values ($1, $2, $3)
         returning *"#,
         user_id,
-        create.url,
-        create.title
+        create_bookmark.url,
+        create_bookmark.title
     )
     .fetch_one(&mut **tx)
     .await?;

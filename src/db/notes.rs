@@ -32,8 +32,7 @@ pub struct NoteWithLinks {
 pub async fn insert(
     tx: &mut AppTx,
     user_id: Uuid,
-    // TODO rename to create_<entity> everywhere
-    create: CreateNote,
+    create_note: CreateNote,
 ) -> ResponseResult<Note> {
     let note = query_as!(
         Note,
@@ -43,8 +42,8 @@ pub async fn insert(
         values ($1, $2, $3)
         returning *"#,
         user_id,
-        create.title,
-        create.content,
+        create_note.title,
+        create_note.content,
     )
     .fetch_one(&mut **tx)
     .await?;
