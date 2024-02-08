@@ -12,7 +12,7 @@ use tower_sessions::Session;
 
 use crate::{
     authentication::{self, AuthUser},
-    db::ExtractTx,
+    extract,
     forms::users::Credentials,
     response_error::ResponseResult,
     views::users::LoginTemplate,
@@ -25,7 +25,7 @@ pub fn router() -> Router<Pool<Postgres>> {
 }
 
 async fn post_login(
-    ExtractTx(mut tx): ExtractTx,
+    extract::Tx(mut tx): extract::Tx,
     session: Session,
     Form(creds): Form<Credentials>,
 ) -> ResponseResult<Response> {

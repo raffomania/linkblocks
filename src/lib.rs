@@ -1,6 +1,7 @@
 mod authentication;
 pub mod cli;
 mod db;
+mod extract;
 mod form_errors;
 mod forms;
 mod response_error;

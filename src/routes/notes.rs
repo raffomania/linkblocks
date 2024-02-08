@@ -1,7 +1,8 @@
 use axum::{routing::get, Router};
 use sqlx::{Pool, Postgres};
 
-use crate::{authentication::AuthUser, db::ExtractTx, response_error::ResponseResult};
+use crate::extract;
+use crate::{authentication::AuthUser, response_error::ResponseResult};
 use crate::{
     db::{self},
     views::{layout::LayoutTemplate, note::NoteTemplate},
@@ -16,7 +17,7 @@ pub fn router() -> Router<Pool<Postgres>> {
 
 async fn list(
     auth_user: AuthUser,
-    ExtractTx(mut tx): ExtractTx,
+    extract::Tx(mut tx): extract::Tx,
     Path(note_id): Path<Uuid>,
 ) -> ResponseResult<NoteTemplate> {
     let user = db::users::by_id(&mut tx, auth_user.user_id).await?;
