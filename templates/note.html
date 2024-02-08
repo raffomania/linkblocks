@@ -31,14 +31,14 @@
               <a class="block leading-8 text-orange-100 hover:text-orange-300" href="{{ bookmark.url }}">
                 📄 {{ bookmark.title }} →
               </a>
-              <p class="text-neutral-600">{{ bookmark.url|truncate(25) }}</p>
+              <p class="text-sm text-neutral-500">{{ bookmark.url|truncate(25) }}</p>
             </li>
           {%- when db::LinkDestination::Note with (note) %}
             <li class="my-2">
               <a class="block leading-8 text-fuchsia-100 hover:text-fuchsia-300" href="/notes/{{ note.id }}">
                 ️🧵 {{ note.title }} →
               </a>
-              <p class="text-neutral-600">12 bookmarks, 8 notes</p>
+              <p class="text-sm text-neutral-500">12 bookmarks, 8 notes</p>
             </li>
           {% when _ %}
         {% endmatch %}
@@ -49,7 +49,7 @@
       <a class="block leading-8 text-orange-100 hover:text-orange-300" href="{{ bookmark.url }}">
         📄 {{ bookmark.title }} →
       </a>
-      <p class="text-neutral-600">{{ bookmark.url|truncate(25) }}</p>
+      <p class="text-sm text-neutral-500">{{ bookmark.url|truncate(25) }}</p>
   {% endmatch %}
 </section>
 {% endfor %} {% endblock %}
