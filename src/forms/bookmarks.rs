@@ -1,6 +1,7 @@
 use garde::Validate;
+use serde::Deserialize;
 
-#[derive(Validate)]
+#[derive(Validate, Default, Deserialize)]
 pub struct CreateBookmark {
     #[garde(url)]
     pub url: String,

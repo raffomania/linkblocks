@@ -15,7 +15,7 @@ use crate::{
     extract,
     forms::users::Credentials,
     response_error::ResponseResult,
-    views::users::LoginTemplate,
+    views::login::LoginTemplate,
 };
 
 pub fn router() -> Router<Pool<Postgres>> {
