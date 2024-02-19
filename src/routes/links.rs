@@ -55,7 +55,17 @@ async fn post_create(
     };
 
     let mut search_results = Vec::new();
-    if let Some(ref search_term) = create_link.search_term {
+    let search_term_src = create_link
+        .src
+        .is_none()
+        .then_some(create_link.search_term_src.as_ref())
+        .flatten();
+
+    let search_term_dest = create_link
+        .search_term_dest
+        .as_ref()
+        .and_then(|id| create_link.dest.is_none().then_some(id));
+    if let Some(search_term) = search_term_src.or(search_term_dest) {
         search_results = db::items::search(&mut tx, search_term).await?;
     }
 

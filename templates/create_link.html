@@ -25,20 +25,37 @@
   {%- when None %}
   {%- endmatch %}
 
-  {%- if input.src.is_none() || input.dest.is_none() %}
+  {%- if input.src.is_none() %}
   <input
     hx-trigger="input changed delay:500ms,search"
     hx-post="/links/create"
     hx-select="#search_results"
     hx-target="#search_results"
 
-    type="search" name="search_term"
-    {%- match input.search_term %}
+    type="search" name="search_term_src"
+    {%- match input.search_term_src %}
     {%- when Some with (term) %}
       value="{{ term }}"
     {% when _ %}
     {% endmatch %}
   >
+  {%- endif %}
+
+  {%- if input.src.is_some() && input.dest.is_none() %}
+  <input
+    hx-trigger="input changed delay:500ms,search"
+    hx-post="/links/create"
+    hx-select="#search_results"
+    hx-target="#search_results"
+
+    type="search" name="search_term_dest"
+    {%- match input.search_term_dest %}
+    {%- when Some with (term) %}
+      value="{{ term }}"
+    {% when _ %}
+    {% endmatch %}
+  >
+  {%- endif %}
 
   <div id="search_results">
   {% for result in search_results %}
@@ -57,25 +74,23 @@
       {%- let id = note.id %}
     {%- endmatch %}
 
-    <label>
-    <!-- todo use buttons instead of radio buttons? -->
-      <input
-        hx-post="/links/create"
-        hx-params="not search_term"
+    <button
+      hx-post="/links/create"
+      hx-params="not search_term"
+      class=""
 
-        type="radio"
-        {%- if input.src.is_some() %}
-          name="dest"
-        {%- else %}
-          name="src"
-        {%- endif %}
-        value="{{ id }}"/>
+      {%- if input.src.is_some() %}
+        name="dest"
+      {%- else %}
+        name="src"
+      {%- endif %}
+      value="{{ id }}">
 
         {{ emoji }} {{ title }}
-    </label>
+    </button>
+
   {% endfor %}
   </div>
-  {% endif %}
 
   {% match input.dest %}
   {% when Some with (_) %}
