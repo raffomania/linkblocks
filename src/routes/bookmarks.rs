@@ -17,7 +17,7 @@ use crate::{
 };
 
 pub fn router() -> Router<Pool<Postgres>> {
-    Router::new().route("/create_bookmark", get(get_create).post(post_create))
+    Router::new().route("/bookmarks/create", get(get_create).post(post_create))
 }
 
 async fn post_create(

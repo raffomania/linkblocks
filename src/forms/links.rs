@@ -1,22 +1,24 @@
 use garde::Validate;
-use strum::EnumIter;
+use serde::Deserialize;
 use uuid::Uuid;
 
-#[derive(PartialEq, Eq, Debug, EnumIter)]
-
-pub enum ReferenceType {
-    Bookmark,
-    Note,
-}
-
-#[derive(Validate, Debug)]
+#[derive(Validate, Debug, Deserialize)]
 pub struct CreateLink {
     #[garde(skip)]
-    pub src_id: Uuid,
+    pub src: Uuid,
     #[garde(skip)]
-    pub src_ref_type: ReferenceType,
+    pub dest: Uuid,
+}
+
+#[derive(Validate, Debug, Deserialize, Default)]
+pub struct PartialCreateLink {
     #[garde(skip)]
-    pub dest_id: Uuid,
+    pub search_term: Option<String>,
     #[garde(skip)]
-    pub dest_ref_type: ReferenceType,
+    pub src: Option<Uuid>,
+    #[garde(skip)]
+    pub dest: Option<Uuid>,
+    #[garde(skip)]
+    #[serde(default)]
+    pub submitted: bool,
 }

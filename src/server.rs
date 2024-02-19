@@ -33,6 +33,7 @@ pub async fn app(pool: sqlx::PgPool) -> anyhow::Result<Router> {
         .merge(routes::index::router())
         .merge(routes::notes::router())
         .merge(routes::bookmarks::router())
+        .merge(routes::links::router())
         .merge(routes::assets::router().with_state(()))
         .layer(TraceLayer::new_for_http())
         .layer(session_service)

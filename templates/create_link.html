@@ -1,0 +1,93 @@
+{% import "_form.html" as form %}
+{% extends "_layout.html" %} {% block content %}
+
+<h1 class="px-4 pt-3 pb-4 text-xl font-bold">Link items</h1>
+
+<form action="/links/create" method="POST"
+  hx-trigger="change"
+  hx-select="form#create_link"
+  hx-target="form#create_link"
+  id="create_link"
+>
+
+  {%- match input.src %}
+  {%- when Some with (src) %}
+    <p>Linking from {{ src }}</p>
+    <input type="hidden" value="{{ src }}" name="src" />
+    <p>to:</p>
+  {%- when None %}
+  {%- endmatch %}
+  {%- match input.dest %}
+  {%- when Some with (dest) %}
+    <p>{{ dest }}</p>
+    <input type="hidden" value="{{ dest }}" name="dest" />
+  {%- when None %}
+  {%- endmatch %}
+
+  {%- if input.src.is_none() || input.dest.is_none() %}
+  <input
+    hx-trigger="input changed delay:500ms,search"
+    hx-post="/links/create"
+    hx-select="#search_results"
+    hx-target="#search_results"
+
+    type="search" name="search_term"
+    {%- match input.search_term %}
+    {%- when Some with (term) %}
+      value="{{ term }}"
+    {% when _ %}
+    {% endmatch %}
+  >
+
+  <div id="search_results">
+  {% for result in search_results %}
+    {%- let emoji %}
+    {%- let title %}
+    {%- let id %}
+
+    {%- match result %}
+    {%- when db::LinkDestination::Bookmark with (bookmark) %}
+      {%- let emoji = "📄" %}
+      {%- let title = bookmark.title %}
+      {%- let id = bookmark.id %}
+    {%- when db::LinkDestination::Note with (note) %}
+      {%- let emoji = "🧵" %}
+      {%- let title = note.title %}
+      {%- let id = note.id %}
+    {%- endmatch %}
+
+    <label>
+    <!-- todo use buttons instead of radio buttons? -->
+      <input
+        hx-post="/links/create"
+        hx-params="not search_term"
+
+        type="radio"
+        {%- if input.src.is_some() %}
+          name="dest"
+        {%- else %}
+          name="src"
+        {%- endif %}
+        value="{{ id }}"/>
+
+        {{ emoji }} {{ title }}
+    </label>
+  {% endfor %}
+  </div>
+  {% endif %}
+
+  {% match input.dest %}
+  {% when Some with (_) %}
+    <button type="submit"
+      name="submitted"
+      value="true"
+      class="bg-neutral-300 py-1.5 px-3 text-neutral-900 rounded mt-4 self-end"
+    >
+      Create Link
+    </button>
+  {% when _ %}
+  {% endmatch %}
+</form>
+
+{% endblock %}
+

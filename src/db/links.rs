@@ -3,11 +3,7 @@ use sqlx::{query, query_as, FromRow};
 use time::OffsetDateTime;
 use uuid::Uuid;
 
-use crate::{
-    db,
-    forms::links::{CreateLink, ReferenceType},
-    response_error::ResponseResult,
-};
+use crate::{db, forms::links::CreateLink, response_error::ResponseResult};
 
 use super::AppTx;
 
@@ -51,16 +47,6 @@ pub async fn insert(
     user_id: Uuid,
     create_link: CreateLink,
 ) -> ResponseResult<Link> {
-    let src_bookmark_id =
-        (create_link.src_ref_type == ReferenceType::Bookmark).then_some(create_link.src_id);
-    let src_note_id =
-        (create_link.src_ref_type == ReferenceType::Note).then_some(create_link.src_id);
-
-    let dest_bookmark_id =
-        (create_link.dest_ref_type == ReferenceType::Bookmark).then_some(create_link.dest_id);
-    let dest_note_id =
-        (create_link.dest_ref_type == ReferenceType::Note).then_some(create_link.dest_id);
-
     let list = query_as!(
         Link,
         r#"
@@ -72,13 +58,16 @@ pub async fn insert(
             dest_bookmark_id,
             dest_note_id
         )
-        values ($1, $2, $3, $4, $5)
+        values ($1,
+            (select id from bookmarks where id = $2),
+            (select id from notes where id = $2),
+            (select id from bookmarks where id = $3),
+            (select id from notes where id = $3)
+        )
         returning *"#,
         user_id,
-        src_bookmark_id,
-        src_note_id,
-        dest_bookmark_id,
-        dest_note_id,
+        create_link.src,
+        create_link.dest
     )
     .fetch_one(&mut **tx)
     .await?;
@@ -134,6 +123,34 @@ pub async fn list_by_note(tx: &mut AppTx, note_id: Uuid) -> ResponseResult<Vec<L
             })
         })
         .collect::<anyhow::Result<Vec<_>>>()?;
+
+    Ok(results)
+}
+
+pub async fn search_linkable_items(
+    tx: &mut AppTx,
+    term: &str,
+) -> ResponseResult<Vec<LinkDestination>> {
+    let jsons = query!(
+        r#"
+            select to_jsonb(bookmarks.*) as item
+            from bookmarks
+            where bookmarks.title like '%' || $1 || '%'
+            union
+            select to_jsonb(notes.*) as item
+            from notes
+            where notes.title like '%' || $1 || '%'
+            limit 10
+        "#,
+        term
+    )
+    .fetch_all(&mut **tx)
+    .await?;
+
+    let results = jsons
+        .into_iter()
+        .map(|row| Ok(serde_json::from_value(row.item.into())?))
+        .collect::<anyhow::Result<Vec<LinkDestination>>>()?;
 
     Ok(results)
 }

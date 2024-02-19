@@ -1,19 +1,13 @@
 use anyhow::{anyhow, Result};
 use fake::{Fake, Faker};
 use garde::Validate;
-use rand::seq::{IteratorRandom, SliceRandom};
+use rand::{seq::SliceRandom, Rng};
 use sqlx::PgPool;
-use strum::IntoEnumIterator;
 use uuid::Uuid;
 
 use crate::{
     db::{self},
-    forms::{
-        bookmarks::CreateBookmark,
-        links::{CreateLink, ReferenceType},
-        notes::CreateNote,
-        users::CreateUser,
-    },
+    forms::{bookmarks::CreateBookmark, links::CreateLink, notes::CreateNote, users::CreateUser},
 };
 
 pub async fn insert_demo_data(
@@ -73,17 +67,10 @@ pub async fn insert_demo_data(
 
     for user in users.iter() {
         for _ in 0..1000 {
-            let src_ref_type = random_reference_type()?;
-            let dest_ref_type = random_reference_type()?;
-            let src_id = random_reference_entity_id(&src_ref_type, &bookmarks, &notes)?;
-            let dest_id = random_reference_entity_id(&dest_ref_type, &bookmarks, &notes)?;
+            let src = random_link_reference(&bookmarks, &notes)?;
+            let dest = random_link_reference(&bookmarks, &notes)?;
 
-            let create_link = CreateLink {
-                src_id,
-                src_ref_type,
-                dest_id,
-                dest_ref_type,
-            };
+            let create_link = CreateLink { src, dest };
             db::links::insert(&mut tx, user.id, create_link).await?;
         }
     }
@@ -93,29 +80,20 @@ pub async fn insert_demo_data(
     Ok(())
 }
 
-fn random_reference_type() -> Result<ReferenceType> {
-    ReferenceType::iter()
-        .choose(&mut rand::thread_rng())
-        .ok_or(anyhow!("Failed to choose a random reference type"))
-}
-
-fn random_reference_entity_id(
-    dest_ref_type: &ReferenceType,
-    bookmarks: &Vec<db::Bookmark>,
-    notes: &Vec<db::Note>,
-) -> Result<Uuid> {
-    Ok(match dest_ref_type {
-        ReferenceType::Bookmark => {
+fn random_link_reference(bookmarks: &Vec<db::Bookmark>, notes: &Vec<db::Note>) -> Result<Uuid> {
+    Ok(match rand::thread_rng().gen_range(0..=1) {
+        0 => {
             bookmarks
                 .choose(&mut rand::thread_rng())
                 .ok_or(anyhow!("Found no random bookmark to put into a link"))?
                 .id
         }
-        ReferenceType::Note => {
+        1 => {
             notes
                 .choose(&mut rand::thread_rng())
                 .ok_or(anyhow!("Found no random note to put into a link"))?
                 .id
         }
+        _ => unreachable!(),
     })
 }
