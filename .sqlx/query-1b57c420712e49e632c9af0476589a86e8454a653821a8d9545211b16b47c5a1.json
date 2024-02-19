@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            select to_jsonb(bookmarks.*) as item\n            from bookmarks\n            where bookmarks.id = $1\n            union\n            select to_jsonb(notes.*) as item\n            from notes\n            where notes.id = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "item",
+        "type_info": "Jsonb"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "1b57c420712e49e632c9af0476589a86e8454a653821a8d9545211b16b47c5a1"
+}

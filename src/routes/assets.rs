@@ -83,7 +83,7 @@ mod tests {
     fn all_assets_have_a_mime_type() -> ResponseResult<()> {
         fn check_dir(dir: &Dir) -> ResponseResult<()> {
             for asset in dir.files() {
-                get_mime(&asset.path())?;
+                get_mime(asset.path())?;
             }
 
             for dir in ASSETS_DIR.dirs() {

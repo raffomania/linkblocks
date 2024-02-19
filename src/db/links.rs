@@ -27,11 +27,36 @@ pub enum LinkDestinationWithChildren {
     Note(db::NoteWithLinks),
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 #[serde(untagged)]
 pub enum LinkDestination {
     Bookmark(db::Bookmark),
     Note(db::Note),
+}
+
+impl LinkDestination {
+    pub fn id(&self) -> Uuid {
+        match self {
+            LinkDestination::Bookmark(b) => b.id,
+            LinkDestination::Note(n) => n.id,
+        }
+    }
+
+    pub fn title(&self) -> &str {
+        match self {
+            LinkDestination::Bookmark(b) => &b.title,
+            LinkDestination::Note(n) => &n.title,
+        }
+    }
+
+    pub fn path(&self) -> String {
+        let prefix = match self {
+            LinkDestination::Bookmark(_) => "bookmarks",
+            LinkDestination::Note(_) => "notes",
+        };
+        let id = self.id();
+        format!("/{prefix}/{id}")
+    }
 }
 
 pub struct LinkWithContent {
@@ -123,34 +148,6 @@ pub async fn list_by_note(tx: &mut AppTx, note_id: Uuid) -> ResponseResult<Vec<L
             })
         })
         .collect::<anyhow::Result<Vec<_>>>()?;
-
-    Ok(results)
-}
-
-pub async fn search_linkable_items(
-    tx: &mut AppTx,
-    term: &str,
-) -> ResponseResult<Vec<LinkDestination>> {
-    let jsons = query!(
-        r#"
-            select to_jsonb(bookmarks.*) as item
-            from bookmarks
-            where bookmarks.title like '%' || $1 || '%'
-            union
-            select to_jsonb(notes.*) as item
-            from notes
-            where notes.title like '%' || $1 || '%'
-            limit 10
-        "#,
-        term
-    )
-    .fetch_all(&mut **tx)
-    .await?;
-
-    let results = jsons
-        .into_iter()
-        .map(|row| Ok(serde_json::from_value(row.item.into())?))
-        .collect::<anyhow::Result<Vec<LinkDestination>>>()?;
 
     Ok(results)
 }

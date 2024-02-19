@@ -8,7 +8,7 @@ use crate::response_error::ResponseResult;
 
 use super::AppTx;
 
-#[derive(FromRow, Debug, Deserialize)]
+#[derive(FromRow, Debug, Deserialize, Clone)]
 pub struct Bookmark {
     pub id: Uuid,
     #[serde(with = "time::serde::iso8601")]

@@ -13,7 +13,7 @@ pub fn assert_form_matches<I: Serialize>(form: visdom::types::Elements, input: &
             value
         } else {
             assert!(
-                !field.get_attribute("required").is_none(),
+                field.get_attribute("required").is_some(),
                 "Missing value for required form field {html}"
             );
             continue;

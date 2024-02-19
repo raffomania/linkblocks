@@ -10,17 +10,18 @@
   id="create_link"
 >
 
-  {%- match input.src %}
+  {%- match src_from_db %}
   {%- when Some with (src) %}
-    <p>Linking from {{ src }}</p>
-    <input type="hidden" value="{{ src }}" name="src" />
+    <p>Linking from {{ src.title() }}</p>
+    <input type="hidden" value="{{ src.id() }}" name="src" />
     <p>to:</p>
   {%- when None %}
   {%- endmatch %}
-  {%- match input.dest %}
+
+  {%- match dest_from_db %}
   {%- when Some with (dest) %}
-    <p>{{ dest }}</p>
-    <input type="hidden" value="{{ dest }}" name="dest" />
+    <p>{{ dest.title() }}</p>
+    <input type="hidden" value="{{ dest.id() }}" name="dest" />
   {%- when None %}
   {%- endmatch %}
 

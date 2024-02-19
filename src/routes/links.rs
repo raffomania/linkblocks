@@ -32,27 +32,48 @@ async fn post_create(
         logged_in_username: user.username,
         notes: pinned_notes,
     };
+    let src_from_db = if let Some(id) = create_link.src {
+        Some(db::items::by_id(&mut tx, id).await?)
+    } else {
+        None
+    };
+    let dest_from_db = if let Some(id) = create_link.dest {
+        Some(db::items::by_id(&mut tx, id).await?)
+    } else {
+        None
+    };
     if let Err(errors) = create_link.validate(&()) {
         return Ok(views::links::CreateLinkTemplate {
             layout,
             errors: errors.into(),
             input: create_link,
             search_results: Vec::new(),
-            selected_src: todo!(),
-            selected_dest: todo!(),
+            src_from_db,
+            dest_from_db,
         }
         .into_response());
     };
 
     let mut search_results = Vec::new();
     if let Some(ref search_term) = create_link.search_term {
-        search_results = db::links::search_linkable_items(&mut tx, search_term).await?;
+        search_results = db::items::search(&mut tx, search_term).await?;
     }
 
-    if let (Some(src), Some(dest)) = (create_link.src.clone(), create_link.dest.clone()) {
+    if let (Some(src), Some(dest)) = (&src_from_db, &dest_from_db) {
         if create_link.submitted {
-            db::links::insert(&mut tx, auth_user.user_id, CreateLink { src, dest }).await?;
-            return Ok(Redirect::to("/").into_response());
+            db::links::insert(
+                &mut tx,
+                auth_user.user_id,
+                CreateLink {
+                    src: src.id(),
+                    dest: dest.id(),
+                },
+            )
+            .await?;
+
+            tx.commit().await?;
+
+            return Ok(Redirect::to(&src.path()).into_response());
         }
     }
 
@@ -61,8 +82,8 @@ async fn post_create(
         errors: Default::default(),
         input: create_link,
         search_results,
-        selected_src: None,
-        selected_dest: None,
+        src_from_db,
+        dest_from_db,
     }
     .into_response())
 }
@@ -83,7 +104,7 @@ async fn get_create(
         errors: Default::default(),
         input: PartialCreateLink::default(),
         search_results: Vec::new(),
-        selected_src: None,
-        selected_dest: None,
+        src_from_db: None,
+        dest_from_db: None,
     })
 }

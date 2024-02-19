@@ -21,7 +21,7 @@ pub struct RequestBuilder<'app> {
 impl<'app> RequestBuilder<'app> {
     pub fn new(router: &'app mut Router) -> Self {
         RequestBuilder {
-            router: router,
+            router,
             expected_status: StatusCode::OK,
             request: Request::builder(),
         }
@@ -79,7 +79,7 @@ impl<'app> RequestBuilder<'app> {
             .unwrap();
 
         assert_eq!(response.status(), self.expected_status);
-        TestResponse { response: response }
+        TestResponse { response }
     }
 }
 

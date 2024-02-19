@@ -10,7 +10,7 @@ use crate::response_error::ResponseResult;
 use super::AppTx;
 use super::LinkDestination;
 
-#[derive(FromRow, Debug, Deserialize)]
+#[derive(FromRow, Debug, Deserialize, Clone)]
 pub struct Note {
     pub id: Uuid,
     #[serde(with = "time::serde::iso8601")]
