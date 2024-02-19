@@ -8,13 +8,13 @@ edition = "2021"
 doctest = false
 
 [dependencies]
-anyhow = { version = "1.0.76"}
+anyhow = { version = "1.0.80"}
 argon2 = "0.5.3"
 askama = { version = "0.12.1", features = ["with-axum"] }
 askama_axum = "0.4.0"
 axum = { version = "0.7.4", features = ["macros", "tracing"] }
 axum-server = { version = "0.6.0", features = ["tls-rustls"] }
-clap = { version = "4.4.18", features = ["derive", "env"] }
+clap = { version = "4.5.1", features = ["derive", "env"] }
 fake = { version = "2.9.2", default-features = false }
 garde = { version = "0.18.0", default-features = false, features = ["derive", "url"]}
 include_dir = "0.7.3"
@@ -26,7 +26,7 @@ serde-aux = { version = "4.4.0", default-features = false }
 serde_json = "1.0.113"
 serde_qs = "0.12.0"
 sqlx = { version = "0.7.3", features = ["runtime-tokio", "postgres", "tls-rustls", "migrate", "uuid", "time"] }
-thiserror = "1.0.52"
+thiserror = "1.0.57"
 time = { version = "0.3.34", default-features = false, features = ["serde"] }
 tokio = { version = "1.36.0", features = ["macros", "rt-multi-thread", "signal"] }
 tower = "0.4.13"
