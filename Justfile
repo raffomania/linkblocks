@@ -22,7 +22,6 @@ start-database:
     if ! podman inspect linkblocks_postgres &> /dev/null; then
         podman create \
             --name linkblocks_postgres \
-            --health-cmd pg_isready --health-interval 10s \
             -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_DB=linkblocks \
             -p ${DATABASE_PORT}:5432 docker.io/postgres:16 \
             postgres
@@ -30,7 +29,7 @@ start-database:
 
     podman start linkblocks_postgres
 
-    for i in {1..20}; do 
+    for i in {1..20}; do
         pg_isready -h localhost -p $DATABASE_PORT && break
         sleep 2
     done
@@ -71,7 +70,7 @@ start-test-database:
 
     podman start linkblocks_postgres_test
 
-    for i in {1..20}; do 
+    for i in {1..20}; do
         pg_isready -h localhost -p $DATABASE_PORT_TEST && break
         sleep 2
     done
