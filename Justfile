@@ -22,7 +22,7 @@ start-database:
     if ! podman inspect linkblocks_postgres &> /dev/null; then
         podman create \
             --name linkblocks_postgres \
-            -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_DB=linkblocks \
+            -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_DB=${DATABASE_NAME} \
             -p ${DATABASE_PORT}:5432 docker.io/postgres:16 \
             postgres
     fi
@@ -59,7 +59,7 @@ start-test-database:
         podman create \
             --replace --name linkblocks_postgres_test --image-volume tmpfs \
             --health-cmd pg_isready --health-interval 10s \
-            -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_DB=linkblocks_test \
+            -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_DB=${DATABASE_NAME_TEST} \
             -p ${DATABASE_PORT_TEST}:5432 --rm docker.io/postgres:16 \
             postgres \
             -c fsync=off \
