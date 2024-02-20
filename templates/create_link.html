@@ -1,5 +1,28 @@
 {% import "_form.html" as form %}
 {% extends "_layout.html" %}
+
+{%- macro link_dest(link_dest) -%}
+  {%- match link_dest -%}
+    {%- when db::LinkDestination::Bookmark with (bookmark) -%}
+    <a
+      class="block leading-8 text-orange-100 hover:text-orange-300"
+      href="{{ bookmark.url }}"
+    >
+      📄 {{ bookmark.title }}
+    </a>
+    <p class="text-sm text-neutral-500">{{ bookmark.url|truncate(25) }}</p>
+    {%- when db::LinkDestination::Note with (note) -%}
+    <a
+      class="block leading-8 text-fuchsia-100 hover:text-fuchsia-300"
+      href="/notes/{{ note.id }}"
+    >
+      ️🧵 {{ note.title }}
+    </a>
+    <p class="text-sm text-neutral-500">12 bookmarks, 8 notes</p>
+    {% when _ %}
+  {% endmatch %}
+{%- endmacro -%}
+
 {% block content %}
   <h1 class="px-4 pt-3 pb-4 text-xl font-bold">Link items</h1>
 
@@ -9,51 +32,55 @@
     hx-trigger="change"
     hx-select="form#create_link"
     hx-target="form#create_link"
+    hx-swap="outerHTML"
     id="create_link"
+    class="mx-4"
   >
+    <p>Linking from:</p>
     {%- match src_from_db -%}
       {%- when Some with (src) -%}
-      <p>Linking from {{ src.title() }}</p>
+      {% call link_dest(src) %}
+
       <input type="hidden" value="{{ src.id() }}" name="src" />
-      <p>to:</p>
+      <p class="mt-4">to:</p>
       {%- when None -%}
     {%- endmatch -%}
 
     {%- match dest_from_db -%}
       {%- when Some with (dest) -%}
-      <p>{{ dest.title() }}</p>
+      {% call link_dest(dest) %}
       <input type="hidden" value="{{ dest.id() }}" name="dest" />
       {%- when None -%}
     {%- endmatch -%}
 
-    {%- if input.src.is_none() -%}
-      <input
-        hx-trigger="input changed delay:500ms,search"
-        hx-post="/links/create"
-        hx-select="#search_results"
-        hx-target="#search_results"
-        type="search"
-        name="search_term_src"
-        {%- match input.search_term_src -%}
-          {%- when Some with (term) -%}
-          value="{{ term }}" {% when _ %}
-        {% endmatch %}
-      />
-    {%- endif -%}
+    {%- if input.src.is_none() || input.dest.is_none() -%}
+      {% let suffix %}
+      {% let input_search_term %}
+      {% let description %}
+      {% if input.src.is_none() %}
+        {% let suffix = "src" %}
+        {% let input_search_term = input.search_term_src %}
+        {% let description = "from" %}
+      {% else %}
+        {% let suffix = "dest" %}
+        {% let input_search_term = input.search_term_dest %}
+        {% let description = "to" %}
+      {% endif %}
 
-    {%- if input.src.is_some() && input.dest.is_none() -%}
-      <input
-        hx-trigger="input changed delay:500ms,search"
-        hx-post="/links/create"
-        hx-select="#search_results"
-        hx-target="#search_results"
-        type="search"
-        name="search_term_dest"
-        {%- match input.search_term_dest -%}
-          {%- when Some with (term) -%}
-          value="{{ term }}" {% when _ %}
-        {% endmatch %}
-      />
+      <label>
+        <input
+          hx-trigger="input changed delay:500ms,search"
+          hx-post="/links/create"
+          hx-select="#search_results"
+          hx-target="#search_results"
+          type="search"
+          name="search_term_{{ suffix }}"
+          {%- match input_search_term -%}
+            {%- when Some with (term) -%}
+            value="{{ term }}" {% when _ %}
+          {% endmatch %}
+          class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
+      /></label>
     {%- endif -%}
 
     <div id="search_results">
@@ -75,7 +102,6 @@
 
         <button
           hx-post="/links/create"
-          hx-params="not search_term"
           class=""
           {%- if input.src.is_some() -%}
             name="dest"
