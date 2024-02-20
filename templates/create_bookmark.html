@@ -1,39 +1,38 @@
 {% import "_form.html" as form %}
-{% extends "_layout.html" %} {% block content %}
-<form
-  action="/create_bookmark"
-  method="POST"
-  class="flex flex-col mx-4"
->
+{% extends "_layout.html" %}
+
+{% block content %}
+  <form action="/create_bookmark" method="POST" class="flex flex-col mx-4">
     <h1 class="mt-3 mb-4 text-xl font-bold">Add a bookmark</h1>
 
     {% call form::errors(errors, "root") %}
 
     <label for="url">URL</label>
     {% call form::errors(errors, "url") %}
-    <input type="text" name="url"
-        placeholder="https://..." required
-        value="{{ input.url }}"
-        class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
+    <input
+      type="text"
+      name="url"
+      placeholder="https://..."
+      required
+      value="{{ input.url }}"
+      class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
     />
 
-    <label for="title"
-        class="mt-4"
-    >
-        Title
-    </label>
+    <label for="title" class="mt-4"> Title </label>
     {% call form::errors(errors, "title") %}
     <input
-        type="text" name="title" required
-        value="{{ input.title }}"
-        class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
+      type="text"
+      name="title"
+      required
+      value="{{ input.title }}"
+      class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
     />
 
-    <button type="submit"
-        class="bg-neutral-300 py-1.5 px-3 text-neutral-900 rounded mt-4 self-end"
+    <button
+      type="submit"
+      class="bg-neutral-300 py-1.5 px-3 text-neutral-900 rounded mt-4 self-end"
     >
-        Add Bookmark
+      Add Bookmark
     </button>
-</form>
-
+  </form>
 {% endblock %}

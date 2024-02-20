@@ -1,42 +1,46 @@
-{% import "_form.html" as form %} {% extends "_base.html" %} {% block body %}
-<form
-  action="/login"
-  method="post"
-  class="flex flex-col justify-center flex-1 max-w-md min-h-full mx-auto"
-  hx-boost="true"
-  hx-disabled-elt="button"
->
-  <h1 class="text-2xl font-bold tracking-tight text-center">
-    Sign in to your account
-  </h1>
-  <label class="mt-10 text-neutral-400" name="username">Username</label>
-  {% call form::errors(errors, "root") %} {% call form::errors(errors,
-  "username") %}
-  <input
-    type="text"
-    name="username"
-    class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
-    value="{{ input.username }}"
-    required
-  />
-  <label for="password" class="mt-4 text-neutral-400">Password</label>
-  {% call form::errors(errors, "password") %}
-  <input
-    type="password"
-    name="password"
-    class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
-    required
-  />
-  <button
-    type="submit"
-    class="leading-6 bg-neutral-300 mt-5 font-semibold rounded py-1.5 flex items-center justify-center disabled:bg-neutral-500 text-neutral-900"
+{% import "_form.html" as form %} {% extends "_base.html" %}
+{% block body %}
+  <form
+    action="/login"
+    method="post"
+    class="flex flex-col justify-center flex-1 max-w-md min-h-full mx-auto"
+    hx-boost="true"
+    hx-disabled-elt="button"
   >
-    <span class="inline-block w-0 h-4">
-      <span
-        class="block w-4 h-4 -ml-6 border-2 rounded-full border-neutral-900 animate-spin border-t-transparent htmx-indicator"
-      ></span
-    ></span>
-    Sign in
-  </button>
-</form>
+    <h1 class="text-2xl font-bold tracking-tight text-center">
+      Sign in to your account
+    </h1>
+    <label class="mt-10 text-neutral-400" name="username">Username</label>
+    {% call form::errors(errors, "root") %}
+    {%
+      call form::errors(errors,
+      "username")
+    %}
+    <input
+      type="text"
+      name="username"
+      class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
+      value="{{ input.username }}"
+      required
+    />
+    <label for="password" class="mt-4 text-neutral-400">Password</label>
+    {% call form::errors(errors, "password") %}
+    <input
+      type="password"
+      name="password"
+      class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
+      required
+    />
+    <button
+      type="submit"
+      class="leading-6 bg-neutral-300 mt-5 font-semibold rounded py-1.5 flex items-center justify-center disabled:bg-neutral-500 text-neutral-900"
+    >
+      <span class="inline-block w-0 h-4">
+        <span
+          class="block w-4 h-4 -ml-6 border-2 rounded-full border-neutral-900 animate-spin border-t-transparent htmx-indicator"
+        ></span
+      ></span>
+      Sign in
+    </button>
+  </form>
 {% endblock %}
