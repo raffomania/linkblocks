@@ -7,7 +7,7 @@ use crate::{db, forms::links::CreateLink, response_error::ResponseResult};
 
 use super::AppTx;
 
-#[derive(FromRow)]
+#[derive(FromRow, Debug)]
 pub struct Link {
     pub id: Uuid,
     pub created_at: OffsetDateTime,
@@ -43,12 +43,10 @@ impl LinkDestination {
     }
 
     pub fn path(&self) -> String {
-        let prefix = match self {
-            LinkDestination::Bookmark(_) => "bookmarks",
-            LinkDestination::Note(_) => "notes",
-        };
-        let id = self.id();
-        format!("/{prefix}/{id}")
+        match self {
+            LinkDestination::Bookmark(b) => b.path(),
+            LinkDestination::Note(n) => n.path(),
+        }
     }
 }
 

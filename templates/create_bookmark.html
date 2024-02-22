@@ -2,10 +2,36 @@
 {% extends "_layout.html" %}
 
 {% block content %}
-  <form action="/create_bookmark" method="POST" class="flex flex-col mx-4">
-    <h1 class="pt-3 mb-4 text-xl font-bold">Add a bookmark</h1>
+  <form action="/bookmarks/create" method="POST" class="flex flex-col mx-4">
+    <header class="mt-3 mb-4">
+      <h1 class="text-xl font-bold">Add a bookmark</h1>
 
-    {% call form::errors(errors, "root") %}
+      {% match selected_parent %}
+        {% when Some with (parent) %}
+        <p>
+          to
+          {%- match parent -%}
+            {%- when db::LinkDestination::Bookmark with (bookmark) -%}
+            <a
+              class="leading-8 text-orange-100 hover:text-orange-300"
+              href="{{ bookmark.path() }}"
+            >
+              📄 {{ bookmark.title }}
+            </a>
+            {%- when db::LinkDestination::Note with (note) -%}
+            <a
+              class="leading-8 text-fuchsia-100 hover:text-fuchsia-300"
+              href="{{ note.path() }}"
+            >
+              ️🧵 {{ note.title }}
+            </a>
+            {% when _ %}
+          {% endmatch %}
+        </p>
+        <input type="hidden" name="parent" value="{{ parent.id() }}" />
+        {% when None %}
+      {% endmatch %}
+    </header>
 
     <label for="url">URL</label>
     {% call form::errors(errors, "url") %}
@@ -27,6 +53,8 @@
       value="{{ input.title }}"
       class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
     />
+
+    {% call form::errors(errors, "root") %}
 
     <button
       type="submit"

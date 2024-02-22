@@ -44,6 +44,7 @@ pub async fn insert_demo_data(
             let create_bookmark = CreateBookmark {
                 url: format!("https://{word}.{tld}"),
                 title,
+                parent: None,
             };
             create_bookmark.validate(&())?;
 

@@ -21,6 +21,13 @@ pub struct Note {
     pub content: Option<String>,
 }
 
+impl Note {
+    pub fn path(&self) -> String {
+        let id = self.id;
+        format!("/notes/{id}")
+    }
+}
+
 #[derive(Deserialize)]
 pub struct NoteWithLinks {
     pub note: Note,

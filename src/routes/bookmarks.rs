@@ -1,12 +1,15 @@
+use std::collections::HashMap;
+
 use askama_axum::IntoResponse;
 use axum::{
-    extract::Form,
+    extract::{Form, Query},
     response::{Redirect, Response},
     routing::get,
     Router,
 };
 use garde::Validate;
 use sqlx::{Pool, Postgres};
+use uuid::Uuid;
 
 use crate::{
     authentication::AuthUser,
@@ -23,32 +26,55 @@ pub fn router() -> Router<Pool<Postgres>> {
 async fn post_create(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
-    Form(create_bookmark): Form<CreateBookmark>,
+    Form(input): Form<CreateBookmark>,
 ) -> ResponseResult<Response> {
     let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
-    if let Err(errors) = create_bookmark.validate(&()) {
+
+    let selected_parent = match input.parent {
+        Some(id) => Some(db::items::by_id(&mut tx, id).await?),
+        None => None,
+    };
+
+    if let Err(errors) = input.validate(&()) {
         return Ok(views::create_bookmark::CreateBookmarkTemplate {
             layout,
             errors: errors.into(),
-            input: create_bookmark,
+            input,
+            selected_parent,
         }
         .into_response());
     };
 
-    db::bookmarks::insert(&mut tx, auth_user.user_id, create_bookmark).await?;
+    let bookmark = db::bookmarks::insert(&mut tx, auth_user.user_id, input).await?;
 
-    Ok(Redirect::to("/").into_response())
+    tx.commit().await?;
+
+    let redirect_dest = match selected_parent {
+        Some(parent) => parent.path(),
+        None => bookmark.path(),
+    };
+    Ok(Redirect::to(&redirect_dest).into_response())
 }
 
 async fn get_create(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
+    Query(query): Query<HashMap<String, String>>,
 ) -> ResponseResult<CreateBookmarkTemplate> {
     let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
+
+    let selected_parent = match query.get("parent_id").map(|s| Uuid::try_parse(s)) {
+        Some(Ok(id)) => Some(db::items::by_id(&mut tx, id).await?),
+        _ => None,
+    };
 
     Ok(CreateBookmarkTemplate {
         layout,
         errors: Default::default(),
-        input: Default::default(),
+        input: CreateBookmark {
+            parent: selected_parent.as_ref().map(|p| p.id()),
+            ..Default::default()
+        },
+        selected_parent,
     })
 }

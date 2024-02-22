@@ -1,6 +1,10 @@
 use askama::Template;
 
-use crate::{form_errors::FormErrors, forms};
+use crate::{
+    db::{self, LinkDestination},
+    form_errors::FormErrors,
+    forms,
+};
 
 use super::layout::LayoutTemplate;
 
@@ -11,4 +15,5 @@ pub struct CreateBookmarkTemplate {
 
     pub errors: FormErrors,
     pub input: forms::bookmarks::CreateBookmark,
+    pub selected_parent: Option<LinkDestination>,
 }
