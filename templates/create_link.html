@@ -62,6 +62,8 @@
 
       <label>
         <p>{{ label }}</p>
+        {% call form::errors(errors, "search_term_src") %}
+        {% call form::errors(errors, "search_term_dest") %}
         <input
           hx-trigger="input changed delay:300ms,search"
           hx-post="/links/create"
@@ -73,7 +75,7 @@
             {%- when Some with (term) -%}
             value="{{ term }}" {% when _ %}
           {% endmatch %}
-          class="rounded py-1.5 px-3 my-2 bg-neutral-900"
+          class="rounded py-1.5 px-3 my-2 bg-neutral-900 w-full"
         />
       </label>
     {%- endif -%}
@@ -106,6 +108,8 @@
         </button>
       {% endfor %}
     </div>
+
+    {% call form::errors(errors, "root") %}
 
     {% match input.dest %}
       {% when Some with (_) %}
