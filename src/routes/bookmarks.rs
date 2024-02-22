@@ -25,12 +25,7 @@ async fn post_create(
     auth_user: AuthUser,
     Form(create_bookmark): Form<CreateBookmark>,
 ) -> ResponseResult<Response> {
-    let pinned_notes = db::notes::list_pinned_by_user(&mut tx, auth_user.user_id).await?;
-    let user = db::users::by_id(&mut tx, auth_user.user_id).await?;
-    let layout = LayoutTemplate {
-        logged_in_username: user.username,
-        notes: pinned_notes,
-    };
+    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
     if let Err(errors) = create_bookmark.validate(&()) {
         return Ok(views::create_bookmark::CreateBookmarkTemplate {
             layout,
@@ -49,12 +44,7 @@ async fn get_create(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
 ) -> ResponseResult<CreateBookmarkTemplate> {
-    let pinned_notes = db::notes::list_pinned_by_user(&mut tx, auth_user.user_id).await?;
-    let user = db::users::by_id(&mut tx, auth_user.user_id).await?;
-    let layout = LayoutTemplate {
-        logged_in_username: user.username,
-        notes: pinned_notes,
-    };
+    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
 
     Ok(CreateBookmarkTemplate {
         layout,

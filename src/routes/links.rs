@@ -26,12 +26,7 @@ async fn post_create(
     // TODO handle failed extractors in forms better
     QsForm(create_link): QsForm<PartialCreateLink>,
 ) -> ResponseResult<Response> {
-    let pinned_notes = db::notes::list_pinned_by_user(&mut tx, auth_user.user_id).await?;
-    let user = db::users::by_id(&mut tx, auth_user.user_id).await?;
-    let layout = LayoutTemplate {
-        logged_in_username: user.username,
-        notes: pinned_notes,
-    };
+    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
     let src_from_db = if let Some(id) = create_link.src {
         Some(db::items::by_id(&mut tx, id).await?)
     } else {
@@ -102,12 +97,7 @@ async fn get_create(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
 ) -> ResponseResult<CreateLinkTemplate> {
-    let pinned_notes = db::notes::list_pinned_by_user(&mut tx, auth_user.user_id).await?;
-    let user = db::users::by_id(&mut tx, auth_user.user_id).await?;
-    let layout = LayoutTemplate {
-        logged_in_username: user.username,
-        notes: pinned_notes,
-    };
+    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
 
     Ok(CreateLinkTemplate {
         layout,
