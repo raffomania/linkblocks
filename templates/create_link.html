@@ -4,20 +4,10 @@
 {%- macro link_dest(link_dest) -%}
   {%- match link_dest -%}
     {%- when db::LinkDestination::Bookmark with (bookmark) -%}
-    <a
-      class="block leading-8 text-orange-100 hover:text-orange-300"
-      href="{{ bookmark.url }}"
-    >
-      📄 {{ bookmark.title }}
-    </a>
+    <p class="text-orange-100">📄 {{ bookmark.title }}</p>
     <p class="text-sm text-neutral-500">{{ bookmark.url|truncate(25) }}</p>
     {%- when db::LinkDestination::Note with (note) -%}
-    <a
-      class="block leading-8 text-fuchsia-100 hover:text-fuchsia-300"
-      href="/notes/{{ note.id }}"
-    >
-      ️🧵 {{ note.title }}
-    </a>
+    <p class="text-fuchsia-100">️🧵 {{ note.title }}</p>
     <p class="text-sm text-neutral-500">12 bookmarks, 8 notes</p>
     {% when _ %}
   {% endmatch %}
@@ -36,40 +26,44 @@
     id="create_link"
     class="mx-4"
   >
-    <p>Linking from:</p>
     {%- match src_from_db -%}
       {%- when Some with (src) -%}
-      {% call link_dest(src) %}
-
-      <input type="hidden" value="{{ src.id() }}" name="src" />
-      <p class="mt-4">to:</p>
+      <label class="block mb-4">
+        <p class="mb-1">Linking from:</p>
+        {% call link_dest(src) %}
+        <input type="hidden" value="{{ src.id() }}" name="src" />
+      </label>
       {%- when None -%}
     {%- endmatch -%}
 
     {%- match dest_from_db -%}
       {%- when Some with (dest) -%}
-      {% call link_dest(dest) %}
-      <input type="hidden" value="{{ dest.id() }}" name="dest" />
+      <label>
+        <p>to:</p>
+        {% call link_dest(dest) %}
+        <input type="hidden" value="{{ dest.id() }}" name="dest" />
+      </label>
       {%- when None -%}
     {%- endmatch -%}
 
     {%- if input.src.is_none() || input.dest.is_none() -%}
       {% let suffix %}
       {% let input_search_term %}
-      {% let description %}
+      {% let label %}
       {% if input.src.is_none() %}
         {% let suffix = "src" %}
         {% let input_search_term = input.search_term_src %}
-        {% let description = "from" %}
+        {% let label = "Linking from:" %}
       {% else %}
         {% let suffix = "dest" %}
         {% let input_search_term = input.search_term_dest %}
-        {% let description = "to" %}
+        {% let label = "to:" %}
       {% endif %}
 
       <label>
+        <p>{{ label }}</p>
         <input
-          hx-trigger="input changed delay:500ms,search"
+          hx-trigger="input changed delay:300ms,search"
           hx-post="/links/create"
           hx-select="#search_results"
           hx-target="#search_results"
@@ -79,38 +73,36 @@
             {%- when Some with (term) -%}
             value="{{ term }}" {% when _ %}
           {% endmatch %}
-          class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
-      /></label>
+          class="rounded py-1.5 px-3 my-2 bg-neutral-900"
+        />
+      </label>
     {%- endif -%}
 
     <div id="search_results">
       {% for result in search_results %}
-        {%- let emoji -%}
         {%- let title -%}
         {%- let id -%}
 
         {%- match result -%}
           {%- when db::LinkDestination::Bookmark with (bookmark) -%}
-          {%- let emoji = "📄" -%}
           {%- let title = bookmark.title -%}
           {%- let id = bookmark.id -%}
           {%- when db::LinkDestination::Note with (note) -%}
-          {%- let emoji = "🧵" -%}
           {%- let title = note.title -%}
           {%- let id = note.id -%}
         {%- endmatch -%}
 
         <button
           hx-post="/links/create"
-          class=""
+          class="block text-left hover:bg-neutral-700 rounded w-full px-4 pt-1 pb-2"
+          value="{{ id }}"
           {%- if input.src.is_some() -%}
             name="dest"
           {%- else -%}
             name="src"
           {%- endif -%}
-          value="{{ id }}"
         >
-          {{ emoji }} {{ title }}
+          {% call link_dest(result) %}
         </button>
       {% endfor %}
     </div>

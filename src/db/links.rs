@@ -42,13 +42,6 @@ impl LinkDestination {
         }
     }
 
-    pub fn title(&self) -> &str {
-        match self {
-            LinkDestination::Bookmark(b) => &b.title,
-            LinkDestination::Note(n) => &n.title,
-        }
-    }
-
     pub fn path(&self) -> String {
         let prefix = match self {
             LinkDestination::Bookmark(_) => "bookmarks",
