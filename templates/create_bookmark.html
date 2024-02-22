@@ -2,7 +2,15 @@
 {% extends "_layout.html" %}
 
 {% block content %}
-  <form action="/bookmarks/create" method="POST" class="flex flex-col mx-4">
+  <form
+    action="/bookmarks/create"
+    method="POST"
+    class="flex flex-col mx-4 mb-4 max-w-xl grow"
+    hx-post="/bookmarks/create"
+    hx-target="main"
+    hx-select="main"
+    id="create_bookmark"
+  >
     <header class="mt-3 mb-4">
       <h1 class="text-xl font-bold">Add a bookmark</h1>
 
