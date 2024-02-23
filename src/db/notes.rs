@@ -1,3 +1,5 @@
+//! TODO rename notes
+//! lists / collections / channels / nodes
 use serde::Deserialize;
 use sqlx::query_as;
 use sqlx::FromRow;
