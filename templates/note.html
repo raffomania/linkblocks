@@ -11,11 +11,19 @@
   <section class="flex">
     <a
       href="/bookmarks/create?parent_id={{ note.id }}"
-      class="block px-4 py-1 mx-4 my-4 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
+      class="block px-4 py-1 my-4 ml-4 mr-2 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
       hx-get="/bookmarks/create?parent_id={{ note.id }}"
-      hx-swap="outerHTML"
+      hx-target="closest section"
       hx-select="#create_bookmark"
       >Add new bookmark</a
+    >
+    <a
+      href="/links/create?parent_id={{ note.id }}"
+      class="block px-4 py-1 mx-2 my-4 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
+      hx-get="/links/create?src_id={{ note.id }}"
+      hx-target="closest section"
+      hx-select="#create_link"
+      >Link an item</a
     >
   </section>
   {% for link in links %}

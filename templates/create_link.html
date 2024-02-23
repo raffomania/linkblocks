@@ -14,18 +14,18 @@
 {%- endmacro -%}
 
 {% block content %}
-  <h1 class="px-4 pt-3 pb-4 text-xl font-bold">Link items</h1>
-
   <form
     action="/links/create"
     method="POST"
-    hx-trigger="change"
+    hx-post="/links/create"
     hx-select="form#create_link"
     hx-target="form#create_link"
     hx-swap="outerHTML"
     id="create_link"
-    class="mx-4"
+    class="mx-4 mb-4"
   >
+    <h1 class="pt-3 pb-4 text-xl font-bold">Link items</h1>
+
     {%- match src_from_db -%}
       {%- when Some with (src) -%}
       <label class="block mb-4">
@@ -111,10 +111,15 @@
     {% match input.dest %}
       {% when Some with (_) %}
       <button
-        type="submit"
+        type="button"
         name="submitted"
         value="true"
         class="bg-neutral-300 py-1.5 px-3 text-neutral-900 rounded mt-4 self-end"
+        {# TODO is there a cleaner way to make this form work embedded on the notes page? #}
+        hx-post="/links/create"
+        hx-select="main"
+        hx-target="main"
+        hx-swap="innerHTML"
       >
         Create Link
       </button>

@@ -1,11 +1,15 @@
+use std::collections::HashMap;
+
 use askama_axum::IntoResponse;
 use axum::{
+    extract::Query,
     response::{Redirect, Response},
     routing::get,
     Router,
 };
 use garde::Validate;
 use sqlx::{Pool, Postgres};
+use uuid::Uuid;
 
 use crate::{
     authentication::AuthUser,
@@ -89,15 +93,24 @@ async fn post_create(
 async fn get_create(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
+    Query(query): Query<HashMap<String, String>>,
 ) -> ResponseResult<CreateLinkTemplate> {
     let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
+
+    let src = match query.get("src_id").map(|s| Uuid::try_parse(s)) {
+        Some(Ok(id)) => Some(db::items::by_id(&mut tx, id).await?),
+        _ => None,
+    };
 
     Ok(CreateLinkTemplate {
         layout,
         errors: Default::default(),
-        input: PartialCreateLink::default(),
+        input: PartialCreateLink {
+            src: src.as_ref().map(|item| item.id()),
+            ..PartialCreateLink::default()
+        },
         search_results: Vec::new(),
-        src_from_db: None,
+        src_from_db: src,
         dest_from_db: None,
     })
 }
