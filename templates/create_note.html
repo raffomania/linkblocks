@@ -1,0 +1,43 @@
+{% import "_form.html" as form %}
+{% extends "_layout.html" %}
+
+{% block content %}
+  <form
+    action="/notes/create"
+    method="POST"
+    class="flex flex-col max-w-xl mx-4 mb-4 grow"
+  >
+    <header class="mt-3 mb-4">
+      <h1 class="text-xl font-bold">Add a note</h1>
+    </header>
+
+    <label for="title"> Title </label>
+    {% call form::errors(errors, "title") %}
+    <input
+      type="text"
+      name="title"
+      required
+      value="{{ input.title }}"
+      class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
+    />
+
+    <label class="mt-4"
+      >Note {% call form::errors(errors, "content") %}
+      <textarea
+        name="content"
+        placeholder=""
+        value="{{ input.content.as_deref().unwrap_or_default() }}"
+        class="rounded py-1.5 px-3 mt-2 bg-neutral-900 block w-full"
+      ></textarea>
+    </label>
+
+    {% call form::errors(errors, "root") %}
+
+    <button
+      type="submit"
+      class="bg-neutral-300 py-1.5 px-3 text-neutral-900 rounded mt-4 self-end"
+    >
+      Add Note
+    </button>
+  </form>
+{% endblock %}

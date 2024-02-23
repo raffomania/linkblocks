@@ -5,7 +5,7 @@
       <h1 class="text-xl font-bold">{{ note.title }}</h1>
     </div>
     {% if let Some(content) = note.content %}
-      <p class="mt-2">{{- content -}}</p>
+      <p class="mt-2 whitespace-pre-line">{{- content -}}</p>
     {% endif %}
   </header>
   <section class="flex">

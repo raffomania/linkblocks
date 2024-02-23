@@ -48,7 +48,7 @@ pub async fn insert(
     .await?;
 
     if let Some(parent) = create_bookmark.parent {
-        let link = db::links::insert(
+        db::links::insert(
             tx,
             user_id,
             CreateLink {

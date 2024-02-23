@@ -71,10 +71,7 @@
           hx-target="#search_results"
           type="search"
           name="search_term_{{ suffix }}"
-          {%- match input_search_term -%}
-            {%- when Some with (term) -%}
-            value="{{ term }}" {% when _ %}
-          {% endmatch %}
+          value="{{ input_search_term.as_deref().unwrap_or_default() }}"
           class="rounded py-1.5 px-3 my-2 bg-neutral-900 w-full"
         />
       </label>
@@ -96,7 +93,7 @@
 
         <button
           hx-post="/links/create"
-          class="block text-left hover:bg-neutral-700 rounded w-full px-4 pt-1 pb-2"
+          class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700"
           value="{{ id }}"
           {%- if input.src.is_some() -%}
             name="dest"
