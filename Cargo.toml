@@ -22,7 +22,7 @@ listenfd = "1.0.1"
 mime_guess = "2.0.4"
 rand = { version = "0.8.5", default-features = false }
 serde = "1.0.197"
-serde-aux = { version = "4.4.0", default-features = false }
+serde-aux = { version = "4.5.0", default-features = false }
 serde_json = "1.0.114"
 serde_qs = "0.12.0"
 sqlx = { version = "0.7.3", features = ["runtime-tokio", "postgres", "tls-rustls", "migrate", "uuid", "time"] }
@@ -30,7 +30,7 @@ thiserror = "1.0.57"
 time = { version = "0.3.34", default-features = false, features = ["serde"] }
 tokio = { version = "1.36.0", features = ["macros", "rt-multi-thread", "signal"] }
 tower = "0.4.13"
-tower-http = { version = "0.5.1", features = ["tracing", "trace"] }
+tower-http = { version = "0.5.2", features = ["tracing", "trace"] }
 tower-sessions = { version = "0.9", features = ["postgres-store", "deletion-task"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
