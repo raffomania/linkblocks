@@ -2,7 +2,7 @@ use anyhow::Context;
 use askama_axum::IntoResponse;
 use axum::{
     extract::{Path, Query},
-    http::{header, HeaderMap},
+    http::HeaderMap,
     response::{Redirect, Response},
     routing::{delete, get},
     Router,

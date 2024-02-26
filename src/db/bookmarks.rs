@@ -72,8 +72,7 @@ pub async fn list_unlinked(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<
         and not exists (
             select null from links
             where dest_bookmark_id = bookmarks.id
-        )
-        ;
+        );
         "#,
         user_id,
     )
