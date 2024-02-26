@@ -10,7 +10,7 @@ primary_region = 'ams'
   ADMIN_USERNAME = 'rafael'
   LISTEN = '0.0.0.0:8080'
   RUST_LOG='debug'
-  BASE_URL='linkblocks.fly.dev'
+  BASE_URL='https://linkblocks.fly.dev'
 
 [build]
 
@@ -22,6 +22,6 @@ primary_region = 'ams'
   min_machines_running = 0
 
 [[vm]]
-  memory = '512mb'
+  memory = '256mb'
   cpu_kind = 'shared'
   cpus = 1
