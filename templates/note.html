@@ -30,14 +30,24 @@
     <section class="px-4 py-4 border-t border-neutral-700">
       {% match link.dest %}
         {% when db::LinkDestinationWithChildren::Note with (note) %}
-        <h2 class="font-semibold">
-          <a
-            class="block hover:text-fuchsia-300"
-            href="/notes/{{ note.note.id }}"
+        <div class="flex justify-between leading-8">
+          <h2 class="font-semibold">
+            <a
+              class="block hover:text-fuchsia-300"
+              href="/notes/{{ note.note.id }}"
+            >
+              {{ note.note.title }}
+            </a>
+          </h2>
+
+          <button
+            class="px-3 rounded hover:bg-neutral-700 text-neutral-400"
+            hx-delete="/links/{{ link.id }}"
+            title="Unlink"
           >
-            {{ note.note.title }}
-          </a>
-        </h2>
+            Unlink
+          </button>
+        </div>
         {% if let Some(content) = note.note.content %}
           <p class="mt-2">{{- content -}}</p>
         {%- endif -%}

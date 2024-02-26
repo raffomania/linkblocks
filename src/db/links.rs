@@ -91,8 +91,6 @@ pub async fn insert(
     Ok(list)
 }
 
-// TODO query fails for notes linking to themselves
-// probably we should just add a constraint forbidding this?
 pub async fn list_by_note(tx: &mut AppTx, note_id: Uuid) -> ResponseResult<Vec<LinkWithContent>> {
     let rows = query!(
         r#"
@@ -102,11 +100,15 @@ pub async fn list_by_note(tx: &mut AppTx, note_id: Uuid) -> ResponseResult<Vec<L
             links.user_id as link_user_id,
 
             case when notes.id is not null then
-                jsonb_object('{
-                    {note, to_jsonb(notes.*)},
-                    {links, jsonb_agg_strict(notes_bookmarks.*)
-                        || jsonb_agg_strict(notes_notes.*)}
-                }')
+                jsonb_build_object(
+                    'note', to_jsonb(notes.*),
+                    'links',
+                    coalesce(
+                        jsonb_agg(notes_bookmarks.*) filter (where notes_bookmarks.id is not null)
+                        || jsonb_agg(notes_notes.*) filter (where notes_notes.id is not null),
+                        jsonb_build_array()
+                    )
+                )
             when bookmarks.id is not null then
                 to_jsonb(bookmarks.*)
             else null end as dest
