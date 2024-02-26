@@ -85,7 +85,7 @@ development-cert:
 ci-dev: start-database start-test-database
     #!/usr/bin/env bash
 
-    cargo build
+    cargo build --release
     just test
     cargo fmt --all -- --check
     cargo clippy -- -D warnings
