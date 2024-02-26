@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use askama_axum::IntoResponse;
 use axum::{
     extract::Query,
@@ -8,6 +6,7 @@ use axum::{
     Router,
 };
 use garde::Validate;
+use serde::Deserialize;
 use uuid::Uuid;
 
 use crate::{
@@ -53,7 +52,7 @@ async fn post_create(
     };
 
     let search_term = match (input.src, input.dest) {
-        (None, None) => input.search_term_src.as_ref(),
+        (None, _) => input.search_term_src.as_ref(),
         (Some(_), None) => input.search_term_dest.as_ref(),
         _ => None,
     };
@@ -90,15 +89,26 @@ async fn post_create(
     .into_response())
 }
 
+#[derive(Deserialize)]
+struct CreateLinkQueryString {
+    src_id: Option<Uuid>,
+    dest_id: Option<Uuid>,
+}
+
 async fn get_create(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
-    Query(query): Query<HashMap<String, String>>,
+    Query(query): Query<CreateLinkQueryString>,
 ) -> ResponseResult<CreateLinkTemplate> {
     let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
 
-    let src = match query.get("src_id").map(|s| Uuid::try_parse(s)) {
-        Some(Ok(id)) => Some(db::items::by_id(&mut tx, id).await?),
+    let src = match query.src_id {
+        Some(id) => Some(db::items::by_id(&mut tx, id).await?),
+        _ => None,
+    };
+
+    let dest = match query.dest_id {
+        Some(id) => Some(db::items::by_id(&mut tx, id).await?),
         _ => None,
     };
 
@@ -107,10 +117,11 @@ async fn get_create(
         errors: Default::default(),
         input: PartialCreateLink {
             src: src.as_ref().map(|item| item.id()),
+            dest: dest.as_ref().map(|item| item.id()),
             ..PartialCreateLink::default()
         },
         search_results: Vec::new(),
         src_from_db: src,
-        dest_from_db: None,
+        dest_from_db: dest,
     })
 }

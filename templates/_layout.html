@@ -7,7 +7,9 @@
       <header
         class="sticky top-0 flex justify-between py-2 pl-2 pr-2 leading-8 bg-neutral-900"
       >
-        <a href="/profile" class="px-2 font-bold rounded hover:bg-neutral-800">{{ layout.logged_in_username }}</a>
+        <a href="/profile" class="px-2 font-bold rounded hover:bg-neutral-800"
+          >{{ layout.logged_in_username }}</a
+        >
 
         <form action="/logout" method="post">
           <button class="px-3 rounded text-neutral-400 hover:bg-neutral-800">
@@ -16,17 +18,23 @@
         </form>
       </header>
       <div class="sm:overflow-y-auto">
+        <a
+          class="block px-4 py-1 overflow-hidden text-ellipsis whitespace-nowrap hover:bg-neutral-800"
+          href="/bookmarks/unlinked"
+        >
+          Unlinked bookmarks
+        </a>
         <div
-          class="sticky flex items-center justify-between px-2 top-12 sm:top-0 bg-neutral-900"
+          class="sticky flex items-center justify-between px-2 pt-2 top-12 sm:top-0 bg-neutral-900"
         >
           <h3
-            class="px-2 py-2 text-sm font-bold tracking-tight text-neutral-400"
+            class="px-2 py-1 text-sm font-bold tracking-tight text-neutral-400"
           >
             Notes
           </h3>
           <a
             href="/notes/create"
-            class="block px-3 py-1 text-xl rounded hover:bg-neutral-800 text-neutral-400"
+            class="block px-3 text-xl rounded hover:bg-neutral-800 text-neutral-400"
             >+</a
           >
         </div>

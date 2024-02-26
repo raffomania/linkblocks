@@ -15,11 +15,17 @@ use crate::{
     forms::bookmarks::CreateBookmark,
     response_error::ResponseResult,
     server::AppState,
-    views::{self, create_bookmark::CreateBookmarkTemplate, layout::LayoutTemplate},
+    views::{
+        self,
+        bookmarks::{CreateBookmarkTemplate, UnlinkedBookmarksTemplate},
+        layout::LayoutTemplate,
+    },
 };
 
 pub fn router() -> Router<AppState> {
-    Router::new().route("/bookmarks/create", get(get_create).post(post_create))
+    Router::new()
+        .route("/bookmarks/create", get(get_create).post(post_create))
+        .route("/bookmarks/unlinked", get(get_unlinked))
 }
 
 async fn post_create(
@@ -35,7 +41,7 @@ async fn post_create(
     };
 
     if let Err(errors) = input.validate(&()) {
-        return Ok(views::create_bookmark::CreateBookmarkTemplate {
+        return Ok(views::bookmarks::CreateBookmarkTemplate {
             layout,
             errors: errors.into(),
             input,
@@ -84,4 +90,14 @@ async fn get_create(
         },
         selected_parent,
     })
+}
+
+async fn get_unlinked(
+    extract::Tx(mut tx): extract::Tx,
+    auth_user: AuthUser,
+) -> ResponseResult<UnlinkedBookmarksTemplate> {
+    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
+    let bookmarks = db::bookmarks::list_unlinked(&mut tx, auth_user.user_id).await?;
+
+    Ok(UnlinkedBookmarksTemplate { layout, bookmarks })
 }

@@ -91,6 +91,8 @@ pub async fn insert(
     Ok(list)
 }
 
+// TODO query fails for notes linking to themselves
+// probably we should just add a constraint forbidding this?
 pub async fn list_by_note(tx: &mut AppTx, note_id: Uuid) -> ResponseResult<Vec<LinkWithContent>> {
     let rows = query!(
         r#"

@@ -1,4 +1,4 @@
-pub mod create_bookmark;
+pub mod bookmarks;
 pub mod index;
 pub mod layout;
 pub mod links;

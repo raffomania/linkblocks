@@ -108,8 +108,7 @@
 
     {% call form::errors(errors, "root") %}
 
-    {% match input.dest %}
-      {% when Some with (_) %}
+    {% if input.src.is_some() && input.dest.is_some() %}
       <button
         type="button"
         name="submitted"
@@ -123,7 +122,6 @@
       >
         Create Link
       </button>
-      {% when _ %}
-    {% endmatch %}
+    {% endif %}
   </form>
 {% endblock %}

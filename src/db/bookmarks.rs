@@ -61,3 +61,24 @@ pub async fn insert(
 
     Ok(bookmark)
 }
+
+pub async fn list_unlinked(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<Bookmark>> {
+    let bookmarks = query_as!(
+        Bookmark,
+        r#"
+        select *
+        from bookmarks
+        where user_id = $1
+        and not exists (
+            select null from links
+            where dest_bookmark_id = bookmarks.id
+        )
+        ;
+        "#,
+        user_id,
+    )
+    .fetch_all(&mut **tx)
+    .await?;
+
+    Ok(bookmarks)
+}
