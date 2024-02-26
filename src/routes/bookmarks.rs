@@ -8,6 +8,7 @@ use axum::{
     Router,
 };
 use garde::Validate;
+use serde::Deserialize;
 use sqlx::{Pool, Postgres};
 use uuid::Uuid;
 
@@ -56,15 +57,20 @@ async fn post_create(
     Ok(Redirect::to(&redirect_dest).into_response())
 }
 
+#[derive(Deserialize)]
+struct CreateBookmarkQuery {
+    parent_id: Option<Uuid>,
+}
+
 async fn get_create(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
-    Query(query): Query<HashMap<String, String>>,
+    Query(query): Query<CreateBookmarkQuery>,
 ) -> ResponseResult<CreateBookmarkTemplate> {
     let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
 
-    let selected_parent = match query.get("parent_id").map(|s| Uuid::try_parse(s)) {
-        Some(Ok(id)) => Some(db::items::by_id(&mut tx, id).await?),
+    let selected_parent = match query.parent_id {
+        Some(id) => Some(db::items::by_id(&mut tx, id).await?),
         _ => None,
     };
 
