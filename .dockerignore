@@ -1,0 +1,17 @@
+# Compiled artifacts
+target
+
+# Configuration
+**/.env
+
+# TLS certificates created by mkcert
+**/development_cert
+
+# cargo-run-bin
+**/.bin
+
+# nodejs tooling
+**/node_modules
+
+# deployment stuff
+fly.toml
