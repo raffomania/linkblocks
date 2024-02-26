@@ -144,3 +144,19 @@ pub async fn list_by_note(tx: &mut AppTx, note_id: Uuid) -> ResponseResult<Vec<L
 
     Ok(results)
 }
+
+pub async fn delete_by_id(tx: &mut AppTx, id: Uuid) -> ResponseResult<Link> {
+    let link = query_as!(
+        Link,
+        r#"
+        delete from links
+        where id = $1
+        returning *
+        "#,
+        id
+    )
+    .fetch_one(&mut **tx)
+    .await?;
+
+    Ok(link)
+}

@@ -73,12 +73,21 @@
           </ul>
         {% endif %}
         {% when db::LinkDestinationWithChildren::Bookmark with (bookmark) %}
-        <a
-          class="block leading-8 text-orange-100 hover:text-orange-300"
-          href="{{ bookmark.url }}"
-        >
-          📄 {{ bookmark.title }} →
-        </a>
+        <div class="flex justify-between leading-8">
+          <a
+            class="block text-orange-100 hover:text-orange-300"
+            href="{{ bookmark.url }}"
+          >
+            📄 {{ bookmark.title }} →
+          </a>
+          <button
+            class="px-3 rounded hover:bg-neutral-700 text-neutral-400"
+            hx-delete="/links/{{ link.id }}"
+            title="Unlink"
+          >
+            Unlink
+          </button>
+        </div>
         <p class="text-sm text-neutral-500">{{ bookmark.url|truncate(25) }}</p>
       {% endmatch %}
     </section>

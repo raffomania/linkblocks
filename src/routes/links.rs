@@ -1,8 +1,10 @@
+use anyhow::Context;
 use askama_axum::IntoResponse;
 use axum::{
-    extract::Query,
+    extract::{Path, Query},
+    http::{header, HeaderMap},
     response::{Redirect, Response},
-    routing::get,
+    routing::{delete, get},
     Router,
 };
 use garde::Validate;
@@ -20,7 +22,9 @@ use crate::{
 };
 
 pub fn router() -> Router<AppState> {
-    Router::new().route("/links/create", get(get_create).post(post_create))
+    Router::new()
+        .route("/links/create", get(get_create).post(post_create))
+        .route("/links/:id", delete(delete_by_id))
 }
 
 async fn post_create(
@@ -124,4 +128,21 @@ async fn get_create(
         src_from_db: src,
         dest_from_db: dest,
     })
+}
+
+async fn delete_by_id(
+    extract::Tx(mut tx): extract::Tx,
+    Path(id): Path<Uuid>,
+) -> ResponseResult<HeaderMap> {
+    db::links::delete_by_id(&mut tx, id).await?;
+
+    tx.commit().await?;
+
+    let mut headers = HeaderMap::new();
+    headers.insert(
+        "HX-Refresh",
+        "true".parse().context("Failed to parse header value")?,
+    );
+
+    Ok(headers)
 }
