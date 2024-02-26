@@ -100,11 +100,11 @@ pub async fn list_by_note(tx: &mut AppTx, note_id: Uuid) -> ResponseResult<Vec<L
             links.user_id as link_user_id,
 
             case when notes.id is not null then
-                json_object(
-                    'note': to_jsonb(notes.*),
-                    'links': jsonb_agg_strict(notes_bookmarks.*)
-                        || jsonb_agg_strict(notes_notes.*)
-                )
+                jsonb_object('{
+                    {note, to_jsonb(notes.*)},
+                    {links, jsonb_agg_strict(notes_bookmarks.*)
+                        || jsonb_agg_strict(notes_notes.*)}
+                }')
             when bookmarks.id is not null then
                 to_jsonb(bookmarks.*)
             else null end as dest

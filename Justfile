@@ -23,7 +23,7 @@ start-database:
         podman create \
             --name linkblocks_postgres \
             -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_DB=${DATABASE_NAME} \
-            -p ${DATABASE_PORT}:5432 docker.io/postgres:16 \
+            -p ${DATABASE_PORT}:5432 docker.io/postgres:15 \
             postgres
     fi
 
