@@ -22,5 +22,5 @@ pub struct CreateBookmarkTemplate {
 #[template(path = "unlinked_bookmarks.html")]
 pub struct UnlinkedBookmarksTemplate {
     pub layout: LayoutTemplate,
-    pub bookmarks: Vec<Bookmark>
+    pub bookmarks: Vec<Bookmark>,
 }
