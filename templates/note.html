@@ -1,3 +1,4 @@
+{% import "_content.html" as content %}
 {% extends "_layout.html" %}
 {% block content %}
   <header class="px-4 pt-3 mb-2">
@@ -64,9 +65,7 @@
                   >
                     📄 {{ bookmark.title }} →
                   </a>
-                  <p class="text-sm text-neutral-500">
-                    {{ bookmark.url|truncate(25) }}
-                  </p>
+                  {% call content::link_url(bookmark.url) %}
                 </li>
                 {%- when db::LinkDestination::Note with (note) -%}
                 <li class="my-2">
@@ -98,7 +97,7 @@
             Unlink
           </button>
         </div>
-        <p class="text-sm text-neutral-500">{{ bookmark.url|truncate(25) }}</p>
+        {% call content::link_url(bookmark.url) %}
       {% endmatch %}
     </section>
   {% endfor %}

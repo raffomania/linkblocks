@@ -1,3 +1,4 @@
+{% import "_content.html" as content %}
 {% extends "_layout.html" %}
 {% block content %}
   <header class="px-4 pt-3 mb-2">
@@ -20,7 +21,7 @@
           >Add to a note</a
         >
       </div>
-      <p class="text-sm text-neutral-500">{{ bookmark.url|truncate(25) }}</p>
+      {% call content::link_url(bookmark.url) %}
     </section>
   {% endfor %}
 {% endblock %}

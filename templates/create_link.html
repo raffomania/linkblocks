@@ -1,11 +1,12 @@
 {% import "_form.html" as form %}
+{% import "_content.html" as content %}
 {% extends "_layout.html" %}
 
 {%- macro link_dest(link_dest) -%}
   {%- match link_dest -%}
     {%- when db::LinkDestination::Bookmark with (bookmark) -%}
     <p class="text-orange-100">📄 {{ bookmark.title }}</p>
-    <p class="text-sm text-neutral-500">{{ bookmark.url|truncate(25) }}</p>
+    {% call content::link_url(bookmark.url) %}
     {%- when db::LinkDestination::Note with (note) -%}
     <p class="text-fuchsia-100">️🧵 {{ note.title }}</p>
     <p class="text-sm text-neutral-500">12 bookmarks, 8 notes</p>
