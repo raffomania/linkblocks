@@ -25,7 +25,7 @@ pub async fn app(state: AppState) -> anyhow::Result<Router> {
     tokio::task::spawn(
         session_store
             .clone()
-            .continuously_delete_expired(tokio::time::Duration::from_secs(3600)),
+            .continuously_delete_expired(tokio::time::Duration::from_secs(6 * 60 * 60)),
     );
 
     let session_service = tower_sessions::SessionManagerLayer::new(session_store)
