@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use askama_axum::IntoResponse;
 use axum::{
     extract::{Form, Query},
@@ -60,6 +58,8 @@ async fn post_create(
 #[derive(Deserialize)]
 struct CreateBookmarkQuery {
     parent_id: Option<Uuid>,
+    url: Option<String>,
+    title: Option<String>,
 }
 
 async fn get_create(
@@ -79,7 +79,8 @@ async fn get_create(
         errors: Default::default(),
         input: CreateBookmark {
             parent: selected_parent.as_ref().map(|p| p.id()),
-            ..Default::default()
+            url: query.url.unwrap_or_default(),
+            title: query.title.unwrap_or_default(),
         },
         selected_parent,
     })
