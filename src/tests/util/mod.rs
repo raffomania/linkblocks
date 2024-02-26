@@ -1,7 +1,7 @@
 use axum::Router;
 use sqlx::{Pool, Postgres};
 
-use crate::server::app;
+use crate::server::{app, AppState};
 
 use self::request_builder::RequestBuilder;
 
@@ -15,7 +15,12 @@ pub struct TestApp {
 impl TestApp {
     pub async fn new(pool: Pool<Postgres>) -> Self {
         TestApp {
-            router: app(pool).await.unwrap(),
+            router: app(AppState {
+                pool,
+                base_url: String::new(),
+            })
+            .await
+            .unwrap(),
         }
     }
     pub fn req(&mut self) -> RequestBuilder {

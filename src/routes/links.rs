@@ -8,7 +8,6 @@ use axum::{
     Router,
 };
 use garde::Validate;
-use sqlx::{Pool, Postgres};
 use uuid::Uuid;
 
 use crate::{
@@ -17,10 +16,11 @@ use crate::{
     extract::{self, qs_form::QsForm},
     forms::links::{CreateLink, PartialCreateLink},
     response_error::ResponseResult,
+    server::AppState,
     views::{self, layout::LayoutTemplate, links::CreateLinkTemplate},
 };
 
-pub fn router() -> Router<Pool<Postgres>> {
+pub fn router() -> Router<AppState> {
     Router::new().route("/links/create", get(get_create).post(post_create))
 }
 

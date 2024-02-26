@@ -5,9 +5,9 @@
       class="bg-neutral-900 sm:max-w-[18rem] sm:w-1/3 sm:max-h-full sm:flex sm:flex-col sm:border-r border-neutral-700 border-b sm:border-b-0"
     >
       <header
-        class="sticky top-0 flex justify-between py-2 pl-4 pr-2 leading-8 bg-neutral-900"
+        class="sticky top-0 flex justify-between py-2 pl-2 pr-2 leading-8 bg-neutral-900"
       >
-        <p class="font-bold">{{ layout.logged_in_username }}</p>
+        <a href="/profile" class="px-2 font-bold rounded hover:bg-neutral-800">{{ layout.logged_in_username }}</a>
 
         <form action="/logout" method="post">
           <button class="px-3 rounded text-neutral-400 hover:bg-neutral-800">

@@ -4,3 +4,4 @@ pub mod layout;
 pub mod links;
 pub mod login;
 pub mod notes;
+pub mod users;

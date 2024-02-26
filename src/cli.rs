@@ -7,7 +7,11 @@ use clap::{Args, Parser, Subcommand};
 
 #[cfg(debug_assertions)]
 use crate::insert_demo_data::insert_demo_data;
-use crate::{db, forms::users::CreateUser, server};
+use crate::{
+    db,
+    forms::users::CreateUser,
+    server::{self, AppState},
+};
 
 #[derive(Parser)]
 #[clap(version)]
@@ -43,6 +47,8 @@ enum Command {
         tls_key: Option<PathBuf>,
         #[clap(flatten)]
         admin_credentials: AdminCredentials,
+        #[clap(long, env)]
+        base_url: String,
     },
     Db {
         #[clap(subcommand)]
@@ -111,6 +117,7 @@ pub async fn run() -> Result<()> {
             admin_credentials,
             tls_cert,
             tls_key,
+            base_url,
         } => {
             let pool = db::pool(&cli.config.database_url).await?;
 
@@ -127,7 +134,7 @@ pub async fn run() -> Result<()> {
                 tx.commit().await?;
             }
 
-            let app = server::app(pool).await?;
+            let app = server::app(AppState { pool, base_url }).await?;
             server::start(listen_address, app, tls_cert, tls_key).await?;
         }
         Command::Db {

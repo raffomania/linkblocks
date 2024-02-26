@@ -10,6 +10,7 @@ primary_region = 'ams'
   ADMIN_USERNAME = 'rafael'
   LISTEN = '0.0.0.0:8080'
   RUST_LOG='debug'
+  BASE_URL='linkblocks.fly.dev'
 
 [build]
 

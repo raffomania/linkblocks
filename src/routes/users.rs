@@ -1,13 +1,11 @@
 use askama_axum::IntoResponse;
 use axum::{
-    extract::Form,
-    response::Redirect,
-    response::Response,
+    extract::{Form, State},
+    response::{Redirect, Response},
     routing::{get, post},
     Router,
 };
 use garde::{Report, Validate};
-use sqlx::{Pool, Postgres};
 use tower_sessions::Session;
 
 use crate::{
@@ -15,13 +13,15 @@ use crate::{
     extract,
     forms::users::Credentials,
     response_error::ResponseResult,
-    views::login::LoginTemplate,
+    server::AppState,
+    views::{layout::LayoutTemplate, login::LoginTemplate, users::ProfileTemplate},
 };
 
-pub fn router() -> Router<Pool<Postgres>> {
+pub fn router() -> Router<AppState> {
     Router::new()
         .route("/login", get(get_login).post(post_login))
         .route("/logout", post(logout))
+        .route("/profile", get(get_profile))
 }
 
 async fn post_login(
@@ -44,6 +44,19 @@ async fn post_login(
     }
 
     Ok(Redirect::to("/").into_response())
+}
+
+async fn get_profile(
+    extract::Tx(mut tx): extract::Tx,
+    auth_user: AuthUser,
+    State(state): State<AppState>,
+) -> ResponseResult<ProfileTemplate> {
+    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
+
+    Ok(ProfileTemplate {
+        layout,
+        base_url: state.base_url,
+    })
 }
 
 async fn get_login() -> ResponseResult<LoginTemplate> {

@@ -2,12 +2,12 @@ use crate::{
     authentication::AuthUser,
     extract,
     response_error::ResponseResult,
+    server::AppState,
     views::{index::IndexTemplate, layout::LayoutTemplate},
 };
 use axum::{routing::get, Router};
-use sqlx::{Pool, Postgres};
 
-pub fn router() -> Router<Pool<Postgres>> {
+pub fn router() -> Router<AppState> {
     Router::new().route("/", get(index))
 }
 

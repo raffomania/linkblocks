@@ -13,8 +13,14 @@ use axum::Router;
 use listenfd::ListenFd;
 use tower_http::trace::TraceLayer;
 
-pub async fn app(pool: sqlx::PgPool) -> anyhow::Result<Router> {
-    let session_store = tower_sessions::PostgresStore::new(pool.clone());
+#[derive(Clone)]
+pub struct AppState {
+    pub pool: sqlx::PgPool,
+    pub base_url: String,
+}
+
+pub async fn app(state: AppState) -> anyhow::Result<Router> {
+    let session_store = tower_sessions::PostgresStore::new(state.pool.clone());
     session_store.migrate().await?;
     tokio::task::spawn(
         session_store
@@ -24,6 +30,7 @@ pub async fn app(pool: sqlx::PgPool) -> anyhow::Result<Router> {
 
     let session_service = tower_sessions::SessionManagerLayer::new(session_store)
         .with_secure(true)
+        .with_same_site(tower_sessions::cookie::SameSite::Lax)
         .with_expiry(tower_sessions::Expiry::OnInactivity(
             tower_sessions::cookie::time::Duration::weeks(2),
         ));
@@ -37,7 +44,7 @@ pub async fn app(pool: sqlx::PgPool) -> anyhow::Result<Router> {
         .merge(routes::assets::router().with_state(()))
         .layer(TraceLayer::new_for_http())
         .layer(session_service)
-        .with_state(pool))
+        .with_state(state))
 }
 
 pub async fn start(

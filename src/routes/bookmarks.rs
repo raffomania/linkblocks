@@ -7,7 +7,6 @@ use axum::{
 };
 use garde::Validate;
 use serde::Deserialize;
-use sqlx::{Pool, Postgres};
 use uuid::Uuid;
 
 use crate::{
@@ -15,10 +14,11 @@ use crate::{
     db, extract,
     forms::bookmarks::CreateBookmark,
     response_error::ResponseResult,
+    server::AppState,
     views::{self, create_bookmark::CreateBookmarkTemplate, layout::LayoutTemplate},
 };
 
-pub fn router() -> Router<Pool<Postgres>> {
+pub fn router() -> Router<AppState> {
     Router::new().route("/bookmarks/create", get(get_create).post(post_create))
 }
 

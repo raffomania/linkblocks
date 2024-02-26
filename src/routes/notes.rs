@@ -1,12 +1,5 @@
-use askama_axum::IntoResponse;
-use axum::response::Redirect;
-use axum::response::Response;
-use axum::Form;
-use axum::{routing::get, Router};
-use garde::Validate;
-use sqlx::{Pool, Postgres};
-
 use crate::forms::notes::CreateNote;
+use crate::server::AppState;
 use crate::views::notes::CreateNoteTemplate;
 use crate::{authentication::AuthUser, response_error::ResponseResult};
 use crate::{
@@ -14,10 +7,16 @@ use crate::{
     views::{layout::LayoutTemplate, notes::NoteTemplate},
 };
 use crate::{extract, views};
+use askama_axum::IntoResponse;
 use axum::extract::Path;
+use axum::response::Redirect;
+use axum::response::Response;
+use axum::Form;
+use axum::{routing::get, Router};
+use garde::Validate;
 use uuid::Uuid;
 
-pub fn router() -> Router<Pool<Postgres>> {
+pub fn router() -> Router<AppState> {
     let router = Router::new();
     router
         .route("/notes/create", get(get_create).post(post_create))
