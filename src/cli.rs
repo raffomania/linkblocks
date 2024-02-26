@@ -5,7 +5,9 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilte
 
 use clap::{Args, Parser, Subcommand};
 
-use crate::{db, forms::users::CreateUser, insert_demo_data::insert_demo_data, server};
+#[cfg(debug_assertions)]
+use crate::insert_demo_data::insert_demo_data;
+use crate::{db, forms::users::CreateUser, server};
 
 #[derive(Parser)]
 #[clap(version)]
@@ -134,6 +136,7 @@ pub async fn run() -> Result<()> {
             let pool = db::pool(&cli.config.database_url).await?;
             db::migrate(&pool).await?;
         }
+        #[cfg(debug_assertions)]
         Command::InsertDemoData {
             dev_user_credentials,
         } => {
