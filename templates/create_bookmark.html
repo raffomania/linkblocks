@@ -25,6 +25,7 @@
       placeholder="https://..."
       required
       value="{{ input.url }}"
+      {# TODO move all labels 1 unit closer to inputs #}
       class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
     />
 
@@ -56,8 +57,6 @@
         value="{{ input.note_search_term.as_deref().unwrap_or_default() }}"
         hx-trigger="input changed delay:300ms,search"
         hx-post="/bookmarks/create"
-        hx-select="#search_results"
-        hx-target="#search_results"
         class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
       />
       <div id="search_results">

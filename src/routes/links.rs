@@ -61,10 +61,10 @@ async fn post_create(
         _ => None,
     };
 
-    let mut search_results = Vec::new();
-    if let Some(search_term) = search_term {
-        search_results = db::items::search(&mut tx, search_term).await?;
-    }
+    let search_results = match search_term {
+        Some(search_term) => db::items::search(&mut tx, search_term).await?,
+        None => Vec::new(),
+    };
 
     if let (Some(src), Some(dest), true) = (&src_from_db, &dest_from_db, input.submitted) {
         db::links::insert(
