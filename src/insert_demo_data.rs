@@ -68,7 +68,10 @@ pub async fn insert_demo_data(
 
     for user in users.iter() {
         for _ in 0..1000 {
-            let src = random_link_reference(&bookmarks, &notes)?;
+            let src = notes
+                .choose(&mut rand::thread_rng())
+                .ok_or(anyhow!("Found no random note to put into a link"))?
+                .id;
             let dest = random_link_reference(&bookmarks, &notes)?;
 
             let create_link = CreateLink { src, dest };

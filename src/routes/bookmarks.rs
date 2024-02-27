@@ -1,8 +1,10 @@
+use anyhow::Context;
 use askama_axum::IntoResponse;
 use axum::{
-    extract::{Form, Query},
+    extract::{Form, Path, Query},
+    http::HeaderMap,
     response::{Redirect, Response},
-    routing::get,
+    routing::{delete, get},
     Router,
 };
 use garde::Validate;
@@ -26,6 +28,7 @@ pub fn router() -> Router<AppState> {
     Router::new()
         .route("/bookmarks/create", get(get_create).post(post_create))
         .route("/bookmarks/unlinked", get(get_unlinked))
+        .route("/bookmarks/:id", delete(delete_by_id))
 }
 
 async fn post_create(
@@ -50,13 +53,13 @@ async fn post_create(
         .into_response());
     };
 
-    let bookmark = db::bookmarks::insert(&mut tx, auth_user.user_id, input).await?;
+    db::bookmarks::insert(&mut tx, auth_user.user_id, input).await?;
 
     tx.commit().await?;
 
     let redirect_dest = match selected_parent {
         Some(parent) => parent.path(),
-        None => bookmark.path(),
+        None => "/bookmarks/unlinked".to_string(),
     };
     Ok(Redirect::to(&redirect_dest).into_response())
 }
@@ -100,4 +103,21 @@ async fn get_unlinked(
     let bookmarks = db::bookmarks::list_unlinked(&mut tx, auth_user.user_id).await?;
 
     Ok(UnlinkedBookmarksTemplate { layout, bookmarks })
+}
+
+async fn delete_by_id(
+    extract::Tx(mut tx): extract::Tx,
+    Path(id): Path<Uuid>,
+) -> ResponseResult<HeaderMap> {
+    db::bookmarks::delete_by_id(&mut tx, id).await?;
+
+    tx.commit().await?;
+
+    let mut headers = HeaderMap::new();
+    headers.insert(
+        "HX-Refresh",
+        "true".parse().context("Failed to parse header value")?,
+    );
+
+    Ok(headers)
 }

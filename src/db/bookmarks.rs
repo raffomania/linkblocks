@@ -81,3 +81,19 @@ pub async fn list_unlinked(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<
 
     Ok(bookmarks)
 }
+
+pub async fn delete_by_id(tx: &mut AppTx, id: Uuid) -> ResponseResult<Bookmark> {
+    let bookmark = query_as!(
+        Bookmark,
+        r#"
+        delete from bookmarks
+        where id = $1
+        returning *;
+        "#,
+        id
+    )
+    .fetch_one(&mut **tx)
+    .await?;
+
+    Ok(bookmark)
+}

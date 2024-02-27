@@ -46,18 +46,9 @@ create table links (
         references users(id)
         not null,
 
-    src_bookmark_id uuid
-        references bookmarks(id)
-        default null,
     src_note_id uuid
         references notes(id)
-        default null,
-
-    check (
-        num_nonnulls(
-            src_bookmark_id, src_note_id
-        ) = 1
-    ),
+        not null,
 
     dest_bookmark_id uuid
         references bookmarks(id)

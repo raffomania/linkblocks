@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        delete from links\n        where id = $1\n        returning *\n        ",
+  "query": "\n        delete from bookmarks\n        where id = $1\n        returning *;\n        ",
   "describe": {
     "columns": [
       {
@@ -20,18 +20,13 @@
       },
       {
         "ordinal": 3,
-        "name": "src_note_id",
-        "type_info": "Uuid"
+        "name": "url",
+        "type_info": "Text"
       },
       {
         "ordinal": 4,
-        "name": "dest_bookmark_id",
-        "type_info": "Uuid"
-      },
-      {
-        "ordinal": 5,
-        "name": "dest_note_id",
-        "type_info": "Uuid"
+        "name": "title",
+        "type_info": "Text"
       }
     ],
     "parameters": {
@@ -44,9 +39,8 @@
       false,
       false,
       false,
-      true,
-      true
+      false
     ]
   },
-  "hash": "428714129ac2a0b701ed574ba62a234d313b149fb22dd45e0a305ca2772d54bf"
+  "hash": "212735e57340956e6176c65b4ce06aedcf278052f90bc02d1ddf9d5b6f5c04dc"
 }

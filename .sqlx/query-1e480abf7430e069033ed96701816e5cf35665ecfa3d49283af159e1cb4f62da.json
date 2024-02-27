@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        insert into links\n        (\n            user_id,\n            src_bookmark_id,\n            src_note_id,\n            dest_bookmark_id,\n            dest_note_id\n        )\n        values ($1,\n            (select id from bookmarks where id = $2),\n            (select id from notes where id = $2),\n            (select id from bookmarks where id = $3),\n            (select id from notes where id = $3)\n        )\n        returning *",
+  "query": "\n        insert into links\n        (\n            user_id,\n            src_note_id,\n            dest_bookmark_id,\n            dest_note_id\n        )\n        values ($1,\n            (select id from notes where id = $2),\n            (select id from bookmarks where id = $3),\n            (select id from notes where id = $3)\n        )\n        returning *",
   "describe": {
     "columns": [
       {
@@ -20,21 +20,16 @@
       },
       {
         "ordinal": 3,
-        "name": "src_bookmark_id",
-        "type_info": "Uuid"
-      },
-      {
-        "ordinal": 4,
         "name": "src_note_id",
         "type_info": "Uuid"
       },
       {
-        "ordinal": 5,
+        "ordinal": 4,
         "name": "dest_bookmark_id",
         "type_info": "Uuid"
       },
       {
-        "ordinal": 6,
+        "ordinal": 5,
         "name": "dest_note_id",
         "type_info": "Uuid"
       }
@@ -50,11 +45,10 @@
       false,
       false,
       false,
-      true,
-      true,
+      false,
       true,
       true
     ]
   },
-  "hash": "0f992c85b014157a205f22ed6554daaaf421339b7db1984d9e39014d35229e28"
+  "hash": "1e480abf7430e069033ed96701816e5cf35665ecfa3d49283af159e1cb4f62da"
 }

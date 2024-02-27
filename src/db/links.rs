@@ -13,7 +13,6 @@ pub struct Link {
     pub created_at: OffsetDateTime,
     pub user_id: Uuid,
 
-    pub src_bookmark_id: Option<Uuid>,
     pub src_note_id: Option<Uuid>,
 
     pub dest_bookmark_id: Option<Uuid>,
@@ -69,13 +68,11 @@ pub async fn insert(
         insert into links
         (
             user_id,
-            src_bookmark_id,
             src_note_id,
             dest_bookmark_id,
             dest_note_id
         )
         values ($1,
-            (select id from bookmarks where id = $2),
             (select id from notes where id = $2),
             (select id from bookmarks where id = $3),
             (select id from notes where id = $3)
@@ -123,8 +120,7 @@ pub async fn list_by_note(tx: &mut AppTx, note_id: Uuid) -> ResponseResult<Vec<L
 
         where links.src_note_id = $1
         group by links.id, notes.id, bookmarks.id
-        -- temporary hack for random ordering of demo data
-        order by link_id
+        order by links.created_at desc
         "#,
         note_id
     )
