@@ -6,13 +6,15 @@
       <h1 class="text-xl font-bold">{{ note.title }}</h1>
     </div>
     {% if let Some(content) = note.content %}
-      <p class="mt-2 whitespace-pre-line">{{- content -}}</p>
+      {% if !content.is_empty() %}
+        <p class="mt-2 whitespace-pre-line">{{- content -}}</p>
+      {% endif %}
     {% endif %}
   </header>
-  <section class="flex">
+  <section class="flex my-4">
     <a
       href="/bookmarks/create?parent_id={{ note.id }}"
-      class="block px-4 py-1 my-4 ml-4 mr-2 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
+      class="block px-4 py-1 ml-4 mr-2 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
       hx-get="/bookmarks/create?parent_id={{ note.id }}"
       hx-target="closest section"
       hx-select="#create_bookmark"
@@ -20,7 +22,7 @@
     >
     <a
       href="/links/create?parent_id={{ note.id }}"
-      class="block px-4 py-1 mx-2 my-4 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
+      class="block px-4 py-1 mx-2 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
       hx-get="/links/create?src_id={{ note.id }}"
       hx-target="closest section"
       hx-select="#create_link"
@@ -48,7 +50,10 @@
           </button>
         </div>
         {% if let Some(content) = note.note.content %}
-          <p class="mt-2">{{- content -}}</p>
+
+          {% if !content.is_empty() %}
+            <p class="mt-2">{{- content -}}</p>
+          {% endif %}
         {%- endif -%}
 
         {%- if note.links.len() > 0 -%}

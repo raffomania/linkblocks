@@ -1,10 +1,8 @@
 {% import "_content.html" as content %}
 {% extends "_layout.html" %}
 {% block content %}
-  <header class="px-4 pt-3 mb-2">
-    <div class="flex items-center justify-between">
-      <h1 class="text-xl font-bold">Unlinked Bookmarks</h1>
-    </div>
+  <header class="px-4 pt-3 mb-4">
+    <h1 class="text-xl font-bold">Unlinked Bookmarks</h1>
   </header>
   {% for bookmark in bookmarks %}
     <section
