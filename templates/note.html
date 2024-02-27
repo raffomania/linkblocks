@@ -32,14 +32,12 @@
       {% match link.dest %}
         {% when db::LinkDestinationWithChildren::Note with (note) %}
         <div class="flex justify-between leading-8">
-          <h2 class="font-semibold">
-            <a
-              class="block hover:text-fuchsia-300"
-              href="/notes/{{ note.note.id }}"
-            >
-              {{ note.note.title }}
-            </a>
-          </h2>
+          <a
+            class="block overflow-hidden font-semibold hover:text-fuchsia-300 text-ellipsis whitespace-nowrap"
+            href="/notes/{{ note.note.id }}"
+          >
+            {{ note.note.title }}
+          </a>
 
           <button
             class="px-3 rounded hover:bg-neutral-700 text-neutral-400"
@@ -84,7 +82,7 @@
         {% when db::LinkDestinationWithChildren::Bookmark with (bookmark) %}
         <div class="flex justify-between leading-8">
           <a
-            class="block text-orange-100 hover:text-orange-300"
+            class="block overflow-hidden text-orange-100 hover:text-orange-300 text-ellipsis whitespace-nowrap"
             href="{{ bookmark.url }}"
           >
             📄 {{ bookmark.title }} →

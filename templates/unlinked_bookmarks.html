@@ -11,7 +11,7 @@
       class="flex flex-wrap items-end justify-between gap-2 py-4 border-t border-neutral-700"
     >
       <a
-        class="block px-4 leading-8 text-orange-100 hover:text-orange-300 shrink"
+        class="block px-4 overflow-hidden leading-8 text-orange-100 hover:text-orange-300 shrink text-ellipsis whitespace-nowrap"
         href="{{ bookmark.url }}"
       >
         📄 {{ bookmark.title }} → {% call content::link_url(bookmark.url) %}
