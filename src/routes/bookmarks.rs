@@ -39,7 +39,7 @@ async fn post_create(
     let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
 
     let selected_parent = match input.parent {
-        Some(id) => Some(db::items::by_id(&mut tx, id).await?),
+        Some(id) => Some(db::notes::by_id(&mut tx, id).await?),
         None => None,
     };
 
@@ -49,9 +49,26 @@ async fn post_create(
             errors: errors.into(),
             input,
             selected_parent,
+            search_results: Vec::new(),
         }
         .into_response());
     };
+
+    let search_results = match input.note_search_term.as_ref() {
+        Some(term) => db::notes::search(&mut tx, term).await?,
+        None => Vec::new(),
+    };
+
+    if !input.submitted {
+        return Ok(CreateBookmarkTemplate {
+            layout,
+            errors: Default::default(),
+            input,
+            selected_parent,
+            search_results,
+        }
+        .into_response());
+    }
 
     db::bookmarks::insert(&mut tx, auth_user.user_id, input).await?;
 
@@ -79,7 +96,7 @@ async fn get_create(
     let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
 
     let selected_parent = match query.parent_id {
-        Some(id) => Some(db::items::by_id(&mut tx, id).await?),
+        Some(id) => Some(db::notes::by_id(&mut tx, id).await?),
         _ => None,
     };
 
@@ -87,11 +104,13 @@ async fn get_create(
         layout,
         errors: Default::default(),
         input: CreateBookmark {
-            parent: selected_parent.as_ref().map(|p| p.id()),
+            parent: selected_parent.as_ref().map(|p| p.id),
             url: query.url.unwrap_or_default(),
             title: query.title.unwrap_or_default(),
+            ..Default::default()
         },
         selected_parent,
+        search_results: Vec::new(),
     })
 }
 

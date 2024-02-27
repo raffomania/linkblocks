@@ -9,7 +9,6 @@
     {% call content::link_url(bookmark.url) %}
     {%- when db::LinkDestination::Note with (note) -%}
     <p class="text-fuchsia-100">️🧵 {{ note.title }}</p>
-    <p class="text-sm text-neutral-500">12 bookmarks, 8 notes</p>
     {% when _ %}
   {% endmatch %}
 {%- endmacro -%}
@@ -80,22 +79,10 @@
 
     <div id="search_results">
       {% for result in search_results %}
-        {%- let title -%}
-        {%- let id -%}
-
-        {%- match result -%}
-          {%- when db::LinkDestination::Bookmark with (bookmark) -%}
-          {%- let title = bookmark.title -%}
-          {%- let id = bookmark.id -%}
-          {%- when db::LinkDestination::Note with (note) -%}
-          {%- let title = note.title -%}
-          {%- let id = note.id -%}
-        {%- endmatch -%}
-
         <button
           hx-post="/links/create"
           class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700"
-          value="{{ id }}"
+          value="{{ result.id() }}"
           {%- if input.src.is_some() -%}
             name="dest"
           {%- else -%}

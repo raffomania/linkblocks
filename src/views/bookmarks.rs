@@ -1,7 +1,7 @@
 use askama::Template;
 
 use crate::{
-    db::{self, Bookmark, LinkDestination},
+    db::{self},
     form_errors::FormErrors,
     forms,
 };
@@ -15,12 +15,13 @@ pub struct CreateBookmarkTemplate {
 
     pub errors: FormErrors,
     pub input: forms::bookmarks::CreateBookmark,
-    pub selected_parent: Option<LinkDestination>,
+    pub selected_parent: Option<db::Note>,
+    pub search_results: Vec<db::Note>,
 }
 
 #[derive(Template)]
 #[template(path = "unlinked_bookmarks.html")]
 pub struct UnlinkedBookmarksTemplate {
     pub layout: LayoutTemplate,
-    pub bookmarks: Vec<Bookmark>,
+    pub bookmarks: Vec<db::Bookmark>,
 }

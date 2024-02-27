@@ -89,3 +89,20 @@ pub async fn list_pinned_by_user(tx: &mut AppTx, user_id: Uuid) -> ResponseResul
 
     Ok(notes)
 }
+
+pub async fn search(tx: &mut AppTx, term: &str) -> ResponseResult<Vec<Note>> {
+    let notes = query_as!(
+        Note,
+        r#"
+            select *
+            from notes
+            where notes.title like '%' || $1 || '%'
+            limit 10
+        "#,
+        term
+    )
+    .fetch_all(&mut **tx)
+    .await?;
+
+    Ok(notes)
+}
