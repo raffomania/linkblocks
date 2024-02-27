@@ -1,3 +1,23 @@
 {% extends "_layout.html" %}
 {% block content %}
+  <header class="mx-4 mt-3 mb-4">
+    <h1 class="text-xl font-bold">Welcome to linkblocks!</h1>
+  </header>
+
+  <ul class="flex flex-col max-w-sm gap-2 px-4">
+    <li>
+      <a
+        class="block p-4 border rounded border-neutral-700 hover:bg-neutral-700"
+        href="/bookmarks/create"
+        >Add a bookmark</a
+      >
+    </li>
+    <li class="">
+      <a
+        class="block px-4 py-2 border rounded border-neutral-700 hover:bg-neutral-700"
+        href="/profile"
+        >Settings</a
+      >
+    </li>
+  </ul>
 {% endblock %}

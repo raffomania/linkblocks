@@ -54,9 +54,10 @@ async fn post_create(
         .into_response());
     };
 
-    let search_results = match input.note_search_term.as_ref() {
-        Some(term) => db::notes::search(&mut tx, term).await?,
-        None => Vec::new(),
+    let search_results = match (input.note_search_term.as_ref(), input.parent) {
+        (None, None) => db::notes::list_recent(&mut tx).await?,
+        (Some(term), None) => db::notes::search(&mut tx, term).await?,
+        _ => Vec::new(),
     };
 
     if !input.submitted {
@@ -110,7 +111,7 @@ async fn get_create(
             ..Default::default()
         },
         selected_parent,
-        search_results: Vec::new(),
+        search_results: db::notes::list_recent(&mut tx).await?,
     })
 }
 

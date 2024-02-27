@@ -106,3 +106,20 @@ pub async fn search(tx: &mut AppTx, term: &str) -> ResponseResult<Vec<Note>> {
 
     Ok(notes)
 }
+
+pub async fn list_recent(tx: &mut AppTx) -> ResponseResult<Vec<Note>> {
+    let notes = query_as!(
+        Note,
+        r#"
+            select notes.*
+            from notes
+            left join links on notes.id = links.src_note_id
+            order by links.created_at desc nulls last, notes.created_at desc
+            limit 10
+        "#,
+    )
+    .fetch_all(&mut **tx)
+    .await?;
+
+    Ok(notes)
+}
