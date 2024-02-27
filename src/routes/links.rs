@@ -13,7 +13,7 @@ use uuid::Uuid;
 
 use crate::{
     authentication::AuthUser,
-    db,
+    db::{self, LinkDestination},
     extract::{self, qs_form::QsForm},
     forms::links::{CreateLink, PartialCreateLink},
     response_error::ResponseResult,
@@ -116,6 +116,16 @@ async fn get_create(
         _ => None,
     };
 
+    let search_results = match (src.as_ref(), dest.as_ref()) {
+        (None, _) => db::notes::list_recent(&mut tx)
+            .await?
+            .into_iter()
+            .map(LinkDestination::Note)
+            .collect(),
+        (_, None) => db::items::list_recent(&mut tx).await?,
+        _ => Vec::new(),
+    };
+
     Ok(CreateLinkTemplate {
         layout,
         errors: Default::default(),
@@ -124,7 +134,7 @@ async fn get_create(
             dest: dest.as_ref().map(|item| item.id()),
             ..PartialCreateLink::default()
         },
-        search_results: Vec::new(),
+        search_results,
         src_from_db: src,
         dest_from_db: dest,
     })

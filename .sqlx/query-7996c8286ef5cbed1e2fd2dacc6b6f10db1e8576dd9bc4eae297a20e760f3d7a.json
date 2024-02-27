@@ -1,0 +1,44 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            select notes.*\n            from notes\n            left join links as src_links on notes.id = src_links.src_note_id\n            left join links as dest_links on notes.id = dest_links.dest_note_id\n            group by notes.id\n            order by\n                max(src_links.created_at) desc nulls last,\n                max(dest_links.created_at) nulls last,\n                max(notes.created_at) desc\n            limit 10\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 2,
+        "name": "user_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 3,
+        "name": "title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "content",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "7996c8286ef5cbed1e2fd2dacc6b6f10db1e8576dd9bc4eae297a20e760f3d7a"
+}

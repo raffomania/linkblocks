@@ -1,0 +1,20 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            select\n            case\n                when src_notes.id is not null then\n                    to_jsonb(src_notes.*)\n                when bookmarks.id is not null then\n                    to_jsonb(bookmarks.*)\n                else null\n            end as item\n            from links\n            left join notes as src_notes\n                on src_notes.id = links.src_note_id\n            left join bookmarks\n                on bookmarks.id = links.dest_bookmark_id\n            where src_notes.id is not null or bookmarks.id is not null\n            order by\n                links.created_at desc nulls last,\n                src_notes.created_at desc,\n                bookmarks.created_at desc\n            limit 10\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "item",
+        "type_info": "Jsonb"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "fd7db3ac7f430bdb33adb334a3535404d37ad16fe2c40951ea781c96113f969e"
+}

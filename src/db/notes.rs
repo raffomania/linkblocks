@@ -113,8 +113,13 @@ pub async fn list_recent(tx: &mut AppTx) -> ResponseResult<Vec<Note>> {
         r#"
             select notes.*
             from notes
-            left join links on notes.id = links.src_note_id
-            order by links.created_at desc nulls last, notes.created_at desc
+            left join links as src_links on notes.id = src_links.src_note_id
+            left join links as dest_links on notes.id = dest_links.dest_note_id
+            group by notes.id
+            order by
+                max(src_links.created_at) desc nulls last,
+                max(dest_links.created_at) nulls last,
+                max(notes.created_at) desc
             limit 10
         "#,
     )
