@@ -89,3 +89,6 @@ ci-dev: start-database start-test-database
     just test
     cargo fmt --all -- --check
     cargo clippy -- -D warnings
+
+install-git-hooks:
+    ln -srf pre-commit.sh .git/hooks/pre-commit
