@@ -7,13 +7,14 @@ use axum::{
     routing::{delete, get},
     Router,
 };
-use garde::Validate;
+
 use serde::Deserialize;
 use uuid::Uuid;
 
 use crate::{
     authentication::AuthUser,
-    db, extract,
+    db::{self, bookmarks::InsertBookmark},
+    extract,
     forms::bookmarks::CreateBookmark,
     response_error::ResponseResult,
     server::AppState,
@@ -43,35 +44,27 @@ async fn post_create(
         None => None,
     };
 
-    if let Err(errors) = input.validate(&()) {
-        return Ok(views::bookmarks::CreateBookmarkTemplate {
-            layout,
-            errors: errors.into(),
-            input,
-            selected_parent,
-            search_results: Vec::new(),
-        }
-        .into_response());
-    };
-
     let search_results = match (input.note_search_term.as_ref(), input.parent) {
         (None, None) => db::notes::list_recent(&mut tx).await?,
         (Some(term), None) => db::notes::search(&mut tx, term).await?,
         _ => Vec::new(),
     };
 
-    if !input.submitted {
-        return Ok(CreateBookmarkTemplate {
-            layout,
-            errors: Default::default(),
-            input,
-            selected_parent,
-            search_results,
+    let insert_bookmark = match InsertBookmark::try_from(input.clone()) {
+        Err(errors) => {
+            return Ok(views::bookmarks::CreateBookmarkTemplate {
+                layout,
+                errors,
+                input,
+                selected_parent,
+                search_results,
+            }
+            .into_response());
         }
-        .into_response());
-    }
+        Ok(i) => i,
+    };
 
-    db::bookmarks::insert(&mut tx, auth_user.user_id, input).await?;
+    db::bookmarks::insert(&mut tx, auth_user.user_id, insert_bookmark).await?;
 
     tx.commit().await?;
 

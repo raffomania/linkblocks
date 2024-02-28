@@ -64,11 +64,11 @@
         {% for note in search_results %}
           <button
             hx-post="/bookmarks/create"
-            class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700"
+            class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 text-fuchsia-100"
             value="{{ note.id }}"
             name="parent"
           >
-            <p class="text-fuchsia-100">️🧵 {{ note.title }}</p>
+            ️🧵 {{ note.title }}
           </button>
         {% endfor %}
       </div>

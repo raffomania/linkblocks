@@ -1,13 +1,12 @@
 use anyhow::{anyhow, Result};
 use fake::{Fake, Faker};
-use garde::Validate;
 use rand::{seq::SliceRandom, Rng};
 use sqlx::PgPool;
 use uuid::Uuid;
 
 use crate::{
-    db::{self},
-    forms::{bookmarks::CreateBookmark, links::CreateLink, notes::CreateNote, users::CreateUser},
+    db::{self, bookmarks::InsertBookmark},
+    forms::{links::CreateLink, notes::CreateNote, users::CreateUser},
 };
 
 pub async fn insert_demo_data(
@@ -41,14 +40,13 @@ pub async fn insert_demo_data(
             let title: String = fake::faker::lorem::en::Words(1..5)
                 .fake::<Vec<_>>()
                 .join(" ");
-            let create_bookmark = CreateBookmark {
+            let insert_bookmark = InsertBookmark {
                 url: format!("https://{word}.{tld}"),
                 title,
-                ..Default::default()
+                parent: None,
             };
-            create_bookmark.validate(&())?;
 
-            let bookmark = db::bookmarks::insert(&mut tx, user.id, create_bookmark).await?;
+            let bookmark = db::bookmarks::insert(&mut tx, user.id, insert_bookmark).await?;
             bookmarks.push(bookmark);
         }
 

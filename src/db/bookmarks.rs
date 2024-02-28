@@ -4,7 +4,6 @@ use time::OffsetDateTime;
 use uuid::Uuid;
 
 use crate::db;
-use crate::forms::bookmarks::CreateBookmark;
 use crate::forms::links::CreateLink;
 use crate::response_error::ResponseResult;
 
@@ -28,10 +27,16 @@ impl Bookmark {
     }
 }
 
+pub struct InsertBookmark {
+    pub parent: Option<Uuid>,
+    pub url: String,
+    pub title: String,
+}
+
 pub async fn insert(
     tx: &mut AppTx,
     user_id: Uuid,
-    create_bookmark: CreateBookmark,
+    create_bookmark: InsertBookmark,
 ) -> ResponseResult<Bookmark> {
     let bookmark = query_as!(
         Bookmark,
