@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            select *\n            from notes\n            where notes.title like '%' || $1 || '%'\n            limit 10\n        ",
+  "query": "\n            select *\n            from notes\n            where notes.title ilike '%' || $1 || '%'\n            limit 10\n        ",
   "describe": {
     "columns": [
       {
@@ -42,5 +42,5 @@
       true
     ]
   },
-  "hash": "358aee9817c9e9b82a2dbd4e697b2c2e6ebaab9cc4a5fbea8658371c35122e98"
+  "hash": "ed375b4fba23d27e1eb3edaa0d31a458fd0cb07db56b67ba55af40513bd0e3e4"
 }
