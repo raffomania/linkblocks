@@ -24,24 +24,23 @@
     id="create_link"
     class="mx-4 mb-4"
   >
-    <h1 class="pt-3 pb-4 text-xl font-bold">Link items</h1>
-
-    {%- match src_from_db -%}
-      {%- when Some with (src) -%}
+    <h1 class="pt-3 pb-4 text-xl font-bold">Add to note</h1>
+    {%- match dest_from_db -%}
+      {%- when Some with (dest) -%}
       <label class="block mb-4">
-        <p class="mb-1">Linking from:</p>
-        {% call link_dest(src) %}
-        <input type="hidden" value="{{ src.id() }}" name="src" />
+        <p class="mb-1">Item to add</p>
+        {% call link_dest(dest) %}
+        <input type="hidden" value="{{ dest.id() }}" name="dest" />
       </label>
       {%- when None -%}
     {%- endmatch -%}
 
-    {%- match dest_from_db -%}
-      {%- when Some with (dest) -%}
-      <label>
-        <p>to:</p>
-        {% call link_dest(dest) %}
-        <input type="hidden" value="{{ dest.id() }}" name="dest" />
+    {%- match src_from_db -%}
+      {%- when Some with (src) -%}
+      <label class="block mb-2">
+        <p class="mb-1">Adding to note</p>
+        {% call link_dest(src) %}
+        <input type="hidden" value="{{ src.id() }}" name="src" />
       </label>
       {%- when None -%}
     {%- endmatch -%}
@@ -53,15 +52,15 @@
       {% if input.src.is_none() %}
         {% let suffix = "src" %}
         {% let input_search_term = input.search_term_src %}
-        {% let label = "Linking from:" %}
+        {% let label = "Adding to note" %}
       {% else %}
         {% let suffix = "dest" %}
         {% let input_search_term = input.search_term_dest %}
-        {% let label = "to:" %}
+        {% let label = "Item to add" %}
       {% endif %}
 
-      <label>
-        <p>{{ label }}</p>
+      <label class="block my-2">
+        <p class="mb-1">{{ label }}</p>
         {% call form::errors(errors, "search_term_src") %}
         {% call form::errors(errors, "search_term_dest") %}
         <input
@@ -73,7 +72,7 @@
           name="search_term_{{ suffix }}"
           id="search_term_{{ suffix }}"
           value="{{ input_search_term.as_deref().unwrap_or_default() }}"
-          class="rounded py-1.5 px-3 my-2 bg-neutral-900 w-full"
+          class="rounded py-1.5 px-3 bg-neutral-900 w-full"
         />
       </label>
     {%- endif -%}
