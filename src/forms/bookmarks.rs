@@ -8,6 +8,8 @@ use crate::{db::bookmarks::InsertBookmark, form_errors::FormErrors};
 pub struct CreateBookmark {
     #[garde(skip)]
     pub parent: Option<Uuid>,
+    #[garde(skip)]
+    pub create_parent_from_search_term: Option<String>,
     #[garde(url)]
     pub url: String,
     #[garde(skip)]

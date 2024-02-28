@@ -15,7 +15,7 @@ use crate::{
     authentication::AuthUser,
     db::{self, bookmarks::InsertBookmark},
     extract,
-    forms::bookmarks::CreateBookmark,
+    forms::{bookmarks::CreateBookmark, notes::CreateNote},
     response_error::ResponseResult,
     server::AppState,
     views::{
@@ -39,7 +39,7 @@ async fn post_create(
 ) -> ResponseResult<Response> {
     let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
 
-    let selected_parent = match input.parent {
+    let mut selected_parent = match input.parent {
         Some(id) => Some(db::notes::by_id(&mut tx, id).await?),
         None => None,
     };
@@ -50,7 +50,7 @@ async fn post_create(
         _ => Vec::new(),
     };
 
-    let insert_bookmark = match InsertBookmark::try_from(input.clone()) {
+    let mut insert_bookmark = match InsertBookmark::try_from(input.clone()) {
         Err(errors) => {
             return Ok(views::bookmarks::CreateBookmarkTemplate {
                 layout,
@@ -63,6 +63,20 @@ async fn post_create(
         }
         Ok(i) => i,
     };
+
+    if let Some(term) = input.create_parent_from_search_term {
+        let parent = db::notes::insert(
+            &mut tx,
+            auth_user.user_id,
+            CreateNote {
+                title: term,
+                content: None,
+            },
+        )
+        .await?;
+        insert_bookmark.parent = Some(parent.id);
+        selected_parent = Some(parent);
+    }
 
     db::bookmarks::insert(&mut tx, auth_user.user_id, insert_bookmark).await?;
 

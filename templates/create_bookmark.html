@@ -50,28 +50,52 @@
       </a>
       <input type="hidden" name="parent" value="{{ note.id }}" />
       {% when None %}
-      {% call form::errors(errors, "note_search_term") %}
-      <input
-        type="search"
-        name="note_search_term"
-        id="note_search_term"
-        value="{{ input.note_search_term.as_deref().unwrap_or_default() }}"
-        hx-trigger="input changed delay:300ms,search"
-        hx-post="/bookmarks/create"
-        class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
-      />
-      <div id="search_results">
-        {% for note in search_results %}
-          <button
-            hx-post="/bookmarks/create"
-            class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 text-fuchsia-100"
-            value="{{ note.id }}"
-            name="parent"
-          >
-            ️🧵 {{ note.title }}
-          </button>
-        {% endfor %}
-      </div>
+
+      {% if let Some(term) = input.create_parent_from_search_term %}
+        <p class="leading-8">
+          New note <span class="text-fuchsia-100">🧵 {{ term }}</span>
+        </p>
+        <input
+          type="hidden"
+          name="create_parent_from_search_term"
+          value="{{ term }}"
+        />
+      {% else %}
+        {% call form::errors(errors, "note_search_term") %}
+        <input
+          type="search"
+          name="note_search_term"
+          id="note_search_term"
+          value="{{ input.note_search_term.as_deref().unwrap_or_default() }}"
+          hx-trigger="input changed delay:300ms,search"
+          hx-post="/bookmarks/create"
+          class="rounded py-1.5 px-3 my-2 bg-neutral-900"
+        />
+        <div id="search_results">
+          {% for note in search_results %}
+            <button
+              hx-post="/bookmarks/create"
+              class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 text-fuchsia-100"
+              name="parent"
+              value="{{ note.id }}"
+            >
+              ️🧵 {{ note.title }}
+            </button>
+          {% endfor %}
+          {% if search_results.is_empty() && input.create_parent_from_search_term.is_none() %}
+            {% if let Some(term) = input.note_search_term %}
+              <button
+                name="create_parent_from_search_term"
+                value="{{ term }}"
+                hx-post="/bookmarks/create"
+                class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 text-fuchsia-100"
+              >
+                Create note "{{ term }}"
+              </button>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endif %}
     {% endmatch %}
     {% call form::errors(errors, "root") %}
     <button
@@ -79,6 +103,7 @@
       name="submitted"
       value="true"
       class="bg-neutral-300 py-1.5 px-3 text-neutral-900 rounded mt-4 self-end"
+      {# TODO Refresh whole page in case there's a new note in the sidebar #}
     >
       Add Bookmark
     </button>
