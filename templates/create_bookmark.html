@@ -54,6 +54,7 @@
       <input
         type="search"
         name="note_search_term"
+        id="note_search_term"
         value="{{ input.note_search_term.as_deref().unwrap_or_default() }}"
         hx-trigger="input changed delay:300ms,search"
         hx-post="/bookmarks/create"

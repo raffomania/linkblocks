@@ -14,11 +14,11 @@ pub async fn search(tx: &mut AppTx, term: &str) -> ResponseResult<Vec<LinkDestin
         r#"
             select to_jsonb(bookmarks.*) as item
             from bookmarks
-            where bookmarks.title like '%' || $1 || '%'
+            where bookmarks.title ilike '%' || $1 || '%'
             union
             select to_jsonb(notes.*) as item
             from notes
-            where notes.title like '%' || $1 || '%'
+            where notes.title ilike '%' || $1 || '%'
             limit 10
         "#,
         term

@@ -96,7 +96,7 @@ pub async fn search(tx: &mut AppTx, term: &str) -> ResponseResult<Vec<Note>> {
         r#"
             select *
             from notes
-            where notes.title like '%' || $1 || '%'
+            where notes.title ilike '%' || $1 || '%'
             limit 10
         "#,
         term
