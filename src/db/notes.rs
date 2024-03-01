@@ -1,5 +1,5 @@
 //! TODO rename notes
-//! lists / collections / channels / nodes
+//! lists / collections / channels / nodes / pages
 use serde::Deserialize;
 use sqlx::query_as;
 use sqlx::FromRow;
