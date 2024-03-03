@@ -67,12 +67,16 @@
       value="{{ input.note_search_term.as_deref().unwrap_or_default() }}"
       hx-trigger="input changed delay:300ms,search"
       hx-post="/bookmarks/create"
+      hx-target="#search_results"
+      hx-select="#search_results"
+      hx-swap="outerHTML"
       class="rounded py-1.5 px-3 my-2 bg-neutral-900"
     />
     <div id="search_results">
       {% for note in search_results %}
         <button
           hx-post="/bookmarks/create"
+          hx-params="not note_search_term"
           class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 text-fuchsia-100"
           name="parents[]"
           value="{{ note.id }}"
@@ -86,6 +90,7 @@
             name="create_parents[]"
             value="{{ term }}"
             hx-post="/bookmarks/create"
+            hx-params="not note_search_term"
             class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 text-fuchsia-100"
           >
             Create note "{{ term }}"
