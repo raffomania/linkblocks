@@ -1,8 +1,7 @@
-use askama_axum::IntoResponse;
 use axum::{
     body::Body,
     http::{self, request, HeaderMap, HeaderName, HeaderValue, Request, Response, StatusCode},
-    Form, Router,
+    Router,
 };
 use http_body_util::BodyExt;
 use mime_guess::mime;
@@ -53,7 +52,7 @@ impl<'app> RequestBuilder<'app> {
                 http::header::CONTENT_TYPE,
                 mime::APPLICATION_WWW_FORM_URLENCODED.as_ref(),
             )
-            .body(Form(input).into_response().into_body())
+            .body(serde_qs::to_string(input).unwrap())
             .unwrap();
 
         let response = ServiceExt::<Request<Body>>::ready(&mut self.router)

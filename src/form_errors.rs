@@ -1,11 +1,11 @@
+#[derive(Debug)]
 pub struct FormErrors(pub garde::Report);
 
 impl FormErrors {
     pub fn filter(&self, path_str: &str) -> Vec<String> {
-        let path_to_find = garde::Path::new(path_str);
         self.0
             .iter()
-            .filter(|(path, _error)| path == &path_to_find)
+            .filter(|(path, _error)| path.to_string() == path_str)
             .map(|(_path, error)| error.to_string())
             .collect()
     }

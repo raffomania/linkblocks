@@ -5,10 +5,11 @@ use crate::{
 };
 use anyhow::{anyhow, Context};
 use argon2::PasswordVerifier;
+use askama::filters::urlencode;
 use askama_axum::IntoResponse;
 use axum::{
     async_trait,
-    extract::FromRequestParts,
+    extract::{FromRequestParts, OriginalUri},
     http::request::Parts,
     response::{Redirect, Response},
 };
@@ -104,7 +105,16 @@ where
 
         let auth_user = AuthUser::from_session(session).await;
         if let Err(ResponseError::NotAuthenticated) = auth_user {
-            return Err(Redirect::to("/login").into_response());
+            let uri = OriginalUri::from_request_parts(req, state).await.unwrap();
+
+            let redirect_after_login = uri
+                .path_and_query()
+                .map(|pq| pq.as_str())
+                .unwrap_or_default();
+            let redirect_after_login = urlencode(redirect_after_login).unwrap_or_default();
+
+            let redirect_to = format!("/login?previous_uri={redirect_after_login}",);
+            return Err(Redirect::to(&redirect_to).into_response());
         }
 
         Ok(auth_user.map_err(|e| e.into_response())?)

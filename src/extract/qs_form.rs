@@ -17,7 +17,6 @@ where
 
     async fn from_request(req: Request, _state: &S) -> Result<Self, Self::Rejection> {
         let RawForm(bytes) = req.extract().await.context("Failed to extract form")?;
-        dbg!(bytes.clone());
         Ok(Self(
             serde_qs::Config::new(5, false)
                 .deserialize_bytes(&bytes)

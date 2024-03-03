@@ -10,27 +10,34 @@
     <h1 class="text-2xl font-bold tracking-tight text-center">
       Sign in to your account
     </h1>
-    <label class="mt-10 text-neutral-400" name="username">Username</label>
-    {% call form::errors(errors, "root") %}
+    <label class="mt-10 text-neutral-400" name="credentials[username]"
+      >Username</label
+    >
     {%
       call form::errors(errors,
-      "username")
+      "credentials.username")
     %}
     <input
       type="text"
-      name="username"
+      name="credentials[username]"
       class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
-      value="{{ input.username }}"
+      value="{{ input.credentials.username }}"
       required
     />
-    <label for="password" class="mt-4 text-neutral-400">Password</label>
-    {% call form::errors(errors, "password") %}
+    <label for="credentials[password]" class="mt-4 text-neutral-400"
+      >Password</label
+    >
+    {% call form::errors(errors, "credentials.password") %}
     <input
       type="password"
-      name="password"
+      name="credentials[password]"
       class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
       required
     />
+    {% if let Some(previous_uri) = input.previous_uri %}
+      <input type="hidden" name="previous_uri" value="{{ previous_uri }}" />
+    {% endif %}
+    {% call form::errors(errors, "root") %}
     <button
       type="submit"
       class="leading-6 bg-neutral-300 mt-5 font-semibold rounded py-1.5 flex items-center justify-center disabled:bg-neutral-500 text-neutral-900"

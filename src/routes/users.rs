@@ -1,17 +1,18 @@
 use askama_axum::IntoResponse;
 use axum::{
-    extract::{Form, State},
+    extract::{Query, State},
     response::{Redirect, Response},
     routing::{get, post},
     Router,
 };
 use garde::{Report, Validate};
+use serde::Deserialize;
 use tower_sessions::Session;
 
 use crate::{
     authentication::{self, AuthUser},
-    extract,
-    forms::users::Credentials,
+    extract::{self, qs_form::QsForm},
+    forms::users::Login,
     response_error::ResponseResult,
     server::AppState,
     views::{layout::LayoutTemplate, login::LoginTemplate, users::ProfileTemplate},
@@ -24,26 +25,43 @@ pub fn router() -> Router<AppState> {
         .route("/profile", get(get_profile))
 }
 
+#[derive(Deserialize)]
+struct LoginQuery {
+    previous_uri: Option<String>,
+}
+
 async fn post_login(
     extract::Tx(mut tx): extract::Tx,
     session: Session,
-    Form(creds): Form<Credentials>,
+    QsForm(input): QsForm<Login>,
 ) -> ResponseResult<Response> {
-    if let Err(errors) = creds.validate(&()) {
-        return Ok(LoginTemplate::new(errors, creds).into_response());
+    if let Err(errors) = input.validate(&()) {
+        return Ok(LoginTemplate::new(errors, input).into_response());
     };
 
-    let logged_in = authentication::login(&mut tx, session, &creds).await;
+    let logged_in = authentication::login(&mut tx, session, &input.credentials).await;
     if logged_in.is_err() {
         let mut errors = Report::new();
         errors.append(
             garde::Path::new("root"),
             garde::Error::new("Username or password not correct"),
         );
-        return Ok(LoginTemplate::new(errors, creds).into_response());
+        return Ok(LoginTemplate::new(errors, input).into_response());
     }
 
-    Ok(Redirect::to("/").into_response())
+    let redirect_to = input.previous_uri.unwrap_or("/".to_string());
+
+    Ok(Redirect::to(&redirect_to).into_response())
+}
+
+async fn get_login(Query(query): Query<LoginQuery>) -> ResponseResult<LoginTemplate> {
+    Ok(LoginTemplate::new(
+        Report::new(),
+        Login {
+            previous_uri: query.previous_uri,
+            ..Default::default()
+        },
+    ))
 }
 
 async fn get_profile(
@@ -57,10 +75,6 @@ async fn get_profile(
         layout,
         base_url: state.base_url,
     })
-}
-
-async fn get_login() -> ResponseResult<LoginTemplate> {
-    Ok(LoginTemplate::default())
 }
 
 async fn logout(auth_user: AuthUser) -> ResponseResult<Redirect> {
