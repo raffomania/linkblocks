@@ -75,6 +75,21 @@ pub async fn by_id(tx: &mut AppTx, note_id: Uuid) -> ResponseResult<Note> {
     Ok(note)
 }
 
+pub async fn list_by_id(tx: &mut AppTx, note_ids: &[Uuid]) -> ResponseResult<Vec<Note>> {
+    let note = query_as!(
+        Note,
+        r#"
+        select * from notes
+        where id = any($1)
+        "#,
+        note_ids,
+    )
+    .fetch_all(&mut **tx)
+    .await?;
+
+    Ok(note)
+}
+
 pub async fn list_pinned_by_user(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<Note>> {
     let notes = query_as!(
         Note,

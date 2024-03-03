@@ -43,7 +43,6 @@ pub async fn insert_demo_data(
             let insert_bookmark = InsertBookmark {
                 url: format!("https://{word}.{tld}"),
                 title,
-                parent: None,
             };
 
             let bookmark = db::bookmarks::insert(&mut tx, user.id, insert_bookmark).await?;

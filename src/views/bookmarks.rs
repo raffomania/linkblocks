@@ -15,7 +15,7 @@ pub struct CreateBookmarkTemplate {
 
     pub errors: FormErrors,
     pub input: forms::bookmarks::CreateBookmark,
-    pub selected_parent: Option<db::Note>,
+    pub selected_parents: Vec<db::Note>,
     pub search_results: Vec<db::Note>,
 }
 

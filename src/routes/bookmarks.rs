@@ -1,7 +1,7 @@
 use anyhow::Context;
 use askama_axum::IntoResponse;
 use axum::{
-    extract::{Form, Path, Query},
+    extract::{Path, Query},
     http::HeaderMap,
     response::{Redirect, Response},
     routing::{delete, get},
@@ -14,8 +14,8 @@ use uuid::Uuid;
 use crate::{
     authentication::AuthUser,
     db::{self, bookmarks::InsertBookmark},
-    extract,
-    forms::{bookmarks::CreateBookmark, notes::CreateNote},
+    extract::{self, qs_form::QsForm},
+    forms::{bookmarks::CreateBookmark, links::CreateLink, notes::CreateNote},
     response_error::ResponseResult,
     server::AppState,
     views::{
@@ -35,28 +35,25 @@ pub fn router() -> Router<AppState> {
 async fn post_create(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
-    Form(input): Form<CreateBookmark>,
+    QsForm(input): QsForm<CreateBookmark>,
 ) -> ResponseResult<Response> {
     let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
 
-    let mut selected_parent = match input.parent {
-        Some(id) => Some(db::notes::by_id(&mut tx, id).await?),
-        None => None,
+    dbg!(&input);
+    let selected_parents = db::notes::list_by_id(&mut tx, &input.parents).await?;
+
+    let search_results = match input.note_search_term.as_ref() {
+        None => db::notes::list_recent(&mut tx).await?,
+        Some(term) => db::notes::search(&mut tx, term).await?,
     };
 
-    let search_results = match (input.note_search_term.as_ref(), input.parent) {
-        (None, None) => db::notes::list_recent(&mut tx).await?,
-        (Some(term), None) => db::notes::search(&mut tx, term).await?,
-        _ => Vec::new(),
-    };
-
-    let mut insert_bookmark = match InsertBookmark::try_from(input.clone()) {
+    let insert_bookmark = match InsertBookmark::try_from(input.clone()) {
         Err(errors) => {
             return Ok(views::bookmarks::CreateBookmarkTemplate {
                 layout,
                 errors,
                 input,
-                selected_parent,
+                selected_parents,
                 search_results,
             }
             .into_response());
@@ -64,25 +61,44 @@ async fn post_create(
         Ok(i) => i,
     };
 
-    if let Some(term) = input.create_parent_from_search_term {
+    let bookmark = db::bookmarks::insert(&mut tx, auth_user.user_id, insert_bookmark).await?;
+
+    for parent_title in input.create_parents {
         let parent = db::notes::insert(
             &mut tx,
             auth_user.user_id,
             CreateNote {
-                title: term,
+                title: parent_title,
                 content: None,
             },
         )
         .await?;
-        insert_bookmark.parent = Some(parent.id);
-        selected_parent = Some(parent);
+        db::links::insert(
+            &mut tx,
+            auth_user.user_id,
+            CreateLink {
+                src: parent.id,
+                dest: bookmark.id,
+            },
+        )
+        .await?;
     }
 
-    db::bookmarks::insert(&mut tx, auth_user.user_id, insert_bookmark).await?;
+    for parent in input.parents {
+        db::links::insert(
+            &mut tx,
+            auth_user.user_id,
+            CreateLink {
+                src: parent,
+                dest: bookmark.id,
+            },
+        )
+        .await?;
+    }
 
     tx.commit().await?;
 
-    let redirect_dest = match selected_parent {
+    let redirect_dest = match selected_parents.first() {
         Some(parent) => parent.path(),
         None => "/bookmarks/unlinked".to_string(),
     };
@@ -112,12 +128,12 @@ async fn get_create(
         layout,
         errors: Default::default(),
         input: CreateBookmark {
-            parent: selected_parent.as_ref().map(|p| p.id),
+            parents: Vec::new(),
             url: query.url.unwrap_or_default(),
             title: query.title.unwrap_or_default(),
             ..Default::default()
         },
-        selected_parent,
+        selected_parents: Vec::from_iter(selected_parent.into_iter()),
         search_results: db::notes::list_recent(&mut tx).await?,
     })
 }

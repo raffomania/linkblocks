@@ -4,12 +4,14 @@ use uuid::Uuid;
 
 use crate::{db::bookmarks::InsertBookmark, form_errors::FormErrors};
 
-#[derive(Validate, Default, Deserialize, Clone)]
+#[derive(Validate, Default, Deserialize, Clone, Debug)]
 pub struct CreateBookmark {
     #[garde(skip)]
-    pub parent: Option<Uuid>,
+    #[serde(default)]
+    pub parents: Vec<Uuid>,
     #[garde(skip)]
-    pub create_parent_from_search_term: Option<String>,
+    #[serde(default)]
+    pub create_parents: Vec<String>,
     #[garde(url)]
     pub url: String,
     #[garde(skip)]
@@ -32,7 +34,6 @@ impl TryFrom<CreateBookmark> for InsertBookmark {
         }
 
         Ok(InsertBookmark {
-            parent: value.parent,
             url: value.url,
             title: value.title,
         })

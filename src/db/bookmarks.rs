@@ -3,8 +3,6 @@ use sqlx::{query_as, FromRow};
 use time::OffsetDateTime;
 use uuid::Uuid;
 
-use crate::db;
-use crate::forms::links::CreateLink;
 use crate::response_error::ResponseResult;
 
 use super::AppTx;
@@ -28,7 +26,6 @@ impl Bookmark {
 }
 
 pub struct InsertBookmark {
-    pub parent: Option<Uuid>,
     pub url: String,
     pub title: String,
 }
@@ -51,18 +48,6 @@ pub async fn insert(
     )
     .fetch_one(&mut **tx)
     .await?;
-
-    if let Some(parent) = create_bookmark.parent {
-        db::links::insert(
-            tx,
-            user_id,
-            CreateLink {
-                src: parent,
-                dest: bookmark.id,
-            },
-        )
-        .await?;
-    }
 
     Ok(bookmark)
 }

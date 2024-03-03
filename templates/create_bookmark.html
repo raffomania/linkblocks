@@ -39,64 +39,60 @@
       class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
     />
 
-    <label for="note_search_term" class="mt-4">Add to Note </label>
-    {% match selected_parent %}
-      {% when Some with (note) %}
-      <a
-        class="leading-8 text-fuchsia-100 hover:text-fuchsia-300"
-        href="{{ note.path() }}"
-      >
-        ️🧵 {{ note.title }}
-      </a>
-      <input type="hidden" name="parent" value="{{ note.id }}" />
-      {% when None %}
+    <label for="note_search_term" class="mt-4">Add to Notes</label>
 
-      {% if let Some(term) = input.create_parent_from_search_term %}
-        <p class="leading-8">
-          New note <span class="text-fuchsia-100">🧵 {{ term }}</span>
-        </p>
+    {% call form::errors(errors, "parents") %}
+    {% for parent in selected_parents %}
+      <label class="leading-8 text-fuchsia-100">
+        <span class="text-fuchsia-100">🧵 {{ parent.title }}</span>
+        <input type="hidden" name="parents[]" value="{{ parent.id }}" />
+      </label>
+    {% endfor %}
+    {% call form::errors(errors, "create_parents") %}
+    {% for parent_name in input.create_parents %}
+      <label class="leading-8">
+        New note <span class="text-fuchsia-100">🧵 {{ parent_name }}</span>
         <input
           type="hidden"
-          name="create_parent_from_search_term"
-          value="{{ term }}"
+          name="create_parents[]"
+          value="{{ parent_name }}"
         />
-      {% else %}
-        {% call form::errors(errors, "note_search_term") %}
-        <input
-          type="search"
-          name="note_search_term"
-          id="note_search_term"
-          value="{{ input.note_search_term.as_deref().unwrap_or_default() }}"
-          hx-trigger="input changed delay:300ms,search"
+      </label>
+    {% endfor %}
+    {% call form::errors(errors, "note_search_term") %}
+    <input
+      type="search"
+      name="note_search_term"
+      id="note_search_term"
+      value="{{ input.note_search_term.as_deref().unwrap_or_default() }}"
+      hx-trigger="input changed delay:300ms,search"
+      hx-post="/bookmarks/create"
+      class="rounded py-1.5 px-3 my-2 bg-neutral-900"
+    />
+    <div id="search_results">
+      {% for note in search_results %}
+        <button
           hx-post="/bookmarks/create"
-          class="rounded py-1.5 px-3 my-2 bg-neutral-900"
-        />
-        <div id="search_results">
-          {% for note in search_results %}
-            <button
-              hx-post="/bookmarks/create"
-              class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 text-fuchsia-100"
-              name="parent"
-              value="{{ note.id }}"
-            >
-              ️🧵 {{ note.title }}
-            </button>
-          {% endfor %}
-          {% if search_results.is_empty() && input.create_parent_from_search_term.is_none() %}
-            {% if let Some(term) = input.note_search_term %}
-              <button
-                name="create_parent_from_search_term"
-                value="{{ term }}"
-                hx-post="/bookmarks/create"
-                class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 text-fuchsia-100"
-              >
-                Create note "{{ term }}"
-              </button>
-            {% endif %}
-          {% endif %}
-        </div>
+          class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 text-fuchsia-100"
+          name="parents[]"
+          value="{{ note.id }}"
+        >
+          ️🧵 {{ note.title }}
+        </button>
+      {% endfor %}
+      {% if search_results.is_empty() %}
+        {% if let Some(term) = input.note_search_term %}
+          <button
+            name="create_parents[]"
+            value="{{ term }}"
+            hx-post="/bookmarks/create"
+            class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 text-fuchsia-100"
+          >
+            Create note "{{ term }}"
+          </button>
+        {% endif %}
       {% endif %}
-    {% endmatch %}
+    </div>
     {% call form::errors(errors, "root") %}
     <button
       type="submit"
