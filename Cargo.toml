@@ -44,7 +44,7 @@ walkdir = "2"
 [dev-dependencies]
 http-body-util = "0.1.0"
 serde_json = "1.0.114"
-test-log = { version = "0.2.14", features = ["trace"], default-features = false }
+test-log = { version = "0.2.15", features = ["trace"], default-features = false }
 itertools = "0.12.1"
 
 [package.metadata.bin]
