@@ -1,0 +1,30 @@
+{% extends "_base.html" %}
+{% block body %}
+  <form
+    action="/login_demo"
+    method="post"
+    class="flex flex-col justify-center flex-1 max-w-md min-h-full mx-auto"
+    hx-boost="true"
+    hx-disabled-elt="button"
+  >
+    <h1 class="text-2xl font-bold tracking-tight text-center">
+      Welcome to the linkblocks demo!
+    </h1>
+    <p class="mt-10">
+      Here, you can try linkblocks with a temporary account. Once you close your
+      browser, you'll be logged out of your account and it will be permanently
+      deleted.
+    </p>
+    <button
+      type="submit"
+      class="leading-6 bg-neutral-300 mt-5 font-semibold rounded py-1.5 flex items-center justify-center disabled:bg-neutral-500 text-neutral-900"
+    >
+      <span class="inline-block w-0 h-4">
+        <span
+          class="block w-4 h-4 -ml-6 border-2 rounded-full border-neutral-900 animate-spin border-t-transparent htmx-indicator"
+        ></span
+      ></span>
+      Try using a temporary account
+    </button>
+  </form>
+{% endblock %}

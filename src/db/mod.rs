@@ -1,6 +1,7 @@
 use anyhow::{Context, Result};
 use sqlx::PgPool;
 
+pub mod all;
 pub mod items;
 pub mod links;
 pub use links::LinkDestination;

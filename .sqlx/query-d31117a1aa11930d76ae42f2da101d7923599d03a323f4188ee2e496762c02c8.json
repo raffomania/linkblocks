@@ -1,0 +1,12 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "truncate table notes cascade;",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": []
+  },
+  "hash": "d31117a1aa11930d76ae42f2da101d7923599d03a323f4188ee2e496762c02c8"
+}

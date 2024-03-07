@@ -669,6 +669,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "friendly-zoo"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a83b79f10b4f876699a4d7b1aee52ecb486c94fe4c1a63d4c1dbbf8930f9e699"
+dependencies = [
+ "rand",
+]
+
+[[package]]
 name = "futures"
 version = "0.3.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1126,6 +1135,7 @@ dependencies = [
  "axum-server",
  "clap",
  "fake",
+ "friendly-zoo",
  "garde",
  "http-body-util",
  "include_dir",

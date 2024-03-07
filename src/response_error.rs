@@ -22,6 +22,7 @@ impl IntoResponse for ResponseError {
         let status = match self {
             ResponseError::Anyhow(_) => StatusCode::INTERNAL_SERVER_ERROR,
             ResponseError::NotFound => StatusCode::NOT_FOUND,
+            // TODO redirect to login instead of sending an error
             ResponseError::NotAuthenticated => StatusCode::UNAUTHORIZED,
         };
         (status, self.to_string()).into_response()

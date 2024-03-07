@@ -2,11 +2,13 @@ use std::{path::PathBuf, time::Duration};
 
 use anyhow::anyhow;
 use axum_server::tls_rustls::RustlsConfig;
+use sqlx::PgPool;
 use tower_sessions::ExpiredDeletion;
 
 use crate::{
     cli::ListenArgs,
-    routes::{self},
+    db::{self},
+    routes,
 };
 
 use axum::Router;
@@ -17,6 +19,7 @@ use tower_http::trace::TraceLayer;
 pub struct AppState {
     pub pool: sqlx::PgPool,
     pub base_url: String,
+    pub demo_mode: bool,
 }
 
 pub async fn app(state: AppState) -> anyhow::Result<Router> {
@@ -28,11 +31,20 @@ pub async fn app(state: AppState) -> anyhow::Result<Router> {
             .continuously_delete_expired(tokio::time::Duration::from_secs(6 * 60 * 60)),
     );
 
+    if state.demo_mode {
+        tokio::task::spawn(periodically_wipe_all_data(state.pool.clone()));
+    }
+
+    let cookie_inactivity_limit = match state.demo_mode {
+        true => tower_sessions::cookie::time::Duration::hours(1),
+        false => tower_sessions::cookie::time::Duration::weeks(2),
+    };
+
     let session_service = tower_sessions::SessionManagerLayer::new(session_store)
         .with_secure(true)
         .with_same_site(tower_sessions::cookie::SameSite::Lax)
         .with_expiry(tower_sessions::Expiry::OnInactivity(
-            tower_sessions::cookie::time::Duration::weeks(2),
+            cookie_inactivity_limit,
         ));
 
     Ok(Router::new()
@@ -124,4 +136,33 @@ async fn shutdown_signal(handle: axum_server::Handle, graceful: bool) {
     } else {
         handle.shutdown();
     }
+}
+
+async fn periodically_wipe_all_data(pool: PgPool) -> anyhow::Result<()> {
+    // interval: every hour
+    let period = tokio::time::Duration::from_secs(60 * 60);
+    let mut interval = tokio::time::interval(period);
+    // First interval completes immediately, but we want to wait
+    // before doing the first deletion to give users time
+    // to react to the warning
+    interval.tick().await;
+    tracing::warn!("Demo mode enabled - will periodically wipe ALL DATA every {period:?}.");
+
+    loop {
+        tracing::debug!("wait");
+        interval.tick().await;
+        tracing::debug!("delete");
+        let res = wipe_all_data(&pool).await;
+        if let Err(e) = res {
+            tracing::error!("{e:?}");
+        }
+    }
+}
+
+async fn wipe_all_data(pool: &PgPool) -> anyhow::Result<()> {
+    tracing::info!("Wiping all data!");
+    let mut tx = pool.begin().await?;
+    db::all::wipe_all_data(&mut tx).await?;
+    tx.commit().await?;
+    Ok(())
 }

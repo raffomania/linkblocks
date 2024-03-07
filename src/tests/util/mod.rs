@@ -18,6 +18,7 @@ impl TestApp {
             router: app(AppState {
                 pool,
                 base_url: String::new(),
+                demo_mode: false,
             })
             .await
             .unwrap(),

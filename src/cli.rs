@@ -49,6 +49,8 @@ enum Command {
         admin_credentials: AdminCredentials,
         #[clap(long, env)]
         base_url: String,
+        #[clap(long, env, default_value = "false")]
+        demo_mode: bool,
     },
     Db {
         #[clap(subcommand)]
@@ -118,6 +120,7 @@ pub async fn run() -> Result<()> {
             tls_cert,
             tls_key,
             base_url,
+            demo_mode,
         } => {
             let pool = db::pool(&cli.config.database_url).await?;
 
@@ -134,7 +137,12 @@ pub async fn run() -> Result<()> {
                 tx.commit().await?;
             }
 
-            let app = server::app(AppState { pool, base_url }).await?;
+            let app = server::app(AppState {
+                pool,
+                base_url,
+                demo_mode,
+            })
+            .await?;
             server::start(listen_address, app, tls_cert, tls_key).await?;
         }
         Command::Db {

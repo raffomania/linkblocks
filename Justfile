@@ -1,8 +1,8 @@
 set dotenv-load := true
 set export := true
 
-watch: development-cert start-database
-    cargo bin systemfd --no-pid -s http::4040 -- cargo bin cargo-watch -- cargo run start --listenfd
+watch *args: development-cert start-database
+    cargo bin systemfd --no-pid -s http::4040 -- cargo bin cargo-watch -- cargo run start --listenfd {{args}}
 
 run *args: development-cert
     cargo run -- {{args}}

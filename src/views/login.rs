@@ -28,3 +28,7 @@ impl LoginTemplate {
         }
     }
 }
+
+#[derive(Template, Default)]
+#[template(path = "login_demo.html")]
+pub struct DemoLoginTemplate {}
