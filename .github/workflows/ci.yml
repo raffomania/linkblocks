@@ -32,6 +32,16 @@ jobs:
 
       - run: cargo clippy -- -D warnings
 
+      - name: podman login
+        run: podman login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
+
+      - name: podman build linux/amd64
+        run: podman build --format docker --platform linux/amd64 --manifest linkblocks -f Containerfile target/release
+
+      - name: podman manifest push latest
+        run: podman manifest push linkblocks ghcr.io/raffomania/linkblocks:latest
+        if: github.ref == 'refs/heads/main'
+
   test:
     name: Test
     runs-on: ubuntu-latest
