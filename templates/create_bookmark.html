@@ -41,24 +41,26 @@
 
     <label for="note_search_term" class="mt-4">Add to Notes</label>
 
-    {% call form::errors(errors, "parents") %}
-    {% for parent in selected_parents %}
-      <label class="leading-8 text-fuchsia-100">
-        <span class="text-fuchsia-100">🧵 {{ parent.title }}</span>
-        <input type="hidden" name="parents[]" value="{{ parent.id }}" />
-      </label>
-    {% endfor %}
-    {% call form::errors(errors, "create_parents") %}
-    {% for parent_name in input.create_parents %}
-      <label class="leading-8">
-        New note <span class="text-fuchsia-100">🧵 {{ parent_name }}</span>
-        <input
-          type="hidden"
-          name="create_parents[]"
-          value="{{ parent_name }}"
-        />
-      </label>
-    {% endfor %}
+    <div id="selected_notes">
+      {% call form::errors(errors, "parents") %}
+      {% for parent in selected_parents %}
+        <label class="block leading-8 text-fuchsia-100">
+          <span class="text-fuchsia-100">🧵 {{ parent.title }}</span>
+          <input type="hidden" name="parents[]" value="{{ parent.id }}" />
+        </label>
+      {% endfor %}
+      {% call form::errors(errors, "create_parents") %}
+      {% for parent_name in input.create_parents %}
+        <label class="block leading-8">
+          New note <span class="text-fuchsia-100">🧵 {{ parent_name }}</span>
+          <input
+            type="hidden"
+            name="create_parents[]"
+            value="{{ parent_name }}"
+          />
+        </label>
+      {% endfor %}
+    </div>
     {% call form::errors(errors, "note_search_term") %}
     <input
       type="search"
@@ -77,6 +79,8 @@
         <button
           hx-post="/bookmarks/create"
           hx-params="not note_search_term"
+          hx-select="#selected_notes"
+          hx-target="#selected_notes"
           class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 text-fuchsia-100"
           name="parents[]"
           value="{{ note.id }}"
@@ -91,6 +95,8 @@
             value="{{ term }}"
             hx-post="/bookmarks/create"
             hx-params="not note_search_term"
+            hx-select="#selected_notes"
+            hx-target="#selected_notes"
             class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 text-fuchsia-100"
           >
             Create note "{{ term }}"
@@ -103,6 +109,8 @@
       type="submit"
       name="submitted"
       value="true"
+      hx-post="/bookmarks/create"
+      hx-select-oob="#nav"
       class="bg-neutral-300 py-1.5 px-3 text-neutral-900 rounded mt-4 self-end"
       {# TODO Refresh whole page in case there's a new note in the sidebar #}
     >
