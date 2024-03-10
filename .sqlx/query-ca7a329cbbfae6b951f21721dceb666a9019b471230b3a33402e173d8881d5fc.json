@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            select notes.*\n            from notes\n            left join links as src_links on notes.id = src_links.src_note_id\n            left join links as dest_links on notes.id = dest_links.dest_note_id\n            group by notes.id\n            order by\n                max(src_links.created_at) desc nulls last,\n                max(dest_links.created_at) nulls last,\n                max(notes.created_at) desc\n            limit 10\n        ",
+  "query": "\n            select notes.*\n            from notes\n            left join links as src_links on notes.id = src_links.src_note_id\n            left join links as dest_links on notes.id = dest_links.dest_note_id\n            where notes.user_id = $1\n            group by notes.id\n            order by\n                max(src_links.created_at) desc nulls last,\n                max(dest_links.created_at) nulls last,\n                max(notes.created_at) desc\n            limit 10\n        ",
   "describe": {
     "columns": [
       {
@@ -30,7 +30,9 @@
       }
     ],
     "parameters": {
-      "Left": []
+      "Left": [
+        "Uuid"
+      ]
     },
     "nullable": [
       false,
@@ -40,5 +42,5 @@
       true
     ]
   },
-  "hash": "7996c8286ef5cbed1e2fd2dacc6b6f10db1e8576dd9bc4eae297a20e760f3d7a"
+  "hash": "ca7a329cbbfae6b951f21721dceb666a9019b471230b3a33402e173d8881d5fc"
 }

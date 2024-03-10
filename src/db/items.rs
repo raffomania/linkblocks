@@ -9,19 +9,26 @@ use crate::response_error::ResponseResult;
 
 use super::{AppTx, LinkDestination};
 
-pub async fn search(tx: &mut AppTx, term: &str) -> ResponseResult<Vec<LinkDestination>> {
+pub async fn search(
+    tx: &mut AppTx,
+    term: &str,
+    user_id: Uuid,
+) -> ResponseResult<Vec<LinkDestination>> {
     let jsons = query!(
         r#"
             select to_jsonb(bookmarks.*) as item
             from bookmarks
             where bookmarks.title ilike '%' || $1 || '%'
+            and bookmarks.user_id = $2
             union
             select to_jsonb(notes.*) as item
             from notes
             where notes.title ilike '%' || $1 || '%'
+            and notes.user_id = $2
             limit 10
         "#,
-        term
+        term,
+        user_id
     )
     .fetch_all(&mut **tx)
     .await?;
@@ -34,7 +41,7 @@ pub async fn search(tx: &mut AppTx, term: &str) -> ResponseResult<Vec<LinkDestin
     Ok(results)
 }
 
-pub async fn list_recent(tx: &mut AppTx) -> ResponseResult<Vec<LinkDestination>> {
+pub async fn list_recent(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<LinkDestination>> {
     let jsons = query!(
         r#"
             select
@@ -50,13 +57,16 @@ pub async fn list_recent(tx: &mut AppTx) -> ResponseResult<Vec<LinkDestination>>
                 on src_notes.id = links.src_note_id
             left join bookmarks
                 on bookmarks.id = links.dest_bookmark_id
-            where src_notes.id is not null or bookmarks.id is not null
+            where
+                (src_notes.id is not null or bookmarks.id is not null)
+                and links.user_id = $1
             order by
                 links.created_at desc nulls last,
                 src_notes.created_at desc,
                 bookmarks.created_at desc
             limit 10
         "#,
+        user_id,
     )
     .fetch_all(&mut **tx)
     .await?;

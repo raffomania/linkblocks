@@ -105,16 +105,18 @@ pub async fn list_pinned_by_user(tx: &mut AppTx, user_id: Uuid) -> ResponseResul
     Ok(notes)
 }
 
-pub async fn search(tx: &mut AppTx, term: &str) -> ResponseResult<Vec<Note>> {
+pub async fn search(tx: &mut AppTx, term: &str, user_id: Uuid) -> ResponseResult<Vec<Note>> {
     let notes = query_as!(
         Note,
         r#"
             select *
             from notes
-            where notes.title ilike '%' || $1 || '%'
+            where (notes.title ilike '%' || $1 || '%')
+            and notes.user_id = $2
             limit 10
         "#,
-        term
+        term,
+        user_id,
     )
     .fetch_all(&mut **tx)
     .await?;
@@ -122,7 +124,7 @@ pub async fn search(tx: &mut AppTx, term: &str) -> ResponseResult<Vec<Note>> {
     Ok(notes)
 }
 
-pub async fn list_recent(tx: &mut AppTx) -> ResponseResult<Vec<Note>> {
+pub async fn list_recent(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<Note>> {
     let notes = query_as!(
         Note,
         r#"
@@ -130,6 +132,7 @@ pub async fn list_recent(tx: &mut AppTx) -> ResponseResult<Vec<Note>> {
             from notes
             left join links as src_links on notes.id = src_links.src_note_id
             left join links as dest_links on notes.id = dest_links.dest_note_id
+            where notes.user_id = $1
             group by notes.id
             order by
                 max(src_links.created_at) desc nulls last,
@@ -137,6 +140,7 @@ pub async fn list_recent(tx: &mut AppTx) -> ResponseResult<Vec<Note>> {
                 max(notes.created_at) desc
             limit 10
         "#,
+        user_id,
     )
     .fetch_all(&mut **tx)
     .await?;

@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            select *\n            from notes\n            where notes.title ilike '%' || $1 || '%'\n            limit 10\n        ",
+  "query": "\n            select *\n            from notes\n            where (notes.title ilike '%' || $1 || '%')\n            and notes.user_id = $2\n            limit 10\n        ",
   "describe": {
     "columns": [
       {
@@ -31,7 +31,8 @@
     ],
     "parameters": {
       "Left": [
-        "Text"
+        "Text",
+        "Uuid"
       ]
     },
     "nullable": [
@@ -42,5 +43,5 @@
       true
     ]
   },
-  "hash": "ed375b4fba23d27e1eb3edaa0d31a458fd0cb07db56b67ba55af40513bd0e3e4"
+  "hash": "46540de15415977b13fab2859a5a284857ebcfdb523c856445e073e151b03dc7"
 }

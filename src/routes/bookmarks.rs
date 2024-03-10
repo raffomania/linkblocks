@@ -43,8 +43,8 @@ async fn post_create(
     let selected_parents = db::notes::list_by_id(&mut tx, &input.parents).await?;
 
     let search_results = match input.note_search_term.as_ref() {
-        None => db::notes::list_recent(&mut tx).await?,
-        Some(term) => db::notes::search(&mut tx, term).await?,
+        None => db::notes::list_recent(&mut tx, auth_user.user_id).await?,
+        Some(term) => db::notes::search(&mut tx, term, auth_user.user_id).await?,
     };
 
     let insert_bookmark = match InsertBookmark::try_from(input.clone()) {
@@ -134,7 +134,7 @@ async fn get_create(
             ..Default::default()
         },
         selected_parents: Vec::from_iter(selected_parent.into_iter()),
-        search_results: db::notes::list_recent(&mut tx).await?,
+        search_results: db::notes::list_recent(&mut tx, auth_user.user_id).await?,
     })
 }
 
