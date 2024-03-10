@@ -101,10 +101,13 @@ pub async fn list_by_note(tx: &mut AppTx, note_id: Uuid) -> ResponseResult<Vec<L
                     'note', to_jsonb(notes.*),
                     'links',
                     coalesce(
-                        jsonb_agg(notes_bookmarks.*) filter (where notes_bookmarks.id is not null)
-                        || jsonb_agg(notes_notes.*) filter (where notes_notes.id is not null),
-                        jsonb_build_array()
-                    )
+                        jsonb_agg(notes_bookmarks.*)
+                        filter (where notes_bookmarks.id is not null),
+                    jsonb_build_array())
+                    || coalesce(
+                        jsonb_agg(notes_notes.*)
+                        filter (where notes_notes.id is not null),
+                    jsonb_build_array())
                 )
             when bookmarks.id is not null then
                 to_jsonb(bookmarks.*)
