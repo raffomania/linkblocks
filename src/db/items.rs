@@ -42,6 +42,7 @@ pub async fn search(
 }
 
 pub async fn list_recent(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<LinkDestination>> {
+    // TODO order by max(links.created_at, lists.created_at, bookmarks.created_at)
     let jsons = query!(
         r#"
             select
