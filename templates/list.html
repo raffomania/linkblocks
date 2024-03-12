@@ -21,7 +21,7 @@
       >Add new bookmark</a
     >
     <a
-      href="/links/create?parent_id={{ list.id }}"
+      href="/links/create?src_id={{ list.id }}"
       class="block px-4 py-1 mx-2 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
       hx-get="/links/create?src_id={{ list.id }}"
       hx-target="closest section"
@@ -30,25 +30,15 @@
     >
   </section>
   {% for link in links %}
-    <section class="px-4 py-4 border-t border-neutral-700">
+    <section class="px-4 pt-4 pb-4 border-t border-neutral-700">
       {% match link.dest %}
         {% when db::LinkDestinationWithChildren::List with (list) %}
-        <div class="flex justify-between leading-8">
-          <a
-            class="block overflow-hidden font-semibold hover:text-fuchsia-300 text-ellipsis whitespace-nowrap"
-            href="/lists/{{ list.list.id }}"
-          >
-            {{ list.list.title }}
-          </a>
-
-          <button
-            class="px-3 rounded hover:bg-neutral-700 text-neutral-400"
-            hx-delete="/links/{{ link.id }}"
-            title="Unlink"
-          >
-            Unlink
-          </button>
-        </div>
+        <a
+          class="block overflow-hidden font-semibold leading-8 hover:text-fuchsia-300 text-ellipsis whitespace-nowrap"
+          href="/lists/{{ list.list.id }}"
+        >
+          {{ list.list.title }}
+        </a>
         {% if let Some(content) = list.list.content %}
 
           {% if !content.is_empty() %}
@@ -66,7 +56,7 @@
                     class="block leading-8 text-orange-100 hover:text-orange-300"
                     href="{{ bookmark.url }}"
                   >
-                    📄 {{ bookmark.title }} →
+                    {{ bookmark.title }}
                   </a>
                   {% call content::link_url(bookmark.url) %}
                 </li>
@@ -76,7 +66,7 @@
                     class="block leading-8 text-fuchsia-100 hover:text-fuchsia-300"
                     href="/lists/{{ list.id }}"
                   >
-                    ️🧵 {{ list.title }} →
+                    {{ list.title }} →
                   </a>
                 </li>
                 {% when _ %}
@@ -85,23 +75,33 @@
           </ul>
         {% endif %}
         {% when db::LinkDestinationWithChildren::Bookmark with (bookmark) %}
-        <div class="flex justify-between leading-8">
+        <div class="mb-2">
           <a
-            class="block overflow-hidden text-orange-100 hover:text-orange-300 text-ellipsis whitespace-nowrap"
+            class="block overflow-hidden leading-8 text-orange-100 hover:text-orange-300 text-ellipsis whitespace-nowrap"
             href="{{ bookmark.url }}"
           >
-            📄 {{ bookmark.title }} →
+            {{ bookmark.title }}
           </a>
-          <button
-            class="px-3 rounded hover:bg-neutral-700 text-neutral-400"
-            hx-delete="/links/{{ link.id }}"
-            title="Unlink"
-          >
-            Unlink
-          </button>
+          {% call content::link_url(bookmark.url) %}
         </div>
-        {% call content::link_url(bookmark.url) %}
       {% endmatch %}
+
+      <div class="flex flex-wrap pt-2 text-sm gap-x-2 text-neutral-400">
+        <a
+          class="hover:text-neutral-100"
+          href="/links/create?dest_id={{ link.dest.id() }}"
+        >
+          Add to other list
+        </a>
+        ∙
+        <button
+          class="hover:text-neutral-100"
+          hx-delete="/links/{{ link.id }}"
+          title="Remove from list"
+        >
+          Remove from this list
+        </button>
+      </div>
     </section>
   {% endfor %}
 {% endblock %}

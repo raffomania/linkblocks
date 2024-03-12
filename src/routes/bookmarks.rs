@@ -20,7 +20,7 @@ use crate::{
     server::AppState,
     views::{
         self,
-        bookmarks::{CreateBookmarkTemplate, UnlinkedBookmarksTemplate},
+        bookmarks::{CreateBookmarkTemplate, UnsortedBookmarksTemplate},
         layout::LayoutTemplate,
     },
 };
@@ -28,7 +28,7 @@ use crate::{
 pub fn router() -> Router<AppState> {
     Router::new()
         .route("/bookmarks/create", get(get_create).post(post_create))
-        .route("/bookmarks/unlinked", get(get_unlinked))
+        .route("/bookmarks/unsorted", get(get_unsorted))
         .route("/bookmarks/:id", delete(delete_by_id))
 }
 
@@ -63,6 +63,7 @@ async fn post_create(
 
     let bookmark = db::bookmarks::insert(&mut tx, auth_user.user_id, insert_bookmark).await?;
 
+    let mut first_created_parent = Option::None;
     for parent_title in input.create_parents {
         let parent = db::lists::insert(
             &mut tx,
@@ -82,6 +83,10 @@ async fn post_create(
             },
         )
         .await?;
+
+        if first_created_parent.is_none() {
+            first_created_parent.replace(parent);
+        }
     }
 
     for parent in input.parents {
@@ -98,9 +103,9 @@ async fn post_create(
 
     tx.commit().await?;
 
-    let redirect_dest = match selected_parents.first() {
+    let redirect_dest = match selected_parents.first().or(first_created_parent.as_ref()) {
         Some(parent) => parent.path(),
-        None => "/bookmarks/unlinked".to_string(),
+        None => "/bookmarks/unsorted".to_string(),
     };
     Ok(Redirect::to(&redirect_dest).into_response())
 }
@@ -138,14 +143,14 @@ async fn get_create(
     })
 }
 
-async fn get_unlinked(
+async fn get_unsorted(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
-) -> ResponseResult<UnlinkedBookmarksTemplate> {
+) -> ResponseResult<UnsortedBookmarksTemplate> {
     let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
-    let bookmarks = db::bookmarks::list_unlinked(&mut tx, auth_user.user_id).await?;
+    let bookmarks = db::bookmarks::list_unsorted(&mut tx, auth_user.user_id).await?;
 
-    Ok(UnlinkedBookmarksTemplate { layout, bookmarks })
+    Ok(UnsortedBookmarksTemplate { layout, bookmarks })
 }
 
 async fn delete_by_id(

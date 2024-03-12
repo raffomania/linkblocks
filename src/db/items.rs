@@ -46,23 +46,23 @@ pub async fn list_recent(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<Li
         r#"
             select
             case
-                when src_lists.id is not null then
-                    to_jsonb(src_lists.*)
+                when lists.id is not null then
+                    to_jsonb(lists.*)
                 when bookmarks.id is not null then
                     to_jsonb(bookmarks.*)
                 else null
             end as item
             from links
-            left join lists as src_lists
-                on src_lists.id = links.src_list_id
+            left join lists
+                on lists.id = links.dest_list_id
             left join bookmarks
                 on bookmarks.id = links.dest_bookmark_id
             where
-                (src_lists.id is not null or bookmarks.id is not null)
+                (lists.id is not null or bookmarks.id is not null)
                 and links.user_id = $1
             order by
                 links.created_at desc nulls last,
-                src_lists.created_at desc,
+                lists.created_at desc,
                 bookmarks.created_at desc
             limit 10
         "#,

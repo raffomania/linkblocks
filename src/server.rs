@@ -149,9 +149,7 @@ async fn periodically_wipe_all_data(pool: PgPool) -> anyhow::Result<()> {
     tracing::warn!("Demo mode enabled - will periodically wipe ALL DATA every {period:?}.");
 
     loop {
-        tracing::debug!("wait");
         interval.tick().await;
-        tracing::debug!("delete");
         let res = wipe_all_data(&pool).await;
         if let Err(e) = res {
             tracing::error!("{e:?}");

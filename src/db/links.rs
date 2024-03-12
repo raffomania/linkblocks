@@ -26,6 +26,15 @@ pub enum LinkDestinationWithChildren {
     List(db::ListWithLinks),
 }
 
+impl LinkDestinationWithChildren {
+    pub fn id(&self) -> Uuid {
+        match self {
+            LinkDestinationWithChildren::Bookmark(b) => b.id,
+            LinkDestinationWithChildren::List(l) => l.list.id,
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Clone)]
 #[serde(untagged)]
 pub enum LinkDestination {

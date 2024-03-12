@@ -52,7 +52,7 @@ pub async fn insert(
     Ok(bookmark)
 }
 
-pub async fn list_unlinked(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<Bookmark>> {
+pub async fn list_unsorted(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<Bookmark>> {
     let bookmarks = query_as!(
         Bookmark,
         r#"
