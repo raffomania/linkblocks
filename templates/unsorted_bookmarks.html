@@ -14,17 +14,17 @@
       >
         📄 {{ bookmark.title }} → {% call content::link_url(bookmark.url) %}
       </a>
-      <div class="flex justify-end gap-2 mx-4 grow">
+      <div class="flex justify-end gap-2 mx-4 grow text-neutral-300">
         <a
-          class="px-4 leading-7 border rounded border-neutral-700 hover:bg-neutral-700 text-neutral-200"
+          class="px-4 py-1 border rounded border-neutral-700 hover:bg-neutral-700"
           href="/links/create?dest_id={{ bookmark.id }}"
-          >link</a
+          >Add to list</a
         >
         <a
-          class="px-4 leading-7 border rounded border-neutral-700 hover:bg-neutral-600 text-neutral-200"
+          class="px-4 py-1 border rounded border-neutral-700 hover:bg-neutral-600"
           hx-delete="/bookmarks/{{ bookmark.id }}"
           href="/bookmarks/{{ bookmark.id }}"
-          >delete</a
+          >Delete</a
         >
       </div>
     </section>
