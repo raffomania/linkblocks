@@ -20,7 +20,7 @@
       },
       {
         "ordinal": 3,
-        "name": "src_note_id",
+        "name": "src_list_id",
         "type_info": "Uuid"
       },
       {
@@ -30,7 +30,7 @@
       },
       {
         "ordinal": 5,
-        "name": "dest_note_id",
+        "name": "dest_list_id",
         "type_info": "Uuid"
       }
     ],

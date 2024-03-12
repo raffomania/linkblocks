@@ -50,7 +50,7 @@ pub async fn app(state: AppState) -> anyhow::Result<Router> {
     Ok(Router::new()
         .merge(routes::users::router())
         .merge(routes::index::router())
-        .merge(routes::notes::router())
+        .merge(routes::lists::router())
         .merge(routes::bookmarks::router())
         .merge(routes::links::router())
         .merge(routes::assets::router().with_state(()))

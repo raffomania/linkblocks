@@ -1,10 +1,10 @@
-use crate::forms::notes::CreateNote;
+use crate::forms::lists::CreateList;
 use crate::server::AppState;
-use crate::views::notes::CreateNoteTemplate;
+use crate::views::lists::CreateListTemplate;
 use crate::{authentication::AuthUser, response_error::ResponseResult};
 use crate::{
     db::{self},
-    views::{layout::LayoutTemplate, notes::NoteTemplate},
+    views::{layout::LayoutTemplate, lists::ListTemplate},
 };
 use crate::{extract, views};
 use askama_axum::IntoResponse;
@@ -19,34 +19,34 @@ use uuid::Uuid;
 pub fn router() -> Router<AppState> {
     let router = Router::new();
     router
-        .route("/notes/create", get(get_create).post(post_create))
-        .route("/notes/:note_id", get(list))
+        .route("/lists/create", get(get_create).post(post_create))
+        .route("/lists/:list_id", get(list))
 }
 
 async fn list(
     auth_user: AuthUser,
     extract::Tx(mut tx): extract::Tx,
-    Path(note_id): Path<Uuid>,
-) -> ResponseResult<NoteTemplate> {
-    let links = db::links::list_by_note(&mut tx, note_id).await?;
-    let note = db::notes::by_id(&mut tx, note_id).await?;
+    Path(list_id): Path<Uuid>,
+) -> ResponseResult<ListTemplate> {
+    let links = db::links::list_by_list(&mut tx, list_id).await?;
+    let list = db::lists::by_id(&mut tx, list_id).await?;
 
-    Ok(NoteTemplate {
+    Ok(ListTemplate {
         layout: LayoutTemplate::from_db(&mut tx, &auth_user).await?,
         links,
-        note,
+        list,
     })
 }
 
 async fn post_create(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
-    Form(input): Form<CreateNote>,
+    Form(input): Form<CreateList>,
 ) -> ResponseResult<Response> {
     let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
 
     if let Err(errors) = input.validate(&()) {
-        return Ok(views::notes::CreateNoteTemplate {
+        return Ok(views::lists::CreateListTemplate {
             layout,
             errors: errors.into(),
             input,
@@ -54,22 +54,22 @@ async fn post_create(
         .into_response());
     };
 
-    let note = db::notes::insert(&mut tx, auth_user.user_id, input).await?;
+    let list = db::lists::insert(&mut tx, auth_user.user_id, input).await?;
 
     tx.commit().await?;
 
-    Ok(Redirect::to(&note.path()).into_response())
+    Ok(Redirect::to(&list.path()).into_response())
 }
 
 async fn get_create(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
-) -> ResponseResult<CreateNoteTemplate> {
+) -> ResponseResult<CreateListTemplate> {
     let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
 
-    Ok(CreateNoteTemplate {
+    Ok(CreateListTemplate {
         layout,
         errors: Default::default(),
-        input: CreateNote::default(),
+        input: CreateList::default(),
     })
 }

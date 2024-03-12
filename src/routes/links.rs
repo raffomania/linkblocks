@@ -117,10 +117,10 @@ async fn get_create(
     };
 
     let search_results = match (src.as_ref(), dest.as_ref()) {
-        (None, _) => db::notes::list_recent(&mut tx, auth_user.user_id)
+        (None, _) => db::lists::list_recent(&mut tx, auth_user.user_id)
             .await?
             .into_iter()
-            .map(LinkDestination::Note)
+            .map(LinkDestination::List)
             .collect(),
         (_, None) => db::items::list_recent(&mut tx, auth_user.user_id).await?,
         _ => Vec::new(),

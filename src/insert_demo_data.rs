@@ -6,7 +6,7 @@ use uuid::Uuid;
 
 use crate::{
     db::{self, bookmarks::InsertBookmark},
-    forms::{links::CreateLink, notes::CreateNote, users::CreateUser},
+    forms::{links::CreateLink, lists::CreateList, users::CreateUser},
 };
 
 pub async fn insert_demo_data(
@@ -31,7 +31,7 @@ pub async fn insert_demo_data(
     }
 
     let mut bookmarks = Vec::new();
-    let mut notes = Vec::new();
+    let mut lists = Vec::new();
 
     for user in users.iter() {
         for _ in 0..500 {
@@ -53,23 +53,23 @@ pub async fn insert_demo_data(
             let content: Option<Vec<_>> = fake::faker::lorem::en::Paragraphs(1..3).fake();
             let title: Vec<_> = fake::faker::lorem::en::Words(1..8).fake();
             let title = title.join(" ");
-            let create_note = CreateNote {
+            let create_list = CreateList {
                 title,
                 content: content.map(|c| c.join("\n\n")),
             };
-            let note = db::notes::insert(&mut tx, user.id, create_note).await?;
+            let list = db::lists::insert(&mut tx, user.id, create_list).await?;
 
-            notes.push(note);
+            lists.push(list);
         }
     }
 
     for user in users.iter() {
         for _ in 0..1000 {
-            let src = notes
+            let src = lists
                 .choose(&mut rand::thread_rng())
-                .ok_or(anyhow!("Found no random note to put into a link"))?
+                .ok_or(anyhow!("Found no random list to put into a link"))?
                 .id;
-            let dest = random_link_reference(&bookmarks, &notes)?;
+            let dest = random_link_reference(&bookmarks, &lists)?;
 
             let create_link = CreateLink { src, dest };
             db::links::insert(&mut tx, user.id, create_link).await?;
@@ -81,7 +81,7 @@ pub async fn insert_demo_data(
     Ok(())
 }
 
-fn random_link_reference(bookmarks: &Vec<db::Bookmark>, notes: &Vec<db::Note>) -> Result<Uuid> {
+fn random_link_reference(bookmarks: &Vec<db::Bookmark>, lists: &Vec<db::List>) -> Result<Uuid> {
     Ok(match rand::thread_rng().gen_range(0..=1) {
         0 => {
             bookmarks
@@ -90,9 +90,9 @@ fn random_link_reference(bookmarks: &Vec<db::Bookmark>, notes: &Vec<db::Note>) -
                 .id
         }
         1 => {
-            notes
+            lists
                 .choose(&mut rand::thread_rng())
-                .ok_or(anyhow!("Found no random note to put into a link"))?
+                .ok_or(anyhow!("Found no random list to put into a link"))?
                 .id
         }
         _ => unreachable!(),

@@ -15,7 +15,7 @@ use crate::{
     authentication::AuthUser,
     db::{self, bookmarks::InsertBookmark},
     extract::{self, qs_form::QsForm},
-    forms::{bookmarks::CreateBookmark, links::CreateLink, notes::CreateNote},
+    forms::{bookmarks::CreateBookmark, links::CreateLink, lists::CreateList},
     response_error::ResponseResult,
     server::AppState,
     views::{
@@ -40,11 +40,11 @@ async fn post_create(
     let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
 
     dbg!(&input);
-    let selected_parents = db::notes::list_by_id(&mut tx, &input.parents).await?;
+    let selected_parents = db::lists::list_by_id(&mut tx, &input.parents).await?;
 
-    let search_results = match input.note_search_term.as_ref() {
-        None => db::notes::list_recent(&mut tx, auth_user.user_id).await?,
-        Some(term) => db::notes::search(&mut tx, term, auth_user.user_id).await?,
+    let search_results = match input.list_search_term.as_ref() {
+        None => db::lists::list_recent(&mut tx, auth_user.user_id).await?,
+        Some(term) => db::lists::search(&mut tx, term, auth_user.user_id).await?,
     };
 
     let insert_bookmark = match InsertBookmark::try_from(input.clone()) {
@@ -64,10 +64,10 @@ async fn post_create(
     let bookmark = db::bookmarks::insert(&mut tx, auth_user.user_id, insert_bookmark).await?;
 
     for parent_title in input.create_parents {
-        let parent = db::notes::insert(
+        let parent = db::lists::insert(
             &mut tx,
             auth_user.user_id,
-            CreateNote {
+            CreateList {
                 title: parent_title,
                 content: None,
             },
@@ -120,7 +120,7 @@ async fn get_create(
     let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
 
     let selected_parent = match query.parent_id {
-        Some(id) => Some(db::notes::by_id(&mut tx, id).await?),
+        Some(id) => Some(db::lists::by_id(&mut tx, id).await?),
         _ => None,
     };
 
@@ -134,7 +134,7 @@ async fn get_create(
             ..Default::default()
         },
         selected_parents: Vec::from_iter(selected_parent.into_iter()),
-        search_results: db::notes::list_recent(&mut tx, auth_user.user_id).await?,
+        search_results: db::lists::list_recent(&mut tx, auth_user.user_id).await?,
     })
 }
 

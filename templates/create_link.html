@@ -7,8 +7,8 @@
     {%- when db::LinkDestination::Bookmark with (bookmark) -%}
     <p class="text-orange-100">📄 {{ bookmark.title }}</p>
     {% call content::link_url(bookmark.url) %}
-    {%- when db::LinkDestination::Note with (note) -%}
-    <p class="text-fuchsia-100">️🧵 {{ note.title }}</p>
+    {%- when db::LinkDestination::List with (list) -%}
+    <p class="text-fuchsia-100">️🧵 {{ list.title }}</p>
     {% when _ %}
   {% endmatch %}
 {%- endmacro -%}
@@ -24,7 +24,7 @@
     id="create_link"
     class="mx-4 mb-4"
   >
-    <h1 class="pt-3 pb-4 text-xl font-bold">Add to note</h1>
+    <h1 class="pt-3 pb-4 text-xl font-bold">Add to list</h1>
     {%- match dest_from_db -%}
       {%- when Some with (dest) -%}
       <label class="block mb-4">
@@ -38,7 +38,7 @@
     {%- match src_from_db -%}
       {%- when Some with (src) -%}
       <label class="block mb-2">
-        <p class="mb-1">Adding to note</p>
+        <p class="mb-1">Adding to list</p>
         {% call link_dest(src) %}
         <input type="hidden" value="{{ src.id() }}" name="src" />
       </label>
@@ -52,7 +52,7 @@
       {% if input.src.is_none() %}
         {% let suffix = "src" %}
         {% let input_search_term = input.search_term_src %}
-        {% let label = "Adding to note" %}
+        {% let label = "Adding to list" %}
       {% else %}
         {% let suffix = "dest" %}
         {% let input_search_term = input.search_term_dest %}
@@ -102,7 +102,7 @@
         name="submitted"
         value="true"
         class="bg-neutral-300 py-1.5 px-3 text-neutral-900 rounded mt-4 self-end"
-        {# TODO is there a cleaner way to make this form work embedded on the notes page? #}
+        {# TODO is there a cleaner way to make this form work embedded on the lists page? #}
         hx-post="/links/create"
         hx-select="main"
         hx-target="main"

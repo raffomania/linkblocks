@@ -8,7 +8,7 @@ pub async fn wipe_all_data(tx: &mut AppTx) -> ResponseResult<()> {
     query!("truncate table links cascade;")
         .execute(&mut **tx)
         .await?;
-    query!("truncate table notes cascade;")
+    query!("truncate table lists cascade;")
         .execute(&mut **tx)
         .await?;
     query!("truncate table bookmarks cascade;")

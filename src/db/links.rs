@@ -13,38 +13,38 @@ pub struct Link {
     pub created_at: OffsetDateTime,
     pub user_id: Uuid,
 
-    pub src_note_id: Option<Uuid>,
+    pub src_list_id: Option<Uuid>,
 
     pub dest_bookmark_id: Option<Uuid>,
-    pub dest_note_id: Option<Uuid>,
+    pub dest_list_id: Option<Uuid>,
 }
 
 #[derive(Deserialize)]
 #[serde(untagged)]
 pub enum LinkDestinationWithChildren {
     Bookmark(db::Bookmark),
-    Note(db::NoteWithLinks),
+    List(db::ListWithLinks),
 }
 
 #[derive(Debug, Deserialize, Clone)]
 #[serde(untagged)]
 pub enum LinkDestination {
     Bookmark(db::Bookmark),
-    Note(db::Note),
+    List(db::List),
 }
 
 impl LinkDestination {
     pub fn id(&self) -> Uuid {
         match self {
             LinkDestination::Bookmark(b) => b.id,
-            LinkDestination::Note(n) => n.id,
+            LinkDestination::List(n) => n.id,
         }
     }
 
     pub fn path(&self) -> String {
         match self {
             LinkDestination::Bookmark(b) => b.path(),
-            LinkDestination::Note(n) => n.path(),
+            LinkDestination::List(n) => n.path(),
         }
     }
 }
@@ -68,14 +68,14 @@ pub async fn insert(
         insert into links
         (
             user_id,
-            src_note_id,
+            src_list_id,
             dest_bookmark_id,
-            dest_note_id
+            dest_list_id
         )
         values ($1,
-            (select id from notes where id = $2),
+            (select id from lists where id = $2),
             (select id from bookmarks where id = $3),
-            (select id from notes where id = $3)
+            (select id from lists where id = $3)
         )
         returning *"#,
         user_id,
@@ -88,7 +88,7 @@ pub async fn insert(
     Ok(list)
 }
 
-pub async fn list_by_note(tx: &mut AppTx, note_id: Uuid) -> ResponseResult<Vec<LinkWithContent>> {
+pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<LinkWithContent>> {
     let rows = query!(
         r#"
         select
@@ -96,17 +96,17 @@ pub async fn list_by_note(tx: &mut AppTx, note_id: Uuid) -> ResponseResult<Vec<L
             links.created_at as link_created_at,
             links.user_id as link_user_id,
 
-            case when notes.id is not null then
+            case when lists.id is not null then
                 jsonb_build_object(
-                    'note', to_jsonb(notes.*),
+                    'list', to_jsonb(lists.*),
                     'links',
                     coalesce(
-                        jsonb_agg(notes_bookmarks.*)
-                        filter (where notes_bookmarks.id is not null),
+                        jsonb_agg(lists_bookmarks.*)
+                        filter (where lists_bookmarks.id is not null),
                     jsonb_build_array())
                     || coalesce(
-                        jsonb_agg(notes_notes.*)
-                        filter (where notes_notes.id is not null),
+                        jsonb_agg(lists_lists.*)
+                        filter (where lists_lists.id is not null),
                     jsonb_build_array())
                 )
             when bookmarks.id is not null then
@@ -114,18 +114,18 @@ pub async fn list_by_note(tx: &mut AppTx, note_id: Uuid) -> ResponseResult<Vec<L
             else null end as dest
         from links
 
-        left join notes on notes.id = links.dest_note_id
-        left join links as notes_links on notes_links.src_note_id = notes.id
-        left join bookmarks as notes_bookmarks on notes_bookmarks.id = notes_links.dest_bookmark_id
-        left join notes as notes_notes on notes_notes.id = notes_links.dest_note_id
+        left join lists on lists.id = links.dest_list_id
+        left join links as lists_links on lists_links.src_list_id = lists.id
+        left join bookmarks as lists_bookmarks on lists_bookmarks.id = lists_links.dest_bookmark_id
+        left join lists as lists_lists on lists_lists.id = lists_links.dest_list_id
 
         left join bookmarks on bookmarks.id = links.dest_bookmark_id
 
-        where links.src_note_id = $1
-        group by links.id, notes.id, bookmarks.id
+        where links.src_list_id = $1
+        group by links.id, lists.id, bookmarks.id
         order by links.created_at desc
         "#,
-        note_id
+        list_id
     )
     .fetch_all(&mut **tx)
     .await?;

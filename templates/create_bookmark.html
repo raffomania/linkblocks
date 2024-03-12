@@ -39,9 +39,9 @@
       class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
     />
 
-    <label for="note_search_term" class="mt-4">Add to Notes</label>
+    <label for="list_search_term" class="mt-4">Add to Lists</label>
 
-    <div id="selected_notes">
+    <div id="selected_lists">
       {% call form::errors(errors, "parents") %}
       {% for parent in selected_parents %}
         <label class="block leading-8 text-fuchsia-100">
@@ -52,7 +52,7 @@
       {% call form::errors(errors, "create_parents") %}
       {% for parent_name in input.create_parents %}
         <label class="block leading-8">
-          New note <span class="text-fuchsia-100">🧵 {{ parent_name }}</span>
+          New list <span class="text-fuchsia-100">🧵 {{ parent_name }}</span>
           <input
             type="hidden"
             name="create_parents[]"
@@ -61,12 +61,12 @@
         </label>
       {% endfor %}
     </div>
-    {% call form::errors(errors, "note_search_term") %}
+    {% call form::errors(errors, "list_search_term") %}
     <input
       type="search"
-      name="note_search_term"
-      id="note_search_term"
-      value="{{ input.note_search_term.as_deref().unwrap_or_default() }}"
+      name="list_search_term"
+      id="list_search_term"
+      value="{{ input.list_search_term.as_deref().unwrap_or_default() }}"
       hx-trigger="input changed delay:300ms,search"
       hx-post="/bookmarks/create"
       hx-target="#search_results"
@@ -75,31 +75,31 @@
       class="rounded py-1.5 px-3 my-2 bg-neutral-900"
     />
     <div id="search_results">
-      {% for note in search_results %}
+      {% for list in search_results %}
         <button
           hx-post="/bookmarks/create"
-          hx-params="not note_search_term"
-          hx-select="#selected_notes"
-          hx-target="#selected_notes"
+          hx-params="not list_search_term"
+          hx-select="#selected_lists"
+          hx-target="#selected_lists"
           class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 text-fuchsia-100"
           name="parents[]"
-          value="{{ note.id }}"
+          value="{{ list.id }}"
         >
-          ️🧵 {{ note.title }}
+          ️🧵 {{ list.title }}
         </button>
       {% endfor %}
       {% if search_results.is_empty() %}
-        {% if let Some(term) = input.note_search_term %}
+        {% if let Some(term) = input.list_search_term %}
           <button
             name="create_parents[]"
             value="{{ term }}"
             hx-post="/bookmarks/create"
-            hx-params="not note_search_term"
-            hx-select="#selected_notes"
-            hx-target="#selected_notes"
+            hx-params="not list_search_term"
+            hx-select="#selected_lists"
+            hx-target="#selected_lists"
             class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 text-fuchsia-100"
           >
-            Create note "{{ term }}"
+            Create list "{{ term }}"
           </button>
         {% endif %}
       {% endif %}
@@ -112,7 +112,7 @@
       hx-post="/bookmarks/create"
       hx-select-oob="#nav"
       class="bg-neutral-300 py-1.5 px-3 text-neutral-900 rounded mt-4 self-end"
-      {# TODO Refresh whole page in case there's a new note in the sidebar #}
+      {# TODO Refresh whole page in case there's a new list in the sidebar #}
     >
       Add Bookmark
     </button>

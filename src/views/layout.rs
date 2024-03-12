@@ -6,17 +6,17 @@ use crate::{
 
 pub struct LayoutTemplate {
     pub logged_in_username: String,
-    pub notes: Vec<db::Note>,
+    pub lists: Vec<db::List>,
 }
 
 impl LayoutTemplate {
     pub async fn from_db(tx: &mut AppTx, auth_user: &AuthUser) -> ResponseResult<Self> {
-        let pinned_notes = db::notes::list_pinned_by_user(tx, auth_user.user_id).await?;
+        let pinned_lists = db::lists::list_pinned_by_user(tx, auth_user.user_id).await?;
         // TODO read this from auth user instead
         let user = db::users::by_id(tx, auth_user.user_id).await?;
         Ok(LayoutTemplate {
             logged_in_username: user.username,
-            notes: pinned_notes,
+            lists: pinned_lists,
         })
     }
 }

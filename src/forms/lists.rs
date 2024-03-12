@@ -2,7 +2,7 @@ use garde::Validate;
 use serde::Deserialize;
 
 #[derive(Validate, Default, Deserialize)]
-pub struct CreateNote {
+pub struct CreateList {
     #[garde(length(min = 1, max = 100))]
     pub title: String,
     #[garde(skip)]

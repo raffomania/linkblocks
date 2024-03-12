@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "truncate table notes cascade;",
+  "query": "truncate table lists cascade;",
   "describe": {
     "columns": [],
     "parameters": {
@@ -8,5 +8,5 @@
     },
     "nullable": []
   },
-  "hash": "d31117a1aa11930d76ae42f2da101d7923599d03a323f4188ee2e496762c02c8"
+  "hash": "8f5b92e11b09856c823f584c1224f505751e5342dcef5f25a6eba48d12f5fbae"
 }

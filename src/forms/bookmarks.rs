@@ -17,7 +17,7 @@ pub struct CreateBookmark {
     #[garde(skip)]
     pub title: String,
     #[garde(length(max = 100))]
-    pub note_search_term: Option<String>,
+    pub list_search_term: Option<String>,
     #[garde(skip)]
     #[serde(default)]
     pub submitted: bool,

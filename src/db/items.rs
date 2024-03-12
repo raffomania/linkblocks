@@ -21,10 +21,10 @@ pub async fn search(
             where bookmarks.title ilike '%' || $1 || '%'
             and bookmarks.user_id = $2
             union
-            select to_jsonb(notes.*) as item
-            from notes
-            where notes.title ilike '%' || $1 || '%'
-            and notes.user_id = $2
+            select to_jsonb(lists.*) as item
+            from lists
+            where lists.title ilike '%' || $1 || '%'
+            and lists.user_id = $2
             limit 10
         "#,
         term,
@@ -46,23 +46,23 @@ pub async fn list_recent(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<Li
         r#"
             select
             case
-                when src_notes.id is not null then
-                    to_jsonb(src_notes.*)
+                when src_lists.id is not null then
+                    to_jsonb(src_lists.*)
                 when bookmarks.id is not null then
                     to_jsonb(bookmarks.*)
                 else null
             end as item
             from links
-            left join notes as src_notes
-                on src_notes.id = links.src_note_id
+            left join lists as src_lists
+                on src_lists.id = links.src_list_id
             left join bookmarks
                 on bookmarks.id = links.dest_bookmark_id
             where
-                (src_notes.id is not null or bookmarks.id is not null)
+                (src_lists.id is not null or bookmarks.id is not null)
                 and links.user_id = $1
             order by
                 links.created_at desc nulls last,
-                src_notes.created_at desc,
+                src_lists.created_at desc,
                 bookmarks.created_at desc
             limit 10
         "#,
@@ -86,9 +86,9 @@ pub async fn by_id(tx: &mut AppTx, id: Uuid) -> ResponseResult<LinkDestination> 
             from bookmarks
             where bookmarks.id = $1
             union
-            select to_jsonb(notes.*) as item
-            from notes
-            where notes.id = $1
+            select to_jsonb(lists.*) as item
+            from lists
+            where lists.id = $1
         "#,
         id
     )
