@@ -1,11 +1,16 @@
 {% extends "_layout.html" %}
 {% block content %}
   <header class="px-4 pt-3 mb-2">
-    <h1 class="text-xl font-bold">{{ layout.logged_in_username }}</h1>
+    <h1 class="text-xl font-bold">Install Bookmarklet</h1>
   </header>
   <section class="px-4">
-    <h2 class="text-lg font-bold">Bookmarklet</h2>
-    <p>Drag the following link to your bookmarks / favorites toolbar:</p>
+    <p class="mb-2">
+      Click the bookmarklet on any website to add it as a bookmark in
+      linkblocks!
+    </p>
+    <p>
+      To install, drag the following link to your bookmarks / favorites toolbar:
+    </p>
     {#
         window.open(
   "{{ base_url }}/bookmarks/create?url="
