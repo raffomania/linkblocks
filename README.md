@@ -14,6 +14,8 @@ It's getting harder and harder to find good web pages. When you do find good one
 - Annotate, highlight and discuss web pages together with your friends.
 - Mark users as trusted whose standards for web pages match yours - and then search through all trusted bookmarks to find good pages on a specific topic. Add trusted users of your trusted users to your search range to cast a wider net.
 
+[See this blog post for more on the vision behind linkblocks.](https://www.rafa.ee/articles/introducing-linkblocks-federated-bookmark-manager/)
+
 ## Related Reading
 
 - [Where have all the Websites gone?](https://www.fromjason.xyz/p/notebook/where-have-all-the-websites-gone/) talks about the importance of website curation. Linkblocks is for publicly curating websites.
