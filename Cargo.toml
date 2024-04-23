@@ -2,6 +2,8 @@
 name = "linkblocks"
 version = "0.1.0"
 edition = "2021"
+license = "AGPL-3.0-or-later"
+publish = false
 
 [lib]
 # Doctests are slow, so we don't use them
