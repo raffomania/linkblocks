@@ -10,10 +10,11 @@ use crate::{
 pub struct Template {
     errors: FormErrors,
     input: Login,
+    oauth_google_configured: bool,
 }
 
 impl Template {
-    pub fn new(errors: Report, input: Login) -> Self {
+    pub fn new(errors: Report, input: Login, oauth_google_configured: bool) -> Self {
         Self {
             errors: errors.into(),
             input: Login {
@@ -24,6 +25,7 @@ impl Template {
                 },
                 ..input
             },
+            oauth_google_configured,
         }
     }
 }

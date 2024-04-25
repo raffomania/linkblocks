@@ -13,6 +13,7 @@ use crate::{
 
 use axum::Router;
 use listenfd::ListenFd;
+use openidconnect::core::CoreClient;
 use tower_http::trace::TraceLayer;
 
 #[derive(Clone)]
@@ -20,6 +21,7 @@ pub struct AppState {
     pub pool: sqlx::PgPool,
     pub base_url: String,
     pub demo_mode: bool,
+    pub oauth_google_client: Option<CoreClient>,
 }
 
 pub async fn app(state: AppState) -> anyhow::Result<Router> {
