@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select * from users\n        where username = $1\n        ",
+  "query": "\n        insert into users\n        (username, password_hash, email)\n        values ($1, $2, $3)\n        returning *\n        ",
   "describe": {
     "columns": [
       {
@@ -41,6 +41,8 @@
     ],
     "parameters": {
       "Left": [
+        "Text",
+        "Text",
         "Text"
       ]
     },
@@ -54,5 +56,5 @@
       true
     ]
   },
-  "hash": "8ea4609ecabc6dbafc262aea24eab363ee25e0dc76c19721907a7768e1e1f8c3"
+  "hash": "1409b1937112bab48f6e036baa246d0557fffe056d0906a2e891141c9e233223"
 }

@@ -51,6 +51,10 @@ enum Command {
         base_url: String,
         #[clap(long, env, default_value = "false")]
         demo_mode: bool,
+        #[clap(long, env)]
+        oauth_google_client_id: String,
+        #[clap(long, env)]
+        oauth_google_client_secret: String,
     },
     Db {
         #[clap(subcommand)]
@@ -121,6 +125,8 @@ pub async fn run() -> Result<()> {
             tls_key,
             base_url,
             demo_mode,
+            oauth_google_client_id,
+            oauth_google_client_secret,
         } => {
             let pool = db::pool(&cli.config.database_url).await?;
 
@@ -141,6 +147,8 @@ pub async fn run() -> Result<()> {
                 pool,
                 base_url,
                 demo_mode,
+                oauth_google_client_id,
+                oauth_google_client_secret,
             })
             .await?;
             server::start(listen_address, app, tls_cert, tls_key).await?;

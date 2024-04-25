@@ -1,34 +1,72 @@
 use askama_axum::IntoResponse;
 use axum::{
-    extract::{Query, State},
-    response::{Redirect, Response},
-    routing::{get, post},
-    Router,
+    extract::{Query, State}, response::{Redirect, Response}, routing::{get, post}, Router
 };
+use tokio::task;
 use garde::{Report, Validate};
-use serde::Deserialize;
 use tower_sessions::Session;
 
 use crate::{
-    authentication::{self, AuthUser},
-    extract::{self, qs_form::QsForm},
-    forms::users::Login,
-    response_error::ResponseResult,
-    server::AppState,
-    views::{
+    authentication::{self, AuthUser}, extract::{self, qs_form::QsForm}, forms::users::{Login, CreateOAuthUser}, response_error::ResponseResult, server::AppState, views::{
         layout::LayoutTemplate,
         login::{DemoLoginTemplate, LoginTemplate},
         users::ProfileTemplate,
-    },
+    }
 };
+use serde::{Deserialize, Serialize};
+
+use openidconnect::core::{
+    CoreAuthDisplay, CoreClaimName, CoreClaimType, CoreClient, CoreClientAuthMethod, CoreGrantType,
+    CoreIdTokenVerifier, CoreJsonWebKey, CoreJsonWebKeyType, CoreJsonWebKeyUse,
+    CoreJweContentEncryptionAlgorithm, CoreJweKeyManagementAlgorithm, CoreJwsSigningAlgorithm,
+    CoreResponseMode, CoreResponseType, CoreRevocableToken, CoreSubjectIdentifierType,
+};
+use openidconnect::reqwest::http_client;
+use openidconnect::{
+    AdditionalProviderMetadata, AuthenticationFlow, AuthorizationCode, ClientId, ClientSecret,
+    CsrfToken, IssuerUrl, Nonce, OAuth2TokenResponse, ProviderMetadata, RedirectUrl, RevocationUrl,
+    Scope,
+};
+use std::process::exit;
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+struct RevocationEndpointProviderMetadata {
+    revocation_endpoint: String,
+}
+impl AdditionalProviderMetadata for RevocationEndpointProviderMetadata {}
+type GoogleProviderMetadata = ProviderMetadata<
+    RevocationEndpointProviderMetadata,
+    CoreAuthDisplay,
+    CoreClientAuthMethod,
+    CoreClaimName,
+    CoreClaimType,
+    CoreGrantType,
+    CoreJweContentEncryptionAlgorithm,
+    CoreJweKeyManagementAlgorithm,
+    CoreJwsSigningAlgorithm,
+    CoreJsonWebKeyType,
+    CoreJsonWebKeyUse,
+    CoreJsonWebKey,
+    CoreResponseMode,
+    CoreResponseType,
+    CoreSubjectIdentifierType,
+>;
+#[derive(Serialize, Deserialize)]
+struct OidcSession {
+    nonce: Nonce,
+    csrf_token: CsrfToken,
+}
 
 pub fn router() -> Router<AppState> {
     Router::new()
         .route("/login", get(get_login).post(post_login))
+        .route("/login_google_handler", get(get_login_google_handler ))
+        .route("/login_google", get(get_login_google ))
         .route("/login_demo", post(post_login_demo))
         .route("/logout", post(logout))
         .route("/profile", get(get_profile))
 }
+
 
 async fn post_login(
     extract::Tx(mut tx): extract::Tx,
@@ -52,6 +90,186 @@ async fn post_login(
     let redirect_to = input.previous_uri.unwrap_or("/".to_string());
 
     Ok(Redirect::to(&redirect_to).into_response())
+}
+
+async fn get_login_google(
+    State(state): State<AppState>,
+    session: Session,
+) -> ResponseResult<Response> {
+
+    let google_client_id = ClientId::new(
+        state.oauth_google_client_id
+    );
+    let google_client_secret = ClientSecret::new(
+        state.oauth_google_client_secret
+    );
+    let issuer_url =
+        IssuerUrl::new("https://accounts.google.com".to_string()).unwrap_or_else(|_err| {
+            unreachable!();
+        });
+
+    let provider_metadata = task::spawn_blocking(move || {
+        GoogleProviderMetadata::discover(&issuer_url, http_client)
+        .unwrap_or_else(|_err| {
+            unreachable!();
+        })
+    }).await.unwrap();
+    
+    let revocation_endpoint = provider_metadata
+        .additional_metadata()
+        .revocation_endpoint
+        .clone();
+    // Set up the config for the Google OAuth2 process.
+    let client = CoreClient::from_provider_metadata(
+        provider_metadata,
+        google_client_id,
+        Some(google_client_secret),
+    )
+    .set_redirect_uri(
+        RedirectUrl::new(state.base_url.to_string() + "/login_google_handler").expect("Invalid redirect URL"),
+    )
+    .set_revocation_uri(
+        RevocationUrl::new(revocation_endpoint).expect("Invalid revocation endpoint URL"),
+    );
+
+    // Generate the authorization URL to which we'll redirect the user.
+    let (authorize_url, csrf_state, nonce) = client
+        .authorize_url(
+            AuthenticationFlow::<CoreResponseType>::AuthorizationCode,
+            CsrfToken::new_random,
+            Nonce::new_random,
+        )
+        .add_scope(Scope::new("email".to_string()))
+        .add_scope(Scope::new("profile".to_string())).url();
+
+    // TODO: Store the CSRF and none states in a way that is more secure than this, although the current method is already quire secure.
+
+    session.insert("google_oidc_session", OidcSession { nonce, csrf_token:csrf_state }).await.unwrap_or_else(|_err| {
+        unreachable!();
+    });
+
+
+    Ok(Redirect::to(authorize_url.as_str()).into_response())
+}
+
+#[derive(Deserialize)]
+struct OAuthLoginQuery{
+    code: String,
+    state: String,
+}
+
+async fn get_login_google_handler(
+    session: Session,
+    Query(query): Query<OAuthLoginQuery>,
+    state: State<AppState>,
+    extract::Tx(mut tx): extract::Tx,
+) -> ResponseResult<Response> {
+    // get the nonce and csrf token from session
+    let oidc_session: OidcSession = session.get("google_oidc_session").await.unwrap_or_else(|_err| {
+        unreachable!();
+    }).unwrap_or_else(|| {
+        unreachable!();
+    });
+
+    let code = AuthorizationCode::new(query.code.clone());
+    let csrf_state = CsrfToken::new(query.state.clone());
+
+    if csrf_state.secret() != oidc_session.csrf_token.secret() {
+        return Ok("Invalid CSRF token".into_response());
+    }
+    let google_client_id = ClientId::new(
+        state.oauth_google_client_id.clone()
+    );
+    let google_client_secret = ClientSecret::new(
+        state.oauth_google_client_secret.clone()
+    );
+    let issuer_url =
+        IssuerUrl::new("https://accounts.google.com".to_string()).unwrap_or_else(|_err| {
+            unreachable!();
+        });
+
+    let provider_metadata = task::spawn_blocking(move || {
+        GoogleProviderMetadata::discover(&issuer_url, http_client)
+        .unwrap_or_else(|_err| {
+            unreachable!();
+        })
+    }).await.unwrap();
+    
+    let revocation_endpoint = provider_metadata
+        .additional_metadata()
+        .revocation_endpoint
+        .clone();
+    // Set up the config for the Google OAuth2 process.
+    let client = CoreClient::from_provider_metadata(
+        provider_metadata,
+        google_client_id,
+        Some(google_client_secret),
+    )
+    .set_redirect_uri(
+        RedirectUrl::new(state.base_url.to_string() + "/login_google_handler").expect("Invalid redirect URL"),
+    )
+    .set_revocation_uri(
+        RevocationUrl::new(revocation_endpoint).expect("Invalid revocation endpoint URL"),
+    );
+
+    let id_token_claims = task::spawn_blocking(move || {
+        let token_response = client.clone()
+        .exchange_code(code)
+        .request(http_client)
+        .unwrap_or_else(|_err| {
+            unreachable!();
+        });
+        let id_token_verifier: CoreIdTokenVerifier = client.id_token_verifier();
+        let token_claims = token_response
+            .extra_fields()
+            .id_token()
+            .expect("Server did not return an ID token")
+            .claims(&id_token_verifier, &oidc_session.nonce)
+            .unwrap_or_else(|_errr| {
+                unreachable!();
+            }).clone();
+        let token_to_revoke: CoreRevocableToken = match token_response.refresh_token() {
+            Some(token) => token.into(),
+            None => token_response.access_token().into(),
+        };
+    
+        client
+            .revoke_token(token_to_revoke)
+            .expect("no revocation_uri configured")
+            .request(http_client)
+            .unwrap_or_else(|_err| {
+                unreachable!();
+            });
+        token_claims
+    }).await.unwrap_or_else(|_err| {
+        unreachable!();
+    });
+
+    let email = id_token_claims.email().unwrap_or_else(|| {
+        unreachable!();
+    }).to_string();
+    // take username from email
+    let username = email.split("@").next().unwrap_or_else(|| {
+        unreachable!();
+    }).to_string();
+
+    let oauth_id = id_token_claims.subject().to_string();
+
+    let oauth_credentials = CreateOAuthUser {
+        username,
+        oauth_id,
+        email,
+        oauth_provider: "Google".to_string(),
+    };
+    let logged_in = authentication::login_oauth_user(&mut tx, session.clone(), &oauth_credentials.oauth_id).await;
+    if logged_in.is_err() {
+        let signed_up = authentication::create_and_login_oauth_user(&mut tx, session, oauth_credentials).await;
+        if signed_up.is_err() {
+            return Ok("Failed to login".into_response());
+        }
+    }
+    tx.commit().await?;
+    Ok(Redirect::to("/").into_response())
 }
 
 async fn post_login_demo(

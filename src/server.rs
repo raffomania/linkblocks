@@ -20,6 +20,8 @@ pub struct AppState {
     pub pool: sqlx::PgPool,
     pub base_url: String,
     pub demo_mode: bool,
+    pub oauth_google_client_id: String,
+    pub oauth_google_client_secret: String,
 }
 
 pub async fn app(state: AppState) -> anyhow::Result<Router> {
