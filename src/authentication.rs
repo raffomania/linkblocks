@@ -1,7 +1,8 @@
 use crate::{
     db::{self, AppTx},
     extract,
-    forms::users::{CreateUser, Credentials},
+    forms::users::{CreateUser, Credentials, OidcLoginQuery},
+    oidc::{self},
     response_error::{ResponseError, ResponseResult},
     server::AppState,
 };
@@ -14,6 +15,7 @@ use axum::{
     http::request::Parts,
     response::Redirect,
 };
+use openidconnect::core::CoreClient;
 use tower_sessions::Session;
 use uuid::Uuid;
 
@@ -31,7 +33,11 @@ pub fn hash_password(password: &String) -> ResponseResult<String> {
 }
 
 pub fn verify_password(user: &db::User, password: &str) -> ResponseResult<()> {
-    let password_hash = &argon2::PasswordHash::new(&user.password_hash)
+    let existing_hash = user
+        .password_hash
+        .as_ref()
+        .context("User has no password set")?;
+    let password_hash = &argon2::PasswordHash::new(existing_hash)
         .map_err(|e| anyhow!("Failed to create password hash: {e}"))?;
 
     argon2::Argon2::default()
@@ -62,6 +68,29 @@ pub async fn create_and_login_temp_user(tx: &mut AppTx, session: Session) -> Res
     Ok(())
 }
 
+pub async fn login_oidc_user(
+    tx: &mut AppTx,
+    session: &Session,
+    query: OidcLoginQuery,
+    oidc_client: CoreClient,
+) -> ResponseResult<()> {
+    let oidc_session: oidc::LoginAttempt = oidc::LoginAttempt::from_session(session).await?;
+    let create_oidc_user = oidc_session
+        .login(&oidc_client, query.state, query.code)
+        .await?;
+    let user = db::users::user_by_oidc_id(tx, &create_oidc_user.oidc_id).await;
+
+    let user = match user {
+        Ok(user) => user,
+        Err(ResponseError::NotFound) => db::users::insert_oidc(tx, create_oidc_user).await?,
+        Err(_) => return Err(anyhow!("Failed to look up user by OIDC id").into()),
+    };
+
+    AuthUser::save_in_session(session, &user.id).await?;
+
+    Ok(())
+}
+
 #[derive(Debug)]
 pub struct AuthUser {
     pub user_id: Uuid,
@@ -83,7 +112,7 @@ impl AuthUser {
 
     pub async fn from_session(session: Session, tx: &mut AppTx) -> ResponseResult<Self> {
         let user_id: Uuid = session
-            .get("auth_user_id")
+            .get(Self::SESSION_KEY)
             .await
             .context("Failed to load authenticated user id")?
             .ok_or(ResponseError::NotAuthenticated)?;

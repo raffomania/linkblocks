@@ -19,6 +19,7 @@ impl TestApp {
                 pool,
                 base_url: String::new(),
                 demo_mode: false,
+                oidc_state: crate::oidc::State::NotConfigured,
             })
             .await
             .unwrap(),

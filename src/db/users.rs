@@ -2,7 +2,7 @@ use sqlx::{query_as, FromRow};
 use uuid::Uuid;
 
 use crate::authentication::hash_password;
-use crate::forms::users::CreateUser;
+use crate::forms::users::{CreateOidcUser, CreateUser};
 use crate::response_error::{ResponseError, ResponseResult};
 
 use super::AppTx;
@@ -10,8 +10,53 @@ use super::AppTx;
 #[derive(FromRow, Debug)]
 pub struct User {
     pub id: Uuid,
-    pub username: String,
-    pub password_hash: String,
+
+    // Password-based login data
+    pub username: Option<String>,
+    pub password_hash: Option<String>,
+
+    // SSO-related data
+    #[allow(dead_code)]
+    pub email: Option<String>,
+    #[allow(dead_code)]
+    pub oidc_id: Option<String>,
+}
+
+pub async fn user_by_oidc_id(tx: &mut AppTx, oidc_id: &str) -> ResponseResult<User> {
+    let user = query_as!(
+        User,
+        r#"
+        select * from users
+        where oidc_id = $1
+        "#,
+        oidc_id
+    )
+    .fetch_one(&mut **tx)
+    .await?;
+
+    Ok(user)
+}
+
+pub async fn insert_oidc(tx: &mut AppTx, create_user: CreateOidcUser) -> ResponseResult<User> {
+    let user = query_as!(
+        User,
+        r#"
+        insert into users
+        (email, oidc_id)
+        values ($1, $2)
+        returning *"#,
+        create_user.email,
+        create_user.oidc_id,
+    )
+    .fetch_one(&mut **tx)
+    .await;
+    match user {
+        Ok(user) => Ok(user),
+        Err(e) => {
+            tracing::warn!("Error inserting user: {:?}", e);
+            Err(e.into())
+        }
+    }
 }
 
 pub async fn insert(tx: &mut AppTx, create_user: CreateUser) -> ResponseResult<User> {
@@ -21,15 +66,15 @@ pub async fn insert(tx: &mut AppTx, create_user: CreateUser) -> ResponseResult<U
         User,
         r#"
         insert into users
-        (password_hash, username)
+        (username, password_hash)
         values ($1, $2)
-        returning *"#,
+        returning *
+        "#,
+        create_user.username,
         hashed_password,
-        create_user.username
     )
     .fetch_one(&mut **tx)
     .await?;
-
     Ok(user)
 }
 
