@@ -82,7 +82,7 @@ development-cert:
     mkdir -p development_cert
     test -f development_cert/localhost.crt || mkcert -cert-file development_cert/localhost.crt -key-file development_cert/localhost.key localhost 127.0.0.1 ::1
 
-ci-dev: start-database start-test-database && lint format test
+ci-dev: start-database migrate-database start-test-database && lint format test
     #!/usr/bin/env bash
 
     cargo build --release
