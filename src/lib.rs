@@ -10,6 +10,7 @@ mod db;
 mod extract;
 mod form_errors;
 mod forms;
+mod oidc;
 mod response_error;
 mod routes;
 pub mod server;

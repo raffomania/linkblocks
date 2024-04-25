@@ -10,6 +10,7 @@ use crate::insert_demo_data::insert_demo_data;
 use crate::{
     db,
     forms::users::CreateUser,
+    oidc,
     server::{self, AppState},
 };
 
@@ -29,6 +30,26 @@ struct SharedConfig {
     database_url: String,
 }
 
+#[derive(Args, Debug)]
+#[group(requires_all = ["oidc_client_id", "oidc_client_secret", "oidc_issuer_url", "oidc_issuer_name"])]
+pub struct OidcArgs {
+    /// To use OIDC, all options beginning with `oidc` must be set.
+    /// We support RS*, PS*, or HS* signature algorithms.
+    /// Configure your redirect URL to be `{base_url}/login_oidc_redirect`.
+    #[clap(long, env, required = false)]
+    pub oidc_client_id: String,
+    #[clap(hide_env_values = true, long, env, required = false)]
+    pub oidc_client_secret: String,
+    #[clap(long, env, required = false)]
+    pub oidc_issuer_url: String,
+    /// This will be displayed on the login page.
+    #[clap(long, env, required = false)]
+    pub oidc_issuer_name: String,
+}
+
+// Since this enum is only ever constructed once,
+// we only waste very little memory due to large enum variants.
+#[allow(clippy::large_enum_variant)]
 #[derive(Parser)]
 enum Command {
     /// Migrate the database, then start the server
@@ -51,6 +72,8 @@ enum Command {
         base_url: String,
         #[clap(long, env, default_value = "false")]
         demo_mode: bool,
+        #[clap(flatten)]
+        oidc_args: Option<OidcArgs>,
     },
     Db {
         #[clap(subcommand)]
@@ -121,6 +144,7 @@ pub async fn run() -> Result<()> {
             tls_key,
             base_url,
             demo_mode,
+            oidc_args,
         } => {
             let pool = db::pool(&cli.config.database_url).await?;
 
@@ -135,10 +159,13 @@ pub async fn run() -> Result<()> {
                 tx.commit().await?;
             }
 
+            let oidc_state = oidc::State::initialize(base_url.clone(), oidc_args).await;
+
             let app = server::app(AppState {
                 pool,
-                base_url,
+                base_url: base_url.clone(),
                 demo_mode,
+                oidc_state,
             })
             .await?;
             server::start(listen_address, app, tls_cert, tls_key).await?;

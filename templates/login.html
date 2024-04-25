@@ -1,53 +1,64 @@
 {% import "_form.html" as form %} {% extends "_base.html" %}
 {% block body %}
-  <form
-    action="/login"
-    method="post"
-    class="flex flex-col justify-center flex-1 max-w-md min-h-full px-4 mx-auto"
-    hx-boost="true"
-    hx-disabled-elt="button"
-  >
-    <h1 class="text-2xl font-bold tracking-tight text-center">
-      Sign in to your account
-    </h1>
-    <label class="mt-10 text-neutral-400" name="credentials[username]"
-      >Username</label
+  <div class="flex flex-col justify-center max-w-md min-h-full px-4 mx-auto">
+    <form
+      action="/login"
+      method="post"
+      hx-boost="true"
+      hx-disabled-elt="button"
+      class="flex flex-col w-full"
     >
-    {%
-      call form::errors(errors,
-      "credentials.username")
-    %}
-    <input
-      type="text"
-      name="credentials[username]"
-      class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
-      value="{{ input.credentials.username }}"
-      required
-    />
-    <label for="credentials[password]" class="mt-4 text-neutral-400"
-      >Password</label
-    >
-    {% call form::errors(errors, "credentials.password") %}
-    <input
-      type="password"
-      name="credentials[password]"
-      class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
-      required
-    />
-    {% if let Some(previous_uri) = input.previous_uri %}
-      <input type="hidden" name="previous_uri" value="{{ previous_uri }}" />
+      <h1 class="text-2xl font-bold tracking-tight text-center">
+        Sign in to your account
+      </h1>
+      <label class="mt-10 text-neutral-400" name="credentials[username]"
+        >Username</label
+      >
+      {%
+        call form::errors(errors,
+        "credentials.username")
+      %}
+      <input
+        type="text"
+        name="credentials[username]"
+        class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
+        value="{{ input.credentials.username }}"
+        required
+      />
+      <label for="credentials[password]" class="mt-4 text-neutral-400"
+        >Password</label
+      >
+      {% call form::errors(errors, "credentials.password") %}
+      <input
+        type="password"
+        name="credentials[password]"
+        class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
+        required
+      />
+      {% if let Some(previous_uri) = input.previous_uri %}
+        <input type="hidden" name="previous_uri" value="{{ previous_uri }}" />
+      {% endif %}
+      {% call form::errors(errors, "root") %}
+      <button
+        type="submit"
+        class="leading-6 bg-neutral-300 mt-5 font-semibold rounded py-1.5 flex items-center justify-center disabled:bg-neutral-500 text-neutral-900"
+      >
+        <span class="inline-block w-0 h-4">
+          <span
+            class="block w-4 h-4 -ml-6 border-2 rounded-full border-neutral-900 animate-spin border-t-transparent htmx-indicator"
+          ></span
+        ></span>
+        Sign in
+      </button>
+    </form>
+    {% if let OidcInfo::Configured{name} = oidc_info %}
+      <hr class="my-5 border-neutral-700" />
+      <a
+        class="leading-6 border border-neutral-500 font-semibold rounded py-1.5 flex items-center justify-center"
+        href="/login_oidc"
+      >
+        Sign in with {{ name }}
+      </a>
     {% endif %}
-    {% call form::errors(errors, "root") %}
-    <button
-      type="submit"
-      class="leading-6 bg-neutral-300 mt-5 font-semibold rounded py-1.5 flex items-center justify-center disabled:bg-neutral-500 text-neutral-900"
-    >
-      <span class="inline-block w-0 h-4">
-        <span
-          class="block w-4 h-4 -ml-6 border-2 rounded-full border-neutral-900 animate-spin border-t-transparent htmx-indicator"
-        ></span
-      ></span>
-      Sign in
-    </button>
-  </form>
+  </div>
 {% endblock %}

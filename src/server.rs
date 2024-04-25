@@ -8,7 +8,7 @@ use tower_sessions::ExpiredDeletion;
 use crate::{
     cli::ListenArgs,
     db::{self},
-    routes,
+    oidc, routes,
 };
 
 use axum::Router;
@@ -20,6 +20,7 @@ pub struct AppState {
     pub pool: sqlx::PgPool,
     pub base_url: String,
     pub demo_mode: bool,
+    pub oidc_state: oidc::State,
 }
 
 pub async fn app(state: AppState) -> anyhow::Result<Router> {

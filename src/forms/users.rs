@@ -1,4 +1,5 @@
 use garde::Validate;
+use openidconnect::{AuthorizationCode, CsrfToken};
 use serde::{Deserialize, Serialize};
 
 #[derive(Validate)]
@@ -23,4 +24,18 @@ pub struct Credentials {
     pub username: String,
     #[garde(length(min = 10, max = 100))]
     pub password: String,
+}
+
+#[derive(Deserialize)]
+pub struct OidcLoginQuery {
+    pub code: AuthorizationCode,
+    pub state: CsrfToken,
+}
+
+#[derive(Serialize, Deserialize, Validate, Debug, Default)]
+pub struct CreateOidcUser {
+    #[garde(length(min = 10, max = 100))]
+    pub oidc_id: String,
+    #[garde(length(min = 10, max = 100))]
+    pub email: String,
 }
