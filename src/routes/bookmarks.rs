@@ -38,7 +38,7 @@ async fn post_create(
     auth_user: AuthUser,
     QsForm(input): QsForm<CreateBookmark>,
 ) -> ResponseResult<Response> {
-    let layout = layout::Template::from_db(&mut tx, &auth_user).await?;
+    let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
 
     dbg!(&input);
     let selected_parents = db::lists::list_by_id(&mut tx, &input.parents).await?;
@@ -72,6 +72,7 @@ async fn post_create(
             CreateList {
                 title: parent_title,
                 content: None,
+                private: false,
             },
         )
         .await?;
@@ -123,7 +124,7 @@ async fn get_create(
     auth_user: AuthUser,
     Query(query): Query<CreateBookmarkQuery>,
 ) -> ResponseResult<CreateBookmarkTemplate> {
-    let layout = layout::Template::from_db(&mut tx, &auth_user).await?;
+    let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
 
     let selected_parent = match query.parent_id {
         Some(id) => Some(db::lists::by_id(&mut tx, id).await?),
@@ -148,7 +149,7 @@ async fn get_unsorted(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
 ) -> ResponseResult<UnsortedBookmarksTemplate> {
-    let layout = layout::Template::from_db(&mut tx, &auth_user).await?;
+    let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
     let bookmarks = db::bookmarks::list_unsorted(&mut tx, auth_user.user_id).await?;
 
     Ok(UnsortedBookmarksTemplate { layout, bookmarks })

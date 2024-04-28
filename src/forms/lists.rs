@@ -7,4 +7,7 @@ pub struct CreateList {
     pub title: String,
     #[garde(skip)]
     pub content: Option<String>,
+    #[garde(skip)]
+    #[serde(default)]
+    pub private: bool,
 }

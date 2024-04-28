@@ -34,7 +34,7 @@ async fn post_create(
     // TODO handle failed extractors in forms better
     QsForm(input): QsForm<PartialCreateLink>,
 ) -> ResponseResult<Response> {
-    let layout = layout::Template::from_db(&mut tx, &auth_user).await?;
+    let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
     let src_from_db = match input.src {
         Some(id) => Some(db::items::by_id(&mut tx, id).await?),
         None => None,
@@ -105,7 +105,7 @@ async fn get_create(
     auth_user: AuthUser,
     Query(query): Query<CreateLinkQueryString>,
 ) -> ResponseResult<CreateLinkTemplate> {
-    let layout = layout::Template::from_db(&mut tx, &auth_user).await?;
+    let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
 
     let src = match query.src_id {
         Some(id) => Some(db::items::by_id(&mut tx, id).await?),
