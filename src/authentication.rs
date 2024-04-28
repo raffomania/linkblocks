@@ -68,7 +68,6 @@ pub async fn create_and_login_oauth_user(
     oauth_user: CreateOAuthUser,
 ) -> ResponseResult<()> {
     let user = db::users::insert_oauth(tx, oauth_user, "Google").await?;
-    let users = db::users::get_all_users(tx).await?;
     AuthUser::save_in_session(&session, &user.id).await?;
 
     Ok(())

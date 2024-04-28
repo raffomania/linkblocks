@@ -1,3 +1,4 @@
+use anyhow::Context;
 use askama_axum::IntoResponse;
 use axum::{
     extract::{Query, State}, response::{Redirect, Response}, routing::{get, post}, Router
@@ -27,7 +28,6 @@ use openidconnect::{
     CsrfToken, IssuerUrl, Nonce, OAuth2TokenResponse, ProviderMetadata, RedirectUrl, RevocationUrl,
     Scope,
 };
-use std::process::exit;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 struct RevocationEndpointProviderMetadata {
@@ -103,17 +103,13 @@ async fn get_login_google(
     let google_client_secret = ClientSecret::new(
         state.oauth_google_client_secret
     );
-    let issuer_url =
-        IssuerUrl::new("https://accounts.google.com".to_string()).unwrap_or_else(|_err| {
-            unreachable!();
-        });
+    let issuer_url = 
+        IssuerUrl::new("https://accounts.google.com".to_string()).context("failed to reach issuer")?;
 
     let provider_metadata = task::spawn_blocking(move || {
         GoogleProviderMetadata::discover(&issuer_url, http_client)
-        .unwrap_or_else(|_err| {
-            unreachable!();
-        })
-    }).await.unwrap();
+        .context("failed to discover provider").unwrap()
+    }).await.context("failed to discover provider")?;
     
     let revocation_endpoint = provider_metadata
         .additional_metadata()
@@ -144,9 +140,7 @@ async fn get_login_google(
 
     // TODO: Store the CSRF and none states in a way that is more secure than this, although the current method is already quire secure.
 
-    session.insert("google_oidc_session", OidcSession { nonce, csrf_token:csrf_state }).await.unwrap_or_else(|_err| {
-        unreachable!();
-    });
+    session.insert("google_oidc_session", OidcSession { nonce, csrf_token:csrf_state }).await.context("failed to insert session")?;
 
 
     Ok(Redirect::to(authorize_url.as_str()).into_response())
@@ -165,11 +159,7 @@ async fn get_login_google_handler(
     extract::Tx(mut tx): extract::Tx,
 ) -> ResponseResult<Response> {
     // get the nonce and csrf token from session
-    let oidc_session: OidcSession = session.get("google_oidc_session").await.unwrap_or_else(|_err| {
-        unreachable!();
-    }).unwrap_or_else(|| {
-        unreachable!();
-    });
+    let oidc_session: OidcSession = session.get("google_oidc_session").await.context("failed to get session")?.context("session not found")?;
 
     let code = AuthorizationCode::new(query.code.clone());
     let csrf_state = CsrfToken::new(query.state.clone());
@@ -184,16 +174,12 @@ async fn get_login_google_handler(
         state.oauth_google_client_secret.clone()
     );
     let issuer_url =
-        IssuerUrl::new("https://accounts.google.com".to_string()).unwrap_or_else(|_err| {
-            unreachable!();
-        });
+        IssuerUrl::new("https://accounts.google.com".to_string()).context("failed to reach issuer")?;
 
     let provider_metadata = task::spawn_blocking(move || {
         GoogleProviderMetadata::discover(&issuer_url, http_client)
-        .unwrap_or_else(|_err| {
-            unreachable!();
-        })
-    }).await.unwrap();
+        .context("failed to discover provider").unwrap()
+    }).await.context("failed to discover provider")?;
     
     let revocation_endpoint = provider_metadata
         .additional_metadata()
@@ -216,18 +202,14 @@ async fn get_login_google_handler(
         let token_response = client.clone()
         .exchange_code(code)
         .request(http_client)
-        .unwrap_or_else(|_err| {
-            unreachable!();
-        });
+        .context("failed to get token response").unwrap();
         let id_token_verifier: CoreIdTokenVerifier = client.id_token_verifier();
         let token_claims = token_response
             .extra_fields()
             .id_token()
             .expect("Server did not return an ID token")
             .claims(&id_token_verifier, &oidc_session.nonce)
-            .unwrap_or_else(|_errr| {
-                unreachable!();
-            }).clone();
+            .context("failed to get token claims").unwrap().clone();
         let token_to_revoke: CoreRevocableToken = match token_response.refresh_token() {
             Some(token) => token.into(),
             None => token_response.access_token().into(),
@@ -237,21 +219,13 @@ async fn get_login_google_handler(
             .revoke_token(token_to_revoke)
             .expect("no revocation_uri configured")
             .request(http_client)
-            .unwrap_or_else(|_err| {
-                unreachable!();
-            });
+            .context("failed to revoke token").unwrap();
         token_claims
-    }).await.unwrap_or_else(|_err| {
-        unreachable!();
-    });
+    }).await.context("failed to get token claims")?;
 
-    let email = id_token_claims.email().unwrap_or_else(|| {
-        unreachable!();
-    }).to_string();
+    let email = id_token_claims.email().context("failed to get email")?.to_string();
     // take username from email
-    let username = email.split("@").next().unwrap_or_else(|| {
-        unreachable!();
-    }).to_string();
+    let username = email.split("@").next().context("failed to parse username")?.to_string();
 
     let oauth_id = id_token_claims.subject().to_string();
 

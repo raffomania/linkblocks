@@ -18,19 +18,6 @@ pub struct User {
     pub oauth_id: Option<String>,
 }
 
-pub async fn get_all_users(tx: &mut AppTx) -> ResponseResult<Vec<User>> {
-    let users = query_as!(
-        User,
-        r#"
-        select * from users
-        "#,
-    )
-    .fetch_all(&mut **tx)
-    .await?;
-
-    Ok(users)
-}
-
 pub async fn user_by_oauth_id(tx: &mut AppTx, oauth_id: &str) -> ResponseResult<User> {
     let user = query_as!(
         User,
@@ -46,7 +33,7 @@ pub async fn user_by_oauth_id(tx: &mut AppTx, oauth_id: &str) -> ResponseResult<
     Ok(user)
 }
 
-pub async fn insert_oauth(tx: &mut AppTx, create_user: CreateOAuthUser, oauth_id: &str) -> ResponseResult<User> {
+pub async fn insert_oauth(tx: &mut AppTx, create_user: CreateOAuthUser, oauth_provider: &str) -> ResponseResult<User> {
     let hashed_password = hash_password(uuid::Uuid::new_v4().to_string())?;
     let user = query_as!(
         User,
@@ -58,7 +45,7 @@ pub async fn insert_oauth(tx: &mut AppTx, create_user: CreateOAuthUser, oauth_id
         create_user.username,
         create_user.email,
         create_user.oauth_id,
-        "Google",
+        oauth_provider,
         true,
         hashed_password
     )
