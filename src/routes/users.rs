@@ -137,7 +137,7 @@ async fn get_profile(
     auth_user: AuthUser,
     State(state): State<AppState>,
 ) -> ResponseResult<ProfileTemplate> {
-    let layout = layout::Template::from_db(&mut tx, &auth_user).await?;
+    let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
 
     Ok(ProfileTemplate {
         layout,

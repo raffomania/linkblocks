@@ -27,6 +27,11 @@
         "ordinal": 4,
         "name": "content",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "private",
+        "type_info": "Bool"
       }
     ],
     "parameters": {
@@ -39,7 +44,8 @@
       false,
       false,
       false,
-      true
+      true,
+      false
     ]
   },
   "hash": "93c7a7586d32b00b3dcd571e20bf5e8b5d720e06f9f3b5ab4e1ef7da2e21f9aa"
