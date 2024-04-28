@@ -16,6 +16,6 @@ async fn index(
     extract::Tx(mut tx): extract::Tx,
 ) -> ResponseResult<views::index::Template> {
     Ok(views::index::Template {
-        layout: layout::Template::from_db(&mut tx, &auth_user).await?,
+        layout: layout::Template::from_db(&mut tx, Some(&auth_user)).await?,
     })
 }

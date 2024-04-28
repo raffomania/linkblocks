@@ -56,6 +56,7 @@ pub async fn insert_demo_data(
             let create_list = CreateList {
                 title,
                 content: content.map(|c| c.join("\n\n")),
+                private: fake::Faker.fake(),
             };
             let list = db::lists::insert(&mut tx, user.id, create_list).await?;
 
