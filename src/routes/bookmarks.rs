@@ -37,14 +37,15 @@ async fn post_create(
     auth_user: AuthUser,
     QsForm(input): QsForm<CreateBookmark>,
 ) -> ResponseResult<Response> {
-    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
+    let user_id = auth_user.user_id;
+    let layout = LayoutTemplate::from_db(&mut tx, Some(auth_user)).await?;
 
     dbg!(&input);
     let selected_parents = db::lists::list_by_id(&mut tx, &input.parents).await?;
 
     let search_results = match input.list_search_term.as_ref() {
-        None => db::lists::list_recent(&mut tx, auth_user.user_id).await?,
-        Some(term) => db::lists::search(&mut tx, term, auth_user.user_id).await?,
+        None => db::lists::list_recent(&mut tx, user_id.clone()).await?,
+        Some(term) => db::lists::search(&mut tx, term, user_id.clone()).await?,
     };
 
     let insert_bookmark = match InsertBookmark::try_from(input.clone()) {
@@ -61,13 +62,13 @@ async fn post_create(
         Ok(i) => i,
     };
 
-    let bookmark = db::bookmarks::insert(&mut tx, auth_user.user_id, insert_bookmark).await?;
+    let bookmark = db::bookmarks::insert(&mut tx, user_id.clone(), insert_bookmark).await?;
 
     let mut first_created_parent = Option::None;
     for parent_title in input.create_parents {
         let parent = db::lists::insert(
             &mut tx,
-            auth_user.user_id,
+            user_id,
             CreateList {
                 title: parent_title,
                 content: None,
@@ -76,7 +77,7 @@ async fn post_create(
         .await?;
         db::links::insert(
             &mut tx,
-            auth_user.user_id,
+            user_id.clone(),
             CreateLink {
                 src: parent.id,
                 dest: bookmark.id,
@@ -92,7 +93,7 @@ async fn post_create(
     for parent in input.parents {
         db::links::insert(
             &mut tx,
-            auth_user.user_id,
+            user_id,
             CreateLink {
                 src: parent,
                 dest: bookmark.id,
@@ -122,7 +123,8 @@ async fn get_create(
     auth_user: AuthUser,
     Query(query): Query<CreateBookmarkQuery>,
 ) -> ResponseResult<CreateBookmarkTemplate> {
-    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
+    let user_id = auth_user.user_id;
+    let layout = LayoutTemplate::from_db(&mut tx, Some(auth_user)).await?;
 
     let selected_parent = match query.parent_id {
         Some(id) => Some(db::lists::by_id(&mut tx, id).await?),
@@ -139,7 +141,7 @@ async fn get_create(
             ..Default::default()
         },
         selected_parents: Vec::from_iter(selected_parent.into_iter()),
-        search_results: db::lists::list_recent(&mut tx, auth_user.user_id).await?,
+        search_results: db::lists::list_recent(&mut tx, user_id).await?,
     })
 }
 
@@ -147,8 +149,9 @@ async fn get_unsorted(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
 ) -> ResponseResult<UnsortedBookmarksTemplate> {
-    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
-    let bookmarks = db::bookmarks::list_unsorted(&mut tx, auth_user.user_id).await?;
+    let user_id = auth_user.user_id;
+    let layout = LayoutTemplate::from_db(&mut tx, Some(auth_user)).await?;
+    let bookmarks = db::bookmarks::list_unsorted(&mut tx, user_id).await?;
 
     Ok(UnsortedBookmarksTemplate { layout, bookmarks })
 }

@@ -33,7 +33,8 @@ async fn post_create(
     // TODO handle failed extractors in forms better
     QsForm(input): QsForm<PartialCreateLink>,
 ) -> ResponseResult<Response> {
-    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
+    let user_id = auth_user.user_id;
+    let layout = LayoutTemplate::from_db(&mut tx, Some(auth_user)).await?;
     let src_from_db = match input.src {
         Some(id) => Some(db::items::by_id(&mut tx, id).await?),
         None => None,
@@ -62,14 +63,14 @@ async fn post_create(
     };
 
     let search_results = match search_term {
-        Some(search_term) => db::items::search(&mut tx, search_term, auth_user.user_id).await?,
+        Some(search_term) => db::items::search(&mut tx, search_term, user_id.clone()).await?,
         None => Vec::new(),
     };
 
     if let (Some(src), Some(dest), true) = (&src_from_db, &dest_from_db, input.submitted) {
         db::links::insert(
             &mut tx,
-            auth_user.user_id,
+            user_id,
             CreateLink {
                 src: src.id(),
                 dest: dest.id(),
@@ -104,7 +105,8 @@ async fn get_create(
     auth_user: AuthUser,
     Query(query): Query<CreateLinkQueryString>,
 ) -> ResponseResult<CreateLinkTemplate> {
-    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
+    let user_id = auth_user.user_id;
+    let layout = LayoutTemplate::from_db(&mut tx, Some(auth_user)).await?;
 
     let src = match query.src_id {
         Some(id) => Some(db::items::by_id(&mut tx, id).await?),
@@ -117,12 +119,12 @@ async fn get_create(
     };
 
     let search_results = match (src.as_ref(), dest.as_ref()) {
-        (None, _) => db::lists::list_recent(&mut tx, auth_user.user_id)
+        (None, _) => db::lists::list_recent(&mut tx, user_id.clone())
             .await?
             .into_iter()
             .map(LinkDestination::List)
             .collect(),
-        (_, None) => db::items::list_recent(&mut tx, auth_user.user_id).await?,
+        (_, None) => db::items::list_recent(&mut tx, user_id).await?,
         _ => Vec::new(),
     };
 

@@ -153,3 +153,90 @@ where
         })?)
     }
 }
+
+#[derive(Debug)]
+pub struct Authenticated{
+    pub logged_in: bool,
+    pub auth_user: Option<AuthUser>,
+}
+
+impl Authenticated {
+    const SESSION_KEY: &'static str = "auth_user_id";
+
+
+    pub async fn from_session(session: Session, tx: &mut AppTx) -> ResponseResult<Self> {
+        let user_id: Uuid = session
+            .get(Self::SESSION_KEY)
+            .await
+            .context("Failed to load authenticated user id")?
+            .ok_or(ResponseError::NotAuthenticated)?;
+        
+        let user = db::users::by_id(tx, user_id).await;
+        if user.is_err(){
+            return Ok(Self{
+                logged_in: false,
+                auth_user: None,
+            })
+        }else{
+            return Ok(Self{
+                logged_in: true,
+                auth_user: Some(AuthUser{
+                    user_id,
+                    user: user.unwrap(),
+                    session,
+                })
+            })
+        
+        }
+
+    }
+}
+
+#[async_trait]
+impl<S> FromRequestParts<S> for Authenticated
+where
+    AppState: FromRef<S>,
+    S: Send + Sync,
+{
+    type Rejection = Redirect;
+
+    async fn from_request_parts(
+        req: &mut Parts,
+        state: &S,
+    ) -> std::result::Result<Self, Self::Rejection> {
+        let uri = OriginalUri::from_request_parts(req, state).await.unwrap();
+
+        let redirect_after_login = uri
+            .path_and_query()
+            .map(|pq| pq.as_str())
+            .unwrap_or_default();
+        let redirect_after_login = urlencode(redirect_after_login).unwrap_or_default();
+
+        let redirect_to = format!("/login?previous_uri={redirect_after_login}",);
+        let error_redirect = Redirect::to(&redirect_to);
+        let session = Session::from_request_parts(req, state).await.map_err(|e| {
+            tracing::error!("{e:?}");
+            error_redirect.clone()
+        })?;
+
+        let extract::Tx(mut tx) =
+            extract::Tx::from_request_parts(req, state)
+                .await
+                .map_err(|e| {
+                    tracing::error!("{e:?}");
+                    error_redirect.clone()
+                })?;
+
+        let auth = Authenticated::from_session(session.clone(), &mut tx).await;
+        if auth.is_err(){
+            return Ok(Authenticated{
+                logged_in: false,
+                auth_user: None,
+            })
+        }
+        Ok(auth.map_err(|e| {
+            tracing::error!("{e:?}");
+            error_redirect
+        })?)
+    }
+}

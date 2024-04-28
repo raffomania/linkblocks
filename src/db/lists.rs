@@ -19,6 +19,7 @@ pub struct List {
 
     pub title: String,
     pub content: Option<String>,
+    pub prvate: bool,
 }
 
 impl List {
@@ -144,4 +145,22 @@ pub async fn list_recent(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<Li
     .await?;
 
     Ok(lists)
+}
+
+pub async fn set_private(tx: &mut AppTx, list_id: Uuid, private: bool) -> ResponseResult<List> {
+    let list = query_as!(
+        List,
+        r#"
+        update lists
+        set prvate = $1
+        where id = $2
+        returning *
+        "#,
+        private,
+        list_id,
+    )
+    .fetch_one(&mut **tx)
+    .await?;
+
+    Ok(list)
 }
