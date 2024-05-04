@@ -1,0 +1,13 @@
+{% import "_form.html" as form %}
+{% import "_content.html" as content %}
+{% extends "_layout.html" %}
+
+{% block content %}
+<form action="/bookmarks/import_from_omnivore" method="post" hx-post="/bookmarks/import_from_omnivore" hx-target="main"
+    hx-select="main"
+    hx-push-url="true">
+    <label for="api_token">API Token:</label>
+    <input type="text" id="api_token" name="api_token" required>
+    <button type="submit">Import from Omnivore</button>
+</form>
+{% endblock %}

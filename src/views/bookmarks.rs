@@ -25,3 +25,10 @@ pub struct UnsortedBookmarksTemplate {
     pub layout: LayoutTemplate,
     pub bookmarks: Vec<db::Bookmark>,
 }
+
+#[derive(Template)]
+#[template(path = "import_from_omnivore.html")]
+
+pub struct ImportFromOmnivoreTemplate {
+    pub layout: LayoutTemplate,
+}

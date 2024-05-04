@@ -15,12 +15,17 @@ use crate::{
     authentication::AuthUser,
     db::{self, bookmarks::InsertBookmark},
     extract::{self, qs_form::QsForm},
-    forms::{bookmarks::CreateBookmark, links::CreateLink, lists::CreateList},
+    forms::{
+        bookmarks::CreateBookmark, import::ImportFromOmnivore, links::CreateLink, lists::CreateList,
+    },
+    import::omnivore::OmnivoreImport,
     response_error::ResponseResult,
     server::AppState,
     views::{
         self,
-        bookmarks::{CreateBookmarkTemplate, UnsortedBookmarksTemplate},
+        bookmarks::{
+            CreateBookmarkTemplate, ImportFromOmnivoreTemplate, UnsortedBookmarksTemplate,
+        },
         layout::LayoutTemplate,
     },
 };
@@ -30,6 +35,10 @@ pub fn router() -> Router<AppState> {
         .route("/bookmarks/create", get(get_create).post(post_create))
         .route("/bookmarks/unsorted", get(get_unsorted))
         .route("/bookmarks/:id", delete(delete_by_id))
+        .route(
+            "/bookmarks/import_from_omnivore",
+            get(get_import_from_omnivore).post(post_import_from_omnivore),
+        )
 }
 
 async fn post_create(
@@ -168,4 +177,68 @@ async fn delete_by_id(
     );
 
     Ok(headers)
+}
+
+async fn post_import_from_omnivore(
+    extract::Tx(mut tx): extract::Tx,
+    auth_user: AuthUser,
+    QsForm(import): QsForm<ImportFromOmnivore>,
+) -> ResponseResult<Response> {
+    let api_token = import.api_token;
+    let omnivore_graphql_endpoint_url = "https://api-prod.omnivore.app/api/graphql".to_string();
+
+    let client = OmnivoreImport::new(api_token, omnivore_graphql_endpoint_url);
+    let result = client
+        .get_articles(
+            Some(1000),
+            None,
+            "markdown".to_string(),
+            "in:inbox".to_string(),
+            false,
+        )
+        .await
+        .expect("Failed to get articles");
+    let parent = db::lists::insert(
+        &mut tx,
+        auth_user.user_id,
+        CreateList {
+            title: "Omnivore".to_string(),
+            content: Some("Imported from Omnivore".to_string()),
+        },
+    )
+    .await?;
+    for article in result["data"]["search"]["edges"].as_array().unwrap() {
+        let title = article["node"]["title"].as_str().unwrap();
+        let url = article["node"]["originalArticleUrl"].as_str().unwrap();
+        let bookmark = db::bookmarks::insert(
+            &mut tx,
+            auth_user.user_id,
+            InsertBookmark {
+                url: url.to_string(),
+                title: title.to_string(),
+            },
+        )
+        .await?;
+        db::links::insert(
+            &mut tx,
+            auth_user.user_id,
+            CreateLink {
+                src: parent.id,
+                dest: bookmark.id,
+            },
+        )
+        .await?;
+    }
+    tx.commit().await?;
+
+    Ok("Imported from Omnivore".into_response())
+}
+
+async fn get_import_from_omnivore(
+    extract::Tx(mut tx): extract::Tx,
+    auth_user: AuthUser,
+) -> ResponseResult<ImportFromOmnivoreTemplate> {
+    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
+
+    Ok(ImportFromOmnivoreTemplate { layout })
 }
