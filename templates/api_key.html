@@ -1,0 +1,13 @@
+{% import "_form.html" as form %}
+{% import "_content.html" as content %}
+{% extends "_layout.html" %}
+
+
+{% block content %}
+
+<div class="p-10 mx-4 mb-4 grow">
+
+<p>You are about to granting linkblocks bot access to your account. This will allow the bot to add links from your account. Click the button below if you are sure you want to proceed. </p>
+<a href="{{ url }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-4">Grant access</a>
+</div>
+{% endblock %}

@@ -1,3 +1,4 @@
+pub mod api;
 pub mod assets;
 pub mod bookmarks;
 pub mod index;

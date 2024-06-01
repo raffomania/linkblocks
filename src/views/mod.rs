@@ -1,3 +1,4 @@
+pub mod apikey;
 pub mod bookmarks;
 pub mod index;
 pub mod layout;

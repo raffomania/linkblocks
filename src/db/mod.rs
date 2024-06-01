@@ -4,6 +4,7 @@ use sqlx::PgPool;
 pub mod all;
 pub mod items;
 pub mod links;
+pub mod users_api;
 pub use links::LinkDestination;
 pub use links::LinkDestinationWithChildren;
 pub use links::LinkWithContent;
