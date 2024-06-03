@@ -31,7 +31,7 @@ serde_qs = "0.13.0"
 sqlx = { version = "0.7.4", features = ["runtime-tokio", "postgres", "tls-rustls", "migrate", "uuid", "time"] }
 thiserror = "1.0.61"
 time = { version = "0.3.36", default-features = false, features = ["serde"] }
-tokio = { version = "1.37.0", features = ["macros", "rt-multi-thread", "signal"] }
+tokio = { version = "1.38.0", features = ["macros", "rt-multi-thread", "signal"] }
 tower = "0.4.13"
 tower-http = { version = "0.5.2", features = ["tracing", "trace"] }
 tower-sessions = { version = "0.9", features = ["postgres-store", "deletion-task"] }
