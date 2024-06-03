@@ -1,7 +1,7 @@
 use crate::{
     db::{self, AppTx},
     extract,
-    forms::users::{CreateUser, Credentials, CreateOAuthUser},
+    forms::users::{CreateOAuthUser, CreateUser, Credentials},
     response_error::{ResponseError, ResponseResult},
     server::AppState,
 };
@@ -73,7 +73,11 @@ pub async fn create_and_login_oauth_user(
     Ok(())
 }
 
-pub async fn login_oauth_user(tx: &mut AppTx, session: Session, oauth_id : &str) -> ResponseResult<()> {
+pub async fn login_oauth_user(
+    tx: &mut AppTx,
+    session: Session,
+    oauth_id: &str,
+) -> ResponseResult<()> {
     let user = db::users::user_by_oauth_id(tx, oauth_id).await?;
 
     AuthUser::save_in_session(&session, &user.id).await?;

@@ -26,7 +26,7 @@ pub struct Credentials {
 }
 
 #[derive(Serialize, Deserialize, Validate, Debug, Default)]
-pub struct CreateOAuthUser{
+pub struct CreateOAuthUser {
     #[garde(alphanumeric, ascii, length(min = 3, max = 50))]
     pub username: String,
     #[garde(length(min = 10, max = 100))]
@@ -35,6 +35,4 @@ pub struct CreateOAuthUser{
     pub email: String,
     #[garde(length(min = 10, max = 100))]
     pub oauth_provider: String,
-    
 }
-

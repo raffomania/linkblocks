@@ -1,8 +1,9 @@
+use log::{info, warn};
 use sqlx::{query_as, FromRow};
 use uuid::Uuid;
 
 use crate::authentication::hash_password;
-use crate::forms::users::{CreateUser, CreateOAuthUser};
+use crate::forms::users::{CreateOAuthUser, CreateUser};
 use crate::response_error::{ResponseError, ResponseResult};
 
 use super::AppTx;
@@ -33,7 +34,11 @@ pub async fn user_by_oauth_id(tx: &mut AppTx, oauth_id: &str) -> ResponseResult<
     Ok(user)
 }
 
-pub async fn insert_oauth(tx: &mut AppTx, create_user: CreateOAuthUser, oauth_provider: &str) -> ResponseResult<User> {
+pub async fn insert_oauth(
+    tx: &mut AppTx,
+    create_user: CreateOAuthUser,
+    oauth_provider: &str,
+) -> ResponseResult<User> {
     let hashed_password = hash_password(uuid::Uuid::new_v4().to_string())?;
     let user = query_as!(
         User,
@@ -51,18 +56,16 @@ pub async fn insert_oauth(tx: &mut AppTx, create_user: CreateOAuthUser, oauth_pr
     )
     .fetch_one(&mut **tx)
     .await;
-match user 
-{
-    Ok(user) => {
-        println!("User inserted successfully");
-        return Ok(user);
+    match user {
+        Ok(user) => {
+            info!("User inserted successfully");
+            return Ok(user);
+        }
+        Err(e) => {
+            warn!("Error inserting user: {:?}", e);
+            return Err(e.into());
+        }
     }
-    Err(e) => {
-        println!("Error inserting user: {:?}", e);
-        return Err(e.into());
-    }
-}
-
 }
 
 pub async fn insert(tx: &mut AppTx, create_user: CreateUser) -> ResponseResult<User> {
@@ -79,7 +82,8 @@ pub async fn insert(tx: &mut AppTx, create_user: CreateUser) -> ResponseResult<U
         create_user.username,
         hashed_password,
         Some("")
-    ).fetch_one(&mut **tx)
+    )
+    .fetch_one(&mut **tx)
     .await?;
     Ok(user)
 }

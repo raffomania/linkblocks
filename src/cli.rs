@@ -10,6 +10,7 @@ use crate::insert_demo_data::insert_demo_data;
 use crate::{
     db,
     forms::users::CreateUser,
+    oidc::oidc_client,
     server::{self, AppState},
 };
 
@@ -52,9 +53,9 @@ enum Command {
         #[clap(long, env, default_value = "false")]
         demo_mode: bool,
         #[clap(long, env)]
-        oauth_google_client_id: String,
+        oauth_google_client_id: Option<String>,
         #[clap(long, env)]
-        oauth_google_client_secret: String,
+        oauth_google_client_secret: Option<String>,
     },
     Db {
         #[clap(subcommand)]
@@ -143,12 +144,21 @@ pub async fn run() -> Result<()> {
                 tx.commit().await?;
             }
 
+            let oauth_google_client = match (
+                oauth_google_client_id.as_deref(),
+                oauth_google_client_secret.as_deref(),
+            ) {
+                (Some(id), Some(secret)) => {
+                    Some(oidc_client(base_url.clone(), id.to_string(), secret.to_string()).await)
+                }
+                _ => None,
+            };
+
             let app = server::app(AppState {
                 pool,
-                base_url,
+                base_url: base_url.clone(),
                 demo_mode,
-                oauth_google_client_id,
-                oauth_google_client_secret,
+                oauth_google_client,
             })
             .await?;
             server::start(listen_address, app, tls_cert, tls_key).await?;

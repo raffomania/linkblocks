@@ -49,6 +49,7 @@
       ></span>
       Sign in
     </button>
+    {% if oauth_google_configured %}
     <button
       type="submit"
       class="leading-6 bg-neutral-300 mt-5 font-semibold rounded py-1.5 flex items-center justify-center disabled:bg-neutral-500 text-neutral-900"
@@ -56,5 +57,6 @@
     >
       Sign in with google
     </button>
+    {% endif %}
   </form>
 {% endblock %}
