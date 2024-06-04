@@ -33,7 +33,6 @@ async fn list(
     extract::Tx(mut tx): extract::Tx,
     Path(list_id): Path<Uuid>,
 ) -> ResponseResult<ListTemplate> {
-// ) -> ResponseResult<TypeList<ListTemplate, PublicListTemplate>> {
     let links = db::links::list_by_list(&mut tx, list_id).await?;
     let list = db::lists::by_id(&mut tx, list_id.clone()).await?;
     
@@ -41,12 +40,12 @@ async fn list(
 
     match auth_user {
         Some(ref user) => {
-            if list.prvate && list.user_id != user.user_id{
+            if list.private && list.user_id != user.user_id{
                 return Err(ResponseError::NotFound)
             }
         },
         None => {
-            if list.prvate{
+            if list.private{
                 return Err(ResponseError::NotFound)
             }
         }
@@ -120,11 +119,7 @@ async fn toggle_publicity(
         }
     }
     
-    if list.prvate {
-        db::lists::set_private(&mut tx, query.list_id,false).await?;
-    } else {
-        db::lists::set_private(&mut tx, query.list_id,true).await?;
-    }
+    db::lists::set_private(&mut tx, query.list_id,!list.private).await?;
 
     tx.commit().await?;
 

@@ -30,7 +30,7 @@
       },
       {
         "ordinal": 5,
-        "name": "prvate",
+        "name": "private",
         "type_info": "Bool"
       }
     ],

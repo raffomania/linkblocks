@@ -33,10 +33,11 @@
       href="/lists/toggle_publicity?list_id={{ list.id }}"
       class="block px-4 py-1 mx-2 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
       hx-get="/lists/toggle_publicity?list_id={{ list.id }}"
-      hx-target="closest section"
+      id="toggle_publicity"
+      hx-swap="outerHTML"
       hx-select="#toggle_publicity"
       >
-      {% if list.prvate %}
+      {% if list.private %}
       Make public
       {% else %}
       Make private

@@ -72,6 +72,7 @@ async fn post_create(
             CreateList {
                 title: parent_title,
                 content: None,
+                private: false,
             },
         )
         .await?;

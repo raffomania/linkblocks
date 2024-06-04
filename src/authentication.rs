@@ -156,7 +156,6 @@ where
 
 #[derive(Debug)]
 pub struct Authenticated{
-    pub logged_in: bool,
     pub auth_user: Option<AuthUser>,
 }
 
@@ -174,12 +173,10 @@ impl Authenticated {
         let user = db::users::by_id(tx, user_id).await;
         if user.is_err(){
             return Ok(Self{
-                logged_in: false,
                 auth_user: None,
             })
         }else{
             return Ok(Self{
-                logged_in: true,
                 auth_user: Some(AuthUser{
                     user_id,
                     user: user.unwrap(),
@@ -230,7 +227,6 @@ where
         let auth = Authenticated::from_session(session.clone(), &mut tx).await;
         if auth.is_err(){
             return Ok(Authenticated{
-                logged_in: false,
                 auth_user: None,
             })
         }
