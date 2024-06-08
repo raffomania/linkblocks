@@ -7,4 +7,6 @@ pub struct CreateList {
     pub title: String,
     #[garde(skip)]
     pub content: Option<String>,
+    #[garde(skip)]
+    pub rich_view: Option<bool>,
 }

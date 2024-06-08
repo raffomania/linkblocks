@@ -64,6 +64,7 @@ pub struct LinkWithContent {
     pub user_id: Uuid,
 
     pub dest: LinkDestinationWithChildren,
+    pub metadata: db::metadata::Metadata,
 }
 
 pub async fn insert(
@@ -120,7 +121,10 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
                 )
             when bookmarks.id is not null then
                 to_jsonb(bookmarks.*)
-            else null end as dest
+            else null end as dest,
+            
+            metadata.* as metadata
+
         from links
 
         left join lists on lists.id = links.dest_list_id
@@ -129,9 +133,10 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
         left join lists as lists_lists on lists_lists.id = lists_links.dest_list_id
 
         left join bookmarks on bookmarks.id = links.dest_bookmark_id
+        left join metadata on metadata.id = bookmarks.metadata_id
 
         where links.src_list_id = $1
-        group by links.id, lists.id, bookmarks.id
+        group by links.id, lists.id, bookmarks.id, metadata.id
         order by links.created_at desc
         "#,
         list_id
@@ -148,6 +153,12 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
                 created_at: row.link_created_at,
                 user_id: row.link_user_id,
                 dest,
+                metadata: db::metadata::Metadata {
+                    id: row.id,
+                    metadata_title: row.metadata_title,
+                    metadata_description: row.metadata_description,
+                    metadata_image_url: row.metadata_image_url,
+                },
             })
         })
         .collect::<anyhow::Result<Vec<_>>>()?;

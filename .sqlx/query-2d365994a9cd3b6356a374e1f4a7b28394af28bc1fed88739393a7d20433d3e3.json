@@ -27,6 +27,11 @@
         "ordinal": 4,
         "name": "title",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "metadata_id",
+        "type_info": "Uuid"
       }
     ],
     "parameters": {
@@ -39,7 +44,8 @@
       false,
       false,
       false,
-      false
+      false,
+      true
     ]
   },
   "hash": "2d365994a9cd3b6356a374e1f4a7b28394af28bc1fed88739393a7d20433d3e3"

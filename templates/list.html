@@ -28,6 +28,20 @@
       hx-select="#create_link"
       >Link an item</a
     >
+    <a
+      href="/lists/toggle_rich_view?list_id={{ list.id }}"
+      class="block px-4 py-1 mx-2 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
+      hx-get="/lists/toggle_rich_view?list_id={{ list.id }}"
+      id="toggle_rich_view"
+      hx-swap="outerHTML"
+      hx-select="#toggle_rich_view"
+      >
+      {% if list.rich_view %}
+      Disable Rich View
+      {% else %}
+      Enable Rich View
+      {% endif %}
+    </a>
   </section>
   {% for link in links %}
     <section
@@ -82,8 +96,16 @@
             class="block overflow-hidden leading-8 text-orange-100 hover:text-orange-300 text-ellipsis whitespace-nowrap"
             href="{{ bookmark.url }}"
           >
-            {{ bookmark.title }}
+            {{ bookmark.title }} <span class="text-gray-300">({{link.metadata.metadata_title}})</span>
           </a>
+          {% if rich_view %}
+            {% if let Some(image_url) = link.metadata.metadata_image_url %}
+              <img src="{{image_url}}" class="w-1/4 h-1/4"/>
+            {% endif %}
+            {% if let Some(desc) = link.metadata.metadata_description %}
+              <p>{{ desc }}</p>
+            {% endif %}
+          {% endif %}
           {% call content::link_url(bookmark.url) %}
         {% endmatch %}
       </div>

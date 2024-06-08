@@ -8,6 +8,7 @@ use axum::{
     Router,
 };
 
+use garde::Validate;
 use serde::Deserialize;
 use uuid::Uuid;
 
@@ -15,7 +16,9 @@ use crate::{
     authentication::AuthUser,
     db::{self, bookmarks::InsertBookmark},
     extract::{self, qs_form::QsForm},
+    form_errors::FormErrors,
     forms::{bookmarks::CreateBookmark, links::CreateLink, lists::CreateList},
+    metadata::get_metadata,
     response_error::ResponseResult,
     server::AppState,
     views::{
@@ -47,18 +50,30 @@ async fn post_create(
         Some(term) => db::lists::search(&mut tx, term, auth_user.user_id).await?,
     };
 
-    let insert_bookmark = match InsertBookmark::try_from(input.clone()) {
-        Err(errors) => {
+    let insert_bookmark = match input.clone().validate(&()) {
+        Err(_) => {
             return Ok(views::bookmarks::CreateBookmarkTemplate {
                 layout,
-                errors,
+                errors: FormErrors::default(),
                 input,
                 selected_parents,
                 search_results,
             }
             .into_response());
         }
-        Ok(i) => i,
+        Ok(_) => {
+            let metadata = get_metadata(&input.url.clone()).await;
+            let metadata_id = db::metadata::insert(&mut tx, metadata)
+                .await
+                .context("Failed inserting metadata")
+                .unwrap()
+                .id;
+            InsertBookmark {
+                url: input.url,
+                title: input.title,
+                metadata_id: Some(metadata_id),
+            }
+        }
     };
 
     let bookmark = db::bookmarks::insert(&mut tx, auth_user.user_id, insert_bookmark).await?;
@@ -71,6 +86,8 @@ async fn post_create(
             CreateList {
                 title: parent_title,
                 content: None,
+                // #TODO: Add rich_view to the form
+                rich_view: Some(false),
             },
         )
         .await?;
