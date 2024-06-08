@@ -19,6 +19,7 @@ pub struct List {
 
     pub title: String,
     pub content: Option<String>,
+    pub private: bool,
 }
 
 impl List {
@@ -45,12 +46,13 @@ pub async fn insert(
         List,
         r#"
         insert into lists
-        (user_id, title, content)
-        values ($1, $2, $3)
+        (user_id, title, content, private)
+        values ($1, $2, $3, $4)
         returning *"#,
         user_id,
         create_list.title,
         create_list.content,
+        create_list.private,
     )
     .fetch_one(&mut **tx)
     .await?;
@@ -144,4 +146,22 @@ pub async fn list_recent(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<Li
     .await?;
 
     Ok(lists)
+}
+
+pub async fn set_private(tx: &mut AppTx, list_id: Uuid, private: bool) -> ResponseResult<List> {
+    let list = query_as!(
+        List,
+        r#"
+        update lists
+        set private = $1
+        where id = $2
+        returning *
+        "#,
+        private,
+        list_id,
+    )
+    .fetch_one(&mut **tx)
+    .await?;
+
+    Ok(list)
 }
