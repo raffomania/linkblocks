@@ -7,6 +7,7 @@ use uuid::Uuid;
 use crate::{
     db::{self, bookmarks::InsertBookmark},
     forms::{links::CreateLink, lists::CreateList, users::CreateUser},
+    metadata::get_metadata,
 };
 
 pub async fn insert_demo_data(
@@ -40,9 +41,13 @@ pub async fn insert_demo_data(
             let title: String = fake::faker::lorem::en::Words(1..5)
                 .fake::<Vec<_>>()
                 .join(" ");
+            let url = format!("https://{word}.{tld}");
+            let metadata = get_metadata(&url).await;
+            let metadata_id = db::metadata::insert(&mut tx, metadata).await?.id;
             let insert_bookmark = InsertBookmark {
                 url: format!("https://{word}.{tld}"),
                 title,
+                metadata_id: Some(metadata_id),
             };
 
             let bookmark = db::bookmarks::insert(&mut tx, user.id, insert_bookmark).await?;
@@ -56,6 +61,7 @@ pub async fn insert_demo_data(
             let create_list = CreateList {
                 title,
                 content: content.map(|c| c.join("\n\n")),
+                rich_view: Some(false),
             };
             let list = db::lists::insert(&mut tx, user.id, create_list).await?;
 

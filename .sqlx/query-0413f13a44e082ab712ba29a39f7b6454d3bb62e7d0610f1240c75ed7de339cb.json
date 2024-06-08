@@ -1,0 +1,40 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select * from metadata where id = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "metadata_title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "metadata_description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "metadata_image_url",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "0413f13a44e082ab712ba29a39f7b6454d3bb62e7d0610f1240c75ed7de339cb"
+}

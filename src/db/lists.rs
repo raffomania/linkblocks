@@ -19,6 +19,7 @@ pub struct List {
 
     pub title: String,
     pub content: Option<String>,
+    pub rich_view: bool,
 }
 
 impl List {
@@ -45,12 +46,13 @@ pub async fn insert(
         List,
         r#"
         insert into lists
-        (user_id, title, content)
-        values ($1, $2, $3)
+        (user_id, title, content, rich_view)
+        values ($1, $2, $3, $4)
         returning *"#,
         user_id,
         create_list.title,
         create_list.content,
+        create_list.rich_view.unwrap_or(false)
     )
     .fetch_one(&mut **tx)
     .await?;
@@ -144,4 +146,26 @@ pub async fn list_recent(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<Li
     .await?;
 
     Ok(lists)
+}
+
+pub async fn update_rich_view(
+    tx: &mut AppTx,
+    list_id: Uuid,
+    rich_view: bool,
+) -> ResponseResult<List> {
+    let list = query_as!(
+        List,
+        r#"
+        update lists
+        set rich_view = $2
+        where id = $1
+        returning *
+        "#,
+        list_id,
+        rich_view
+    )
+    .fetch_one(&mut **tx)
+    .await?;
+
+    Ok(list)
 }

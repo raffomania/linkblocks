@@ -1,0 +1,42 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        insert into metadata\n        (metadata_title,metadata_description, metadata_image_url)\n        values ($1, $2, $3)\n        returning *\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "metadata_title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "metadata_description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "metadata_image_url",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "8b692040cfb2a2c079425814de4e9e5bfc172790d1118d3eb1432ee79eac01e7"
+}

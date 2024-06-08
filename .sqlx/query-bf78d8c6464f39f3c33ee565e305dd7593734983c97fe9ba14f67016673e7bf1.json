@@ -27,6 +27,11 @@
         "ordinal": 4,
         "name": "content",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "rich_view",
+        "type_info": "Bool"
       }
     ],
     "parameters": {
@@ -39,7 +44,8 @@
       false,
       false,
       false,
-      true
+      true,
+      false
     ]
   },
   "hash": "bf78d8c6464f39f3c33ee565e305dd7593734983c97fe9ba14f67016673e7bf1"

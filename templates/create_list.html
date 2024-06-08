@@ -31,6 +31,18 @@
       ></textarea>
     </label>
 
+    <div class="mt-3 mb-5">
+      <input
+        type="checkbox"
+        id="rich_view"
+        name="rich_view"
+        value="false"
+        onchange="this.value = this.checked ? 'true' : 'false'"
+        class="rounded"
+      />
+      <label for="rich_view">Enable Rich View</label>
+    <div>
+
     {% call form::errors(errors, "root") %}
 
     <button

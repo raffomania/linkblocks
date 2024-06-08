@@ -16,6 +16,7 @@ pub struct Bookmark {
 
     pub url: String,
     pub title: String,
+    pub metadata_id: Option<Uuid>,
 }
 
 impl Bookmark {
@@ -28,6 +29,7 @@ impl Bookmark {
 pub struct InsertBookmark {
     pub url: String,
     pub title: String,
+    pub metadata_id: Option<Uuid>,
 }
 
 pub async fn insert(
@@ -39,12 +41,13 @@ pub async fn insert(
         Bookmark,
         r#"
         insert into bookmarks
-        (user_id, url, title)
-        values ($1, $2, $3)
+        (user_id, url, title, metadata_id)
+        values ($1, $2, $3, $4)
         returning *"#,
         user_id,
         create_bookmark.url,
-        create_bookmark.title
+        create_bookmark.title,
+        create_bookmark.metadata_id
     )
     .fetch_one(&mut **tx)
     .await?;

@@ -14,6 +14,7 @@ pub struct ListTemplate {
     pub layout: LayoutTemplate,
     pub links: Vec<db::LinkWithContent>,
     pub list: db::List,
+    pub rich_view: bool,
 }
 
 #[derive(Template)]
