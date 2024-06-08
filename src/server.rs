@@ -49,6 +49,7 @@ pub async fn app(state: AppState) -> anyhow::Result<Router> {
 
     Ok(Router::new()
         .merge(routes::users::router())
+        .merge(routes::api::router())
         .merge(routes::index::router())
         .merge(routes::lists::router())
         .merge(routes::bookmarks::router())
