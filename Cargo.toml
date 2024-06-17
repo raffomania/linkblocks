@@ -16,10 +16,10 @@ askama = { version = "0.12.1", features = ["with-axum"] }
 askama_axum = "0.4.0"
 axum = { version = "0.7.5", features = ["macros", "tracing"] }
 axum-server = { version = "0.6.0", features = ["tls-rustls"] }
-clap = { version = "4.5.4", features = ["derive", "env"] }
+clap = { version = "4.5.7", features = ["derive", "env"] }
 fake = { version = "2.9.2", default-features = false }
 friendly-zoo = "1.1.0"
-garde = { version = "0.18.0", default-features = false, features = ["derive", "url"]}
+garde = { version = "0.19.1", default-features = false, features = ["derive", "url"]}
 include_dir = "0.7.3"
 listenfd = "1.0.1"
 mime_guess = "2.0.4"
@@ -45,7 +45,7 @@ railwind = "0.1.5"
 walkdir = "2"
 
 [dev-dependencies]
-http-body-util = "0.1.1"
+http-body-util = "0.1.2"
 serde_json = "1.0.117"
 test-log = { version = "0.2.16", features = ["trace"], default-features = false }
 itertools = "0.13.0"
