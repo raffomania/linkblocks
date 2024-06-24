@@ -27,7 +27,7 @@ impl TryFrom<CreateBookmark> for InsertBookmark {
     type Error = FormErrors;
 
     fn try_from(value: CreateBookmark) -> Result<Self, Self::Error> {
-        value.validate(&())?;
+        value.validate()?;
 
         if !value.submitted {
             return Err(FormErrors::default());

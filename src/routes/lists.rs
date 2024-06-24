@@ -45,7 +45,7 @@ async fn post_create(
 ) -> ResponseResult<Response> {
     let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
 
-    if let Err(errors) = input.validate(&()) {
+    if let Err(errors) = input.validate() {
         return Ok(views::lists::CreateListTemplate {
             layout,
             errors: errors.into(),

@@ -43,7 +43,7 @@ async fn post_create(
         None => None,
     };
 
-    if let Err(errors) = input.validate(&()) {
+    if let Err(errors) = input.validate() {
         return Ok(views::links::CreateLinkTemplate {
             layout,
             errors: errors.into(),

@@ -8,6 +8,7 @@ use crate::{db, forms::links::CreateLink, response_error::ResponseResult};
 use super::AppTx;
 
 #[derive(FromRow, Debug)]
+#[allow(dead_code)]
 pub struct Link {
     pub id: Uuid,
     pub created_at: OffsetDateTime,
@@ -60,7 +61,9 @@ impl LinkDestination {
 
 pub struct LinkWithContent {
     pub id: Uuid,
+    #[allow(dead_code)]
     pub created_at: OffsetDateTime,
+    #[allow(dead_code)]
     pub user_id: Uuid,
 
     pub dest: LinkDestinationWithChildren,

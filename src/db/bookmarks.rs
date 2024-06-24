@@ -11,7 +11,9 @@ use super::AppTx;
 pub struct Bookmark {
     pub id: Uuid,
     #[serde(with = "time::serde::iso8601")]
+    #[allow(dead_code)]
     pub created_at: OffsetDateTime,
+    #[allow(dead_code)]
     pub user_id: Uuid,
 
     pub url: String,

@@ -35,7 +35,7 @@ async fn post_login(
     session: Session,
     QsForm(input): QsForm<Login>,
 ) -> ResponseResult<Response> {
-    if let Err(errors) = input.validate(&()) {
+    if let Err(errors) = input.validate() {
         return Ok(LoginTemplate::new(errors, input).into_response());
     };
 
