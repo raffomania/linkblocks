@@ -24,8 +24,3 @@ pub struct PartialCreateLink {
     #[serde(default)]
     pub submitted: bool,
 }
-
-#[derive(Debug, Deserialize)]
-pub struct RemoveLink {
-    pub id: Uuid,
-}

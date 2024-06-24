@@ -127,7 +127,7 @@ pub async fn run() -> Result<()> {
             db::migrate(&pool).await?;
 
             if let Some(create) = Option::<CreateUser>::from(admin_credentials) {
-                if let Err(e) = create.validate(&()) {
+                if let Err(e) = create.validate() {
                     return Err(anyhow!("Invalid credentials for admin user provided:\n{e}"));
                 }
                 let mut tx = pool.begin().await?;
