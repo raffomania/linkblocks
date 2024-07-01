@@ -1,8 +1,9 @@
+use log::{info, warn};
 use sqlx::{query_as, FromRow};
 use uuid::Uuid;
 
 use crate::authentication::hash_password;
-use crate::forms::users::CreateUser;
+use crate::forms::users::{CreateOAuthUser, CreateUser};
 use crate::response_error::{ResponseError, ResponseResult};
 
 use super::AppTx;
@@ -12,6 +13,59 @@ pub struct User {
     pub id: Uuid,
     pub username: String,
     pub password_hash: String,
+    pub email: Option<String>,
+    pub using_oauth: bool,
+    pub oauth_provider: Option<String>,
+    pub oauth_id: Option<String>,
+}
+
+pub async fn user_by_oauth_id(tx: &mut AppTx, oauth_id: &str) -> ResponseResult<User> {
+    let user = query_as!(
+        User,
+        r#"
+        select * from users
+        where oauth_id = $1
+        "#,
+        oauth_id
+    )
+    .fetch_one(&mut **tx)
+    .await?;
+
+    Ok(user)
+}
+
+pub async fn insert_oauth(
+    tx: &mut AppTx,
+    create_user: CreateOAuthUser,
+    oauth_provider: &str,
+) -> ResponseResult<User> {
+    let hashed_password = hash_password(uuid::Uuid::new_v4().to_string())?;
+    let user = query_as!(
+        User,
+        r#"
+        insert into users
+        (username, email, oauth_id, oauth_provider, using_oauth, password_hash)
+        values ($1, $2, $3, $4, $5, $6)
+        returning *"#,
+        create_user.username,
+        create_user.email,
+        create_user.oauth_id,
+        oauth_provider,
+        true,
+        hashed_password
+    )
+    .fetch_one(&mut **tx)
+    .await;
+    match user {
+        Ok(user) => {
+            info!("User inserted successfully");
+            return Ok(user);
+        }
+        Err(e) => {
+            warn!("Error inserting user: {:?}", e);
+            return Err(e.into());
+        }
+    }
 }
 
 pub async fn insert(tx: &mut AppTx, create_user: CreateUser) -> ResponseResult<User> {
@@ -21,15 +75,16 @@ pub async fn insert(tx: &mut AppTx, create_user: CreateUser) -> ResponseResult<U
         User,
         r#"
         insert into users
-        (password_hash, username)
-        values ($1, $2)
-        returning *"#,
+        (username, password_hash, email)
+        values ($1, $2, $3)
+        returning *
+        "#,
+        create_user.username,
         hashed_password,
-        create_user.username
+        Some("")
     )
     .fetch_one(&mut **tx)
     .await?;
-
     Ok(user)
 }
 

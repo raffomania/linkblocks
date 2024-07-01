@@ -1,7 +1,7 @@
 use crate::{
     db::{self, AppTx},
     extract,
-    forms::users::{CreateUser, Credentials},
+    forms::users::{CreateOAuthUser, CreateUser, Credentials},
     response_error::{ResponseError, ResponseResult},
     server::AppState,
 };
@@ -62,6 +62,29 @@ pub async fn create_and_login_temp_user(tx: &mut AppTx, session: Session) -> Res
     Ok(())
 }
 
+pub async fn create_and_login_oauth_user(
+    tx: &mut AppTx,
+    session: Session,
+    oauth_user: CreateOAuthUser,
+) -> ResponseResult<()> {
+    let user = db::users::insert_oauth(tx, oauth_user, "Google").await?;
+    AuthUser::save_in_session(&session, &user.id).await?;
+
+    Ok(())
+}
+
+pub async fn login_oauth_user(
+    tx: &mut AppTx,
+    session: Session,
+    oauth_id: &str,
+) -> ResponseResult<()> {
+    let user = db::users::user_by_oauth_id(tx, oauth_id).await?;
+
+    AuthUser::save_in_session(&session, &user.id).await?;
+
+    Ok(())
+}
+
 #[derive(Debug)]
 pub struct AuthUser {
     pub user_id: Uuid,
@@ -83,7 +106,7 @@ impl AuthUser {
 
     pub async fn from_session(session: Session, tx: &mut AppTx) -> ResponseResult<Self> {
         let user_id: Uuid = session
-            .get("auth_user_id")
+            .get(Self::SESSION_KEY)
             .await
             .context("Failed to load authenticated user id")?
             .ok_or(ResponseError::NotAuthenticated)?;

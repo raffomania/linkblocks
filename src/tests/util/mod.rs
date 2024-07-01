@@ -19,6 +19,8 @@ impl TestApp {
                 pool,
                 base_url: String::new(),
                 demo_mode: false,
+                oauth_google_client_id: String::new(),
+                oauth_google_client_secret: String::new(),
             })
             .await
             .unwrap(),

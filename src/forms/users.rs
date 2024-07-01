@@ -24,3 +24,15 @@ pub struct Credentials {
     #[garde(length(min = 10, max = 100))]
     pub password: String,
 }
+
+#[derive(Serialize, Deserialize, Validate, Debug, Default)]
+pub struct CreateOAuthUser {
+    #[garde(alphanumeric, ascii, length(min = 3, max = 50))]
+    pub username: String,
+    #[garde(length(min = 10, max = 100))]
+    pub oauth_id: String,
+    #[garde(length(min = 10, max = 100))]
+    pub email: String,
+    #[garde(length(min = 10, max = 100))]
+    pub oauth_provider: String,
+}
