@@ -26,9 +26,10 @@ It's getting harder and harder to find good web pages. When you do find good one
 Install the dependencies:
 
 - [Latest stable version of Rust](https://www.rust-lang.org/learn/get-started) (An older version might work as well, but is not tested)
-- [podman](http://podman.io/docs/installation) (Optional, for conveniently running postgres for development and tests)
 - [mkcert](https://github.com/FiloSottile/mkcert#installation)
-    - Don't forget to run `mkcert -install`
+  - Don't forget to run `mkcert -install`
+- Optional: [podman](http://podman.io/docs/installation), for conveniently running postgres for development and tests
+- Optional: [npm](https://nodejs.org/en/download/package-manager) or a compatible package manager, to format template files
 
 Install dependencies available via cargo:
 
@@ -37,6 +38,8 @@ cargo install cargo-run-bin
 ```
 
 Copy `.env.example` to `.env` and edit it to your liking.
+
+Optional: run `just install-git-hooks` to automatically run checks before committing.
 
 In the root of the repository, launch the server:
 

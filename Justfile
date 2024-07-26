@@ -90,5 +90,8 @@ ci-dev: start-database start-test-database
     cargo fmt --all -- --check
     cargo clippy -- -D warnings
 
+format-templates:
+    npx prettier --write '**/*.html'
+
 install-git-hooks:
     ln -srf pre-commit.sh .git/hooks/pre-commit
