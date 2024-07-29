@@ -17,6 +17,21 @@
         "ordinal": 2,
         "name": "username",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "email",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "oauth_provider",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "oauth_id",
+        "type_info": "Text"
       }
     ],
     "parameters": {
@@ -26,8 +41,11 @@
     },
     "nullable": [
       false,
-      false,
-      false
+      true,
+      true,
+      true,
+      true,
+      true
     ]
   },
   "hash": "281d80fd76e152c9b5af82896f699f4a7124d6d49f0ceacf3e132120a212e11f"
