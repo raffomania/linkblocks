@@ -37,7 +37,7 @@ start-database:
 stop-database:
     podman stop linkblocks_postgres
 
-wipe-database: stop-database
+wipe-database: stop-database && migrate-database
     podman rm linkblocks_postgres
 
 migrate-database: start-database
