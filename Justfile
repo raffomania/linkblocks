@@ -82,13 +82,16 @@ development-cert:
     mkdir -p development_cert
     test -f development_cert/localhost.crt || mkcert -cert-file development_cert/localhost.crt -key-file development_cert/localhost.key localhost 127.0.0.1 ::1
 
-ci-dev: start-database start-test-database
+ci-dev: start-database start-test-database && lint format test
     #!/usr/bin/env bash
 
     cargo build --release
-    just test
-    cargo fmt --all -- --check
+
+lint:
     cargo clippy -- -D warnings
+
+format: format-templates
+    cargo fmt --all -- --check
 
 format-templates:
     npx prettier --write '**/*.html'

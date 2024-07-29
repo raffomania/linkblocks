@@ -1,6 +1,6 @@
 use std::{path::PathBuf, time::Duration};
 
-use anyhow::anyhow;
+use anyhow::{anyhow, Context};
 use axum_server::tls_rustls::RustlsConfig;
 use sqlx::PgPool;
 use tower_sessions::ExpiredDeletion;
@@ -109,15 +109,17 @@ async fn shutdown_signal(handle: axum_server::Handle, graceful: bool) {
     let ctrl_c = async {
         tokio::signal::ctrl_c()
             .await
-            .expect("failed to install Ctrl+C handler");
+            .context("failed to install Ctrl+C handler")
     };
 
     #[cfg(unix)]
     let terminate = async {
         tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
-            .expect("failed to install signal handler")
+            .context("failed to install signal handler")?
             .recv()
             .await;
+
+        Ok::<(), anyhow::Error>(())
     };
 
     #[cfg(not(unix))]
