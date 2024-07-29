@@ -32,7 +32,7 @@ async fn can_login(pool: Pool<Postgres>) -> anyhow::Result<()> {
         },
         previous_uri: None,
     };
-    assert_form_matches(form, &input);
+    assert_form_matches(&form, &input);
 
     dbg!(serde_qs::to_string(&input)?);
 

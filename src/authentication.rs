@@ -17,7 +17,7 @@ use axum::{
 use tower_sessions::Session;
 use uuid::Uuid;
 
-pub fn hash_password(password: String) -> ResponseResult<String> {
+pub fn hash_password(password: &String) -> ResponseResult<String> {
     let salt =
         argon2::password_hash::SaltString::generate(&mut argon2::password_hash::rand_core::OsRng);
 
@@ -55,7 +55,7 @@ pub async fn create_and_login_temp_user(tx: &mut AppTx, session: Session) -> Res
     let username =
         friendly_zoo::Zoo::new(friendly_zoo::Species::CustomDelimiter(' '), 1).generate();
     let password = Uuid::new_v4().to_string();
-    let user = db::users::insert(tx, CreateUser { password, username }).await?;
+    let user = db::users::insert(tx, CreateUser { username, password }).await?;
 
     AuthUser::save_in_session(&session, &user.id).await?;
 

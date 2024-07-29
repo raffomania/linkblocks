@@ -6,12 +6,12 @@ use crate::{
     forms::links::PartialCreateLink,
 };
 
-use super::layout::LayoutTemplate;
+use super::layout;
 
 #[derive(Template)]
 #[template(path = "create_link.html")]
 pub struct CreateLinkTemplate {
-    pub layout: LayoutTemplate,
+    pub layout: layout::Template,
 
     pub errors: FormErrors,
     pub input: PartialCreateLink,

@@ -3,7 +3,7 @@ use crate::{
     extract,
     response_error::ResponseResult,
     server::AppState,
-    views::{index::IndexTemplate, layout::LayoutTemplate},
+    views::{self, layout},
 };
 use axum::{routing::get, Router};
 
@@ -14,8 +14,8 @@ pub fn router() -> Router<AppState> {
 async fn index(
     auth_user: AuthUser,
     extract::Tx(mut tx): extract::Tx,
-) -> ResponseResult<IndexTemplate> {
-    Ok(IndexTemplate {
-        layout: LayoutTemplate::from_db(&mut tx, &auth_user).await?,
+) -> ResponseResult<views::index::Template> {
+    Ok(views::index::Template {
+        layout: layout::Template::from_db(&mut tx, &auth_user).await?,
     })
 }

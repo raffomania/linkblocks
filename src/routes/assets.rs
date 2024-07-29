@@ -22,11 +22,12 @@ static ASSETS_DIR: Dir = include_dir!("assets");
 async fn assets(Path(path): Path<PathBuf>) -> ResponseResult<(HeaderMap, &'static [u8])> {
     let body = ASSETS_DIR
         .get_file(&path)
-        .map(|f| f.contents())
+        .map(include_dir::File::contents)
         .ok_or(ResponseError::NotFound)?;
 
     let mime_type = get_mime(&path)?;
 
+    #[allow(clippy::from_iter_instead_of_collect)]
     let headers = HeaderMap::from_iter(
         [(
             header::CONTENT_TYPE,
@@ -46,6 +47,7 @@ async fn railwind_generated_css() -> ResponseResult<(HeaderMap, &'static [u8])> 
 
     let mime_type = mime_guess::mime::TEXT_CSS;
 
+    #[allow(clippy::from_iter_instead_of_collect)]
     let headers = HeaderMap::from_iter(
         [(
             header::CONTENT_TYPE,

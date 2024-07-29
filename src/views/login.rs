@@ -1,4 +1,3 @@
-use askama::Template;
 use garde::Report;
 
 use crate::{
@@ -6,14 +5,14 @@ use crate::{
     forms::users::{Credentials, Login},
 };
 
-#[derive(Template, Default)]
+#[derive(askama::Template, Default)]
 #[template(path = "login.html")]
-pub struct LoginTemplate {
+pub struct Template {
     errors: FormErrors,
     input: Login,
 }
 
-impl LoginTemplate {
+impl Template {
     pub fn new(errors: Report, input: Login) -> Self {
         Self {
             errors: errors.into(),
@@ -29,6 +28,6 @@ impl LoginTemplate {
     }
 }
 
-#[derive(Template, Default)]
+#[derive(askama::Template, Default)]
 #[template(path = "login_demo.html")]
-pub struct DemoLoginTemplate {}
+pub struct DemoTemplate {}

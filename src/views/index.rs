@@ -1,9 +1,7 @@
-use askama::Template;
+use super::layout;
 
-use super::layout::LayoutTemplate;
-
-#[derive(Template)]
+#[derive(askama::Template)]
 #[template(path = "index.html")]
-pub struct IndexTemplate {
-    pub layout: LayoutTemplate,
+pub struct Template {
+    pub layout: layout::Template,
 }

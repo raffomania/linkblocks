@@ -35,9 +35,10 @@ pub async fn app(state: AppState) -> anyhow::Result<Router> {
         tokio::task::spawn(periodically_wipe_all_data(state.pool.clone()));
     }
 
-    let cookie_inactivity_limit = match state.demo_mode {
-        true => tower_sessions::cookie::time::Duration::hours(1),
-        false => tower_sessions::cookie::time::Duration::weeks(2),
+    let cookie_inactivity_limit = if state.demo_mode {
+        tower_sessions::cookie::time::Duration::hours(1)
+    } else {
+        tower_sessions::cookie::time::Duration::weeks(2)
     };
 
     let session_service = tower_sessions::SessionManagerLayer::new(session_store)
@@ -82,24 +83,21 @@ pub async fn start(
 
     let listening_on = listener.local_addr()?;
 
-    match (tls_cert, tls_key) {
-        (Some(cert), Some(key)) => {
-            tracing::info!("Using TLS files at: {cert:?}, {key:?}");
-            let config = RustlsConfig::from_pem_file(cert, key).await?;
-            tracing::info!("Listening on https://{listening_on}");
-            axum_server::from_tcp_rustls(listener.into_std()?, config)
-                .handle(handle)
-                .serve(app.into_make_service())
-                .await?;
-        }
-        _ => {
-            tracing::info!("No TLS certificate specified, not using TLS");
-            tracing::info!("Listening on http://{listening_on}");
-            axum_server::from_tcp(listener.into_std()?)
-                .handle(handle)
-                .serve(app.into_make_service())
-                .await?;
-        }
+    if let (Some(cert), Some(key)) = (tls_cert, tls_key) {
+        tracing::info!("Using TLS files at: {cert:?}, {key:?}");
+        let config = RustlsConfig::from_pem_file(cert, key).await?;
+        tracing::info!("Listening on https://{listening_on}");
+        axum_server::from_tcp_rustls(listener.into_std()?, config)
+            .handle(handle)
+            .serve(app.into_make_service())
+            .await?;
+    } else {
+        tracing::info!("No TLS certificate specified, not using TLS");
+        tracing::info!("Listening on http://{listening_on}");
+        axum_server::from_tcp(listener.into_std()?)
+            .handle(handle)
+            .serve(app.into_make_service())
+            .await?;
     };
 
     Ok(())

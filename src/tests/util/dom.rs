@@ -1,7 +1,7 @@
 use serde::Serialize;
 use serde_json::Value;
 
-pub fn assert_form_matches<I: Serialize>(form: visdom::types::Elements, input: &I) {
+pub fn assert_form_matches<I: Serialize>(form: &visdom::types::Elements, input: &I) {
     let json_input = serde_json::to_value(input).unwrap();
     let json_input = json_input.as_object().unwrap();
     for field in form.find("input") {
@@ -9,9 +9,7 @@ pub fn assert_form_matches<I: Serialize>(form: visdom::types::Elements, input: &
         tracing::debug!("Checking form field {html}");
         let value = json_input.get(&field.get_attribute("name").unwrap().to_string());
 
-        let value = if let Some(value) = value {
-            value
-        } else {
+        let Some(value) = value else {
             assert!(
                 field.get_attribute("required").is_some(),
                 "Missing value for required form field {html}"

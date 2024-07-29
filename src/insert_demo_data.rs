@@ -23,7 +23,7 @@ pub async fn insert_demo_data(
             password: "testpassword".to_string(),
         };
 
-        users.push(db::users::insert(&mut tx, create_user).await?)
+        users.push(db::users::insert(&mut tx, create_user).await?);
     }
 
     if let Some(create_dev_user) = dev_user_credentials {
@@ -33,7 +33,7 @@ pub async fn insert_demo_data(
     let mut bookmarks = Vec::new();
     let mut lists = Vec::new();
 
-    for user in users.iter() {
+    for user in &users {
         for _ in 0..500 {
             let tld: String = fake::faker::internet::en::DomainSuffix().fake();
             let word: String = fake::faker::lorem::en::Word().fake();
@@ -63,7 +63,7 @@ pub async fn insert_demo_data(
         }
     }
 
-    for user in users.iter() {
+    for user in users {
         for _ in 0..1000 {
             let src = lists
                 .choose(&mut rand::thread_rng())

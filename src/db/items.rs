@@ -1,5 +1,5 @@
 //! todo: better name than "items"
-//! maybe LinkDestinations?
+//! maybe "link destinations"?
 
 use anyhow::Context;
 use sqlx::query;

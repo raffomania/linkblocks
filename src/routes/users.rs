@@ -15,11 +15,7 @@ use crate::{
     forms::users::Login,
     response_error::ResponseResult,
     server::AppState,
-    views::{
-        layout::LayoutTemplate,
-        login::{DemoLoginTemplate, LoginTemplate},
-        users::ProfileTemplate,
-    },
+    views::{layout, login, users::ProfileTemplate},
 };
 
 pub fn router() -> Router<AppState> {
@@ -36,7 +32,7 @@ async fn post_login(
     QsForm(input): QsForm<Login>,
 ) -> ResponseResult<Response> {
     if let Err(errors) = input.validate() {
-        return Ok(LoginTemplate::new(errors, input).into_response());
+        return Ok(login::Template::new(errors, input).into_response());
     };
 
     let logged_in = authentication::login(&mut tx, session, &input.credentials).await;
@@ -46,7 +42,7 @@ async fn post_login(
             garde::Path::new("root"),
             garde::Error::new("Username or password not correct"),
         );
-        return Ok(LoginTemplate::new(errors, input).into_response());
+        return Ok(login::Template::new(errors, input).into_response());
     }
 
     let redirect_to = input.previous_uri.unwrap_or("/".to_string());
@@ -73,16 +69,17 @@ async fn get_login(
     Query(query): Query<LoginQuery>,
     State(state): State<AppState>,
 ) -> ResponseResult<Response> {
-    match state.demo_mode {
-        true => Ok(DemoLoginTemplate {}.into_response()),
-        false => Ok(LoginTemplate::new(
+    if state.demo_mode {
+        Ok(login::DemoTemplate {}.into_response())
+    } else {
+        Ok(login::Template::new(
             Report::new(),
             Login {
                 previous_uri: query.previous_uri,
                 ..Default::default()
             },
         )
-        .into_response()),
+        .into_response())
     }
 }
 
@@ -91,7 +88,7 @@ async fn get_profile(
     auth_user: AuthUser,
     State(state): State<AppState>,
 ) -> ResponseResult<ProfileTemplate> {
-    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
+    let layout = layout::Template::from_db(&mut tx, &auth_user).await?;
 
     Ok(ProfileTemplate {
         layout,

@@ -15,10 +15,11 @@ use crate::{
     authentication::AuthUser,
     db::{self, LinkDestination},
     extract::{self, qs_form::QsForm},
+    form_errors::FormErrors,
     forms::links::{CreateLink, PartialCreateLink},
     response_error::ResponseResult,
     server::AppState,
-    views::{self, layout::LayoutTemplate, links::CreateLinkTemplate},
+    views::{self, layout, links::CreateLinkTemplate},
 };
 
 pub fn router() -> Router<AppState> {
@@ -33,7 +34,7 @@ async fn post_create(
     // TODO handle failed extractors in forms better
     QsForm(input): QsForm<PartialCreateLink>,
 ) -> ResponseResult<Response> {
-    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
+    let layout = layout::Template::from_db(&mut tx, &auth_user).await?;
     let src_from_db = match input.src {
         Some(id) => Some(db::items::by_id(&mut tx, id).await?),
         None => None,
@@ -84,7 +85,7 @@ async fn post_create(
 
     Ok(CreateLinkTemplate {
         layout,
-        errors: Default::default(),
+        errors: FormErrors::default(),
         input,
         search_results,
         src_from_db,
@@ -104,7 +105,7 @@ async fn get_create(
     auth_user: AuthUser,
     Query(query): Query<CreateLinkQueryString>,
 ) -> ResponseResult<CreateLinkTemplate> {
-    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
+    let layout = layout::Template::from_db(&mut tx, &auth_user).await?;
 
     let src = match query.src_id {
         Some(id) => Some(db::items::by_id(&mut tx, id).await?),
@@ -128,10 +129,10 @@ async fn get_create(
 
     Ok(CreateLinkTemplate {
         layout,
-        errors: Default::default(),
+        errors: FormErrors::default(),
         input: PartialCreateLink {
-            src: src.as_ref().map(|item| item.id()),
-            dest: dest.as_ref().map(|item| item.id()),
+            src: src.as_ref().map(LinkDestination::id),
+            dest: dest.as_ref().map(LinkDestination::id),
             ..PartialCreateLink::default()
         },
         search_results,

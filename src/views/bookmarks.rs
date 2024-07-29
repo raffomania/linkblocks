@@ -6,12 +6,12 @@ use crate::{
     forms,
 };
 
-use super::layout::LayoutTemplate;
+use super::layout;
 
 #[derive(Template)]
 #[template(path = "create_bookmark.html")]
 pub struct CreateBookmarkTemplate {
-    pub layout: LayoutTemplate,
+    pub layout: layout::Template,
 
     pub errors: FormErrors,
     pub input: forms::bookmarks::CreateBookmark,
@@ -22,6 +22,6 @@ pub struct CreateBookmarkTemplate {
 #[derive(Template)]
 #[template(path = "unsorted_bookmarks.html")]
 pub struct UnsortedBookmarksTemplate {
-    pub layout: LayoutTemplate,
+    pub layout: layout::Template,
     pub bookmarks: Vec<db::Bookmark>,
 }

@@ -15,7 +15,7 @@ pub struct User {
 }
 
 pub async fn insert(tx: &mut AppTx, create_user: CreateUser) -> ResponseResult<User> {
-    let hashed_password = hash_password(create_user.password)?;
+    let hashed_password = hash_password(&create_user.password)?;
 
     let user = query_as!(
         User,

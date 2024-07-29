@@ -1,10 +1,11 @@
+use crate::form_errors::FormErrors;
 use crate::forms::lists::CreateList;
 use crate::server::AppState;
 use crate::views::lists::CreateListTemplate;
 use crate::{authentication::AuthUser, response_error::ResponseResult};
 use crate::{
     db::{self},
-    views::{layout::LayoutTemplate, lists::ListTemplate},
+    views::{layout, lists::ListTemplate},
 };
 use crate::{extract, views};
 use askama_axum::IntoResponse;
@@ -32,7 +33,7 @@ async fn list(
     let list = db::lists::by_id(&mut tx, list_id).await?;
 
     Ok(ListTemplate {
-        layout: LayoutTemplate::from_db(&mut tx, &auth_user).await?,
+        layout: layout::Template::from_db(&mut tx, &auth_user).await?,
         links,
         list,
     })
@@ -43,7 +44,7 @@ async fn post_create(
     auth_user: AuthUser,
     Form(input): Form<CreateList>,
 ) -> ResponseResult<Response> {
-    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
+    let layout = layout::Template::from_db(&mut tx, &auth_user).await?;
 
     if let Err(errors) = input.validate() {
         return Ok(views::lists::CreateListTemplate {
@@ -65,11 +66,11 @@ async fn get_create(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
 ) -> ResponseResult<CreateListTemplate> {
-    let layout = LayoutTemplate::from_db(&mut tx, &auth_user).await?;
+    let layout = layout::Template::from_db(&mut tx, &auth_user).await?;
 
     Ok(CreateListTemplate {
         layout,
-        errors: Default::default(),
+        errors: FormErrors::default(),
         input: CreateList::default(),
     })
 }

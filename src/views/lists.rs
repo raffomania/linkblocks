@@ -6,12 +6,12 @@ use crate::{
     forms::lists::CreateList,
 };
 
-use super::layout::LayoutTemplate;
+use super::layout;
 
 #[derive(Template)]
 #[template(path = "list.html")]
 pub struct ListTemplate {
-    pub layout: LayoutTemplate,
+    pub layout: layout::Template,
     pub links: Vec<db::LinkWithContent>,
     pub list: db::List,
 }
@@ -19,7 +19,7 @@ pub struct ListTemplate {
 #[derive(Template)]
 #[template(path = "create_list.html")]
 pub struct CreateListTemplate {
-    pub layout: LayoutTemplate,
+    pub layout: layout::Template,
     pub input: CreateList,
     pub errors: FormErrors,
 }
