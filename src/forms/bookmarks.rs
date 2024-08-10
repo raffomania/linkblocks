@@ -14,7 +14,7 @@ pub struct CreateBookmark {
     pub create_parents: Vec<String>,
     #[garde(url)]
     pub url: String,
-    #[garde(skip)]
+    #[garde(custom(not_empty))]
     pub title: String,
     #[garde(length(max = 100))]
     pub list_search_term: Option<String>,
@@ -37,5 +37,13 @@ impl TryFrom<CreateBookmark> for InsertBookmark {
             url: value.url,
             title: value.title,
         })
+    }
+}
+
+fn not_empty(value: &String, _: &()) -> garde::Result {
+    if value.is_empty() {
+        Err(garde::Error::new("cannot be empty"))
+    } else {
+        Ok(())
     }
 }
