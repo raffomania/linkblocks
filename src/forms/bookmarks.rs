@@ -40,7 +40,7 @@ impl TryFrom<CreateBookmark> for InsertBookmark {
     }
 }
 
-fn not_empty(value: &String, _: &()) -> garde::Result {
+fn not_empty(value: &str, _: &()) -> garde::Result {
     if value.is_empty() {
         Err(garde::Error::new("cannot be empty"))
     } else {
