@@ -40,6 +40,7 @@ impl TryFrom<CreateBookmark> for InsertBookmark {
     }
 }
 
+#[allow(clippy::trivially_copy_pass_by_ref)]
 fn not_empty(value: &str, _: &()) -> garde::Result {
     if value.is_empty() {
         Err(garde::Error::new("cannot be empty"))
