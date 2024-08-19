@@ -51,11 +51,11 @@
       {% let label %}
       {% if input.src.is_none() %}
         {% let suffix = "src" %}
-        {% let input_search_term = input.search_term_src %}
+        {% let input_search_term = input.search_term_src.clone() %}
         {% let label = "Adding to list" %}
       {% else %}
         {% let suffix = "dest" %}
-        {% let input_search_term = input.search_term_dest %}
+        {% let input_search_term = input.search_term_dest.clone() %}
         {% let label = "Item to add" %}
       {% endif %}
 
