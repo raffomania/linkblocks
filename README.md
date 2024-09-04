@@ -51,7 +51,13 @@ Then, open [http://localhost:4040] in your browser.
 
 ## Hosting Your Own Instance
 
-🏗️ coming soon!
+⚠️ linkblocks is in a pre-alpha stage. There are no versions and no changelog. Expect data loss.
+
+You can run the container at `ghcr.io/raffomania/linkblocks:latest`. It's automatically updated to contain the latest version of the `main` branch.
+
+Linkblocks is configured through environment variables or command line options.
+Run `linkblocks --help` to for documentation on the available options.
+The [.env.example] file contains an example configuration for a development environment.
 
 ## Technical Details
 
