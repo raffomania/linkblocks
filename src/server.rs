@@ -16,12 +16,39 @@ use listenfd::ListenFd;
 use openidconnect::core::CoreClient;
 use tower_http::trace::TraceLayer;
 
+// This enum is basically an Option with additional
+// semantics. As such, it's expected that the
+// `NotConfigured` variant will take up lots of space,
+// Just like `None` would
+#[allow(clippy::large_enum_variant)]
+#[derive(Clone)]
+pub enum OauthState {
+    NotConfigured,
+    Configured(OauthConfig),
+}
+
+#[derive(Clone)]
+pub struct OauthConfig {
+    pub client: CoreClient,
+    pub name: String,
+}
+
+impl OauthState {
+    #[must_use]
+    pub fn get_client(self) -> Option<CoreClient> {
+        match self {
+            OauthState::NotConfigured => None,
+            OauthState::Configured(OauthConfig { client, name: _ }) => Some(client),
+        }
+    }
+}
+
 #[derive(Clone)]
 pub struct AppState {
     pub pool: sqlx::PgPool,
     pub base_url: String,
     pub demo_mode: bool,
-    pub oauth_google_client: Option<CoreClient>,
+    pub oauth_state: OauthState,
 }
 
 pub async fn app(state: AppState) -> anyhow::Result<Router> {

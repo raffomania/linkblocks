@@ -20,17 +20,18 @@ use crate::{
 };
 use serde::Deserialize;
 
-use openidconnect::core::{CoreIdTokenVerifier, CoreResponseType, CoreRevocableToken};
 use openidconnect::reqwest::async_http_client;
 use openidconnect::{
-    AuthenticationFlow, AuthorizationCode, CsrfToken, Nonce, OAuth2TokenResponse, Scope,
+    core::{CoreIdTokenVerifier, CoreResponseType},
+    PkceCodeChallenge,
 };
+use openidconnect::{AuthenticationFlow, AuthorizationCode, CsrfToken, Nonce, Scope};
 
 pub fn router() -> Router<AppState> {
     Router::new()
         .route("/login", get(get_login).post(post_login))
-        .route("/login_google_handler", get(get_login_google_handler))
-        .route("/login_google", get(get_login_google))
+        .route("/login_oauth_handler", get(get_login_oauth_handler))
+        .route("/login_oauth", get(get_login_oauth))
         .route("/login_demo", post(post_login_demo))
         .route("/logout", post(logout))
         .route("/profile", get(get_profile))
@@ -43,10 +44,7 @@ async fn post_login(
     QsForm(input): QsForm<Login>,
 ) -> ResponseResult<Response> {
     if let Err(errors) = input.validate() {
-        return Ok(
-            login::Template::new(errors, input, state.oauth_google_client.is_some())
-                .into_response(),
-        );
+        return Ok(login::Template::new(errors, input, state.oauth_state).into_response());
     };
 
     let logged_in = authentication::login(&mut tx, session, &input.credentials).await;
@@ -56,10 +54,7 @@ async fn post_login(
             garde::Path::new("root"),
             garde::Error::new("Username or password not correct"),
         );
-        return Ok(
-            login::Template::new(errors, input, state.oauth_google_client.is_some())
-                .into_response(),
-        );
+        return Ok(login::Template::new(errors, input, state.oauth_state).into_response());
     }
 
     let redirect_to = input.previous_uri.unwrap_or("/".to_string());
@@ -67,13 +62,15 @@ async fn post_login(
     Ok(Redirect::to(&redirect_to).into_response())
 }
 
-async fn get_login_google(
+async fn get_login_oauth(
     State(state): State<AppState>,
     session: Session,
 ) -> ResponseResult<Response> {
+    let (pkce_challenge, pkce_verifier) = PkceCodeChallenge::new_random_sha256();
     // Generate the authorization URL to which we'll redirect the user.
     let (authorize_url, csrf_state, nonce) = state
-        .oauth_google_client
+        .oauth_state
+        .get_client()
         .context("Google OAuth client not configured")?
         .authorize_url(
             AuthenticationFlow::<CoreResponseType>::AuthorizationCode,
@@ -82,6 +79,7 @@ async fn get_login_google(
         )
         .add_scope(Scope::new("email".to_string()))
         .add_scope(Scope::new("profile".to_string()))
+        .set_pkce_challenge(pkce_challenge)
         .url();
 
     // TODO: Store the CSRF and none states in a way that is more secure than this, although the current method is already quire secure.
@@ -92,6 +90,7 @@ async fn get_login_google(
             oidc::Session {
                 nonce,
                 csrf_token: csrf_state,
+                pkce_verifier,
             },
         )
         .await
@@ -106,7 +105,7 @@ struct OAuthLoginQuery {
     state: String,
 }
 
-async fn get_login_google_handler(
+async fn get_login_oauth_handler(
     session: Session,
     Query(query): Query<OAuthLoginQuery>,
     state: State<AppState>,
@@ -128,35 +127,25 @@ async fn get_login_google_handler(
 
     let id_token_claims = {
         let oauth_google_client = state
-            .oauth_google_client
+            .oauth_state
             .clone()
+            .get_client()
             .context("Google OAuth client not configured")?;
         let token_response = oauth_google_client
             .clone()
             .exchange_code(code)
+            .set_pkce_verifier(oidc_session.pkce_verifier)
             .request_async(async_http_client)
             .await
             .context("failed to get token response")?;
         let id_token_verifier: CoreIdTokenVerifier = oauth_google_client.id_token_verifier();
-        let token_claims = token_response
+        token_response
             .extra_fields()
             .id_token()
             .context("Server did not return an ID token")?
             .claims(&id_token_verifier, &oidc_session.nonce)
             .context("failed to get token claims")?
-            .clone();
-        let token_to_revoke: CoreRevocableToken = match token_response.refresh_token() {
-            Some(token) => token.into(),
-            None => token_response.access_token().into(),
-        };
-
-        oauth_google_client
-            .revoke_token(token_to_revoke)
-            .context("no revocation_uri configured")?
-            .request_async(async_http_client)
-            .await
-            .context("failed to revoke token")?;
-        token_claims
+            .clone()
     };
 
     let email = id_token_claims
@@ -213,7 +202,7 @@ async fn get_login(
                 previous_uri: query.previous_uri,
                 ..Default::default()
             },
-            state.oauth_google_client.is_some(),
+            state.oauth_state,
         )
         .into_response())
     }

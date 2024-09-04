@@ -19,7 +19,7 @@ impl TestApp {
                 pool,
                 base_url: String::new(),
                 demo_mode: false,
-                oauth_google_client: None,
+                oauth_state: crate::server::OauthState::NotConfigured,
             })
             .await
             .unwrap(),

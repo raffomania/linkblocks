@@ -34,6 +34,33 @@ start-database:
         sleep 2
     done
 
+start-rauthy:
+    #!/usr/bin/env bash
+    set -euxo pipefail
+
+    # TODO: extract helpers for repetitive podman tasks.
+    if podman ps --format "{{{{.Names}}" | grep -wq linkblocks_rauthy; then
+        echo "Rauthy is running."
+        exit
+    fi
+
+    if ! podman inspect linkblocks_rauthy &> /dev/null; then
+        podman create \
+            --replace --name linkblocks_rauthy \
+            -e COOKIE_MODE=danger-insecure \
+            -e PUB_URL=localhost:${RAUTHY_PORT} \
+            -e LOG_LEVEL=info \
+            -e BOOTSTRAP_ADMIN_PASSWORD_PLAIN="test" \
+            -e DATABASE_URL=sqlite:data/rauthy.db \
+            -p ${RAUTHY_PORT}:8080 \
+            ghcr.io/sebadob/rauthy:0.25.0-lite
+    fi
+
+    podman start linkblocks_rauthy
+
+stop-rauthy:
+    podman stop linkblocks_rauthy
+
 stop-database:
     podman stop linkblocks_postgres
 
@@ -87,8 +114,8 @@ ci-dev: start-database migrate-database start-test-database && lint format test
 
     cargo build --release
 
-lint:
-    cargo clippy -- -D warnings
+lint *args:
+    cargo clippy {{args}} -- -D warnings
 
 format: format-templates
     cargo fmt --all -- --check
