@@ -16,7 +16,6 @@ pub struct User {
     pub password_hash: Option<String>,
 
     // SSO-related data
-    #[allow(dead_code)]
     pub email: Option<String>,
     #[allow(dead_code)]
     pub oidc_id: Option<String>,

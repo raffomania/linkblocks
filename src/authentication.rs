@@ -1,8 +1,7 @@
 use crate::{
     db::{self, AppTx},
     extract,
-    forms::users::{CreateUser, Credentials, OidcLoginQuery},
-    oidc::{self},
+    forms::users::{CreateOidcUser, CreateUser, Credentials},
     response_error::{ResponseError, ResponseResult},
     server::AppState,
 };
@@ -15,7 +14,6 @@ use axum::{
     http::request::Parts,
     response::Redirect,
 };
-use openidconnect::core::CoreClient;
 use tower_sessions::Session;
 use uuid::Uuid;
 
@@ -68,16 +66,11 @@ pub async fn create_and_login_temp_user(tx: &mut AppTx, session: Session) -> Res
     Ok(())
 }
 
-pub async fn login_oidc_user(
+pub async fn create_and_login_oidc_user(
     tx: &mut AppTx,
     session: &Session,
-    query: OidcLoginQuery,
-    oidc_client: CoreClient,
+    create_oidc_user: CreateOidcUser,
 ) -> ResponseResult<()> {
-    let oidc_session: oidc::LoginAttempt = oidc::LoginAttempt::from_session(session).await?;
-    let create_oidc_user = oidc_session
-        .login(&oidc_client, query.state, query.code)
-        .await?;
     let user = db::users::user_by_oidc_id(tx, &create_oidc_user.oidc_id).await;
 
     let user = match user {

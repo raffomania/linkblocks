@@ -1,4 +1,4 @@
-use anyhow::Context;
+use anyhow::{anyhow, Context};
 use askama_axum::IntoResponse;
 use axum::{
     extract::{Query, State},
@@ -83,7 +83,16 @@ async fn get_login_oidc_redirect(
         .get_client()
         .context("OIDC client not configured")?;
 
-    authentication::login_oidc_user(&mut tx, &session, query, oidc_client).await?;
+    let oidc_session: oidc::LoginAttempt = oidc::LoginAttempt::from_session(&session).await?;
+    let create_oidc_user = oidc_session
+        .login(&oidc_client, query.state, query.code)
+        .await?;
+
+    if let Err(e) = create_oidc_user.validate() {
+        return Err(anyhow!("Invalid OIDC user data received").context(e).into());
+    }
+
+    authentication::create_and_login_oidc_user(&mut tx, &session, create_oidc_user).await?;
 
     tx.commit().await?;
     Ok(Redirect::to("/").into_response())

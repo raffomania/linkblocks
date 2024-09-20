@@ -34,8 +34,8 @@ pub struct OidcLoginQuery {
 
 #[derive(Serialize, Deserialize, Validate, Debug, Default)]
 pub struct CreateOidcUser {
-    #[garde(length(min = 10, max = 100))]
+    #[garde(length(max = 500))]
     pub oidc_id: String,
-    #[garde(length(min = 10, max = 100))]
+    #[garde(length(max = 500))]
     pub email: String,
 }
