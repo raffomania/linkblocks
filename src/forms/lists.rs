@@ -16,3 +16,8 @@ pub struct CreateList {
 pub struct EditListPrivate {
     pub private: bool,
 }
+
+#[derive(Deserialize)]
+pub struct EditListPinned {
+    pub pinned: bool,
+}

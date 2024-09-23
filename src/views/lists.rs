@@ -23,3 +23,10 @@ pub struct CreateListTemplate {
     pub input: CreateList,
     pub errors: FormErrors,
 }
+
+#[derive(Template)]
+#[template(path = "list_unpinned_lists.html")]
+pub struct UnpinnedListsTemplate {
+    pub layout: layout::Template,
+    pub lists: Vec<db::lists::UnpinnedList>,
+}

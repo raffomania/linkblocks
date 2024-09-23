@@ -1,0 +1,46 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            select lists.id, title, content,\n                count(links.dest_bookmark_id) as \"bookmark_count!\",\n                count(links.dest_list_id) as \"linked_list_count!\"\n            from lists\n            left join links\n                on lists.id = links.src_list_id\n            where lists.user_id = $1 and not pinned\n            group by lists.id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "content",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "bookmark_count!",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 4,
+        "name": "linked_list_count!",
+        "type_info": "Int8"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      null,
+      null
+    ]
+  },
+  "hash": "dced076a8e72c6a98fee5a26fcc87090098469b1e03103fc931838610e647d33"
+}

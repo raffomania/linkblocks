@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        insert into lists\n        (user_id, title, content, private)\n        values ($1, $2, $3, $4)\n        returning *",
+  "query": "\n        select * from lists\n        where user_id = $1 and pinned\n        ",
   "describe": {
     "columns": [
       {
@@ -41,10 +41,7 @@
     ],
     "parameters": {
       "Left": [
-        "Uuid",
-        "Text",
-        "Text",
-        "Bool"
+        "Uuid"
       ]
     },
     "nullable": [
@@ -57,5 +54,5 @@
       false
     ]
   },
-  "hash": "4b838eb44c8c6fb60069894f80e9b4702faca004c4daf9d140cc9152929119eb"
+  "hash": "92a32628aa4dbf1408257586d8bcd6366b7da7b3d62a3c20053106cbe64e4365"
 }

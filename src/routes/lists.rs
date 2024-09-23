@@ -1,8 +1,8 @@
 use crate::form_errors::FormErrors;
-use crate::forms::lists::{CreateList, EditListPrivate};
+use crate::forms::lists::{CreateList, EditListPinned, EditListPrivate};
 use crate::response_error::ResponseError;
 use crate::server::AppState;
-use crate::views::lists::CreateListTemplate;
+use crate::views::lists::{CreateListTemplate, UnpinnedListsTemplate};
 use crate::{authentication::AuthUser, response_error::ResponseResult};
 use crate::{
     db::{self},
@@ -24,7 +24,9 @@ pub fn router() -> Router<AppState> {
     router
         .route("/lists/create", get(get_create).post(post_create))
         .route("/lists/:list_id", get(list))
-        .route("/lists/:list_id/edit_private", post(toggle_publicity))
+        .route("/lists/:list_id/edit_private", post(edit_private))
+        .route("/lists/:list_id/edit_pinned", post(edit_pinned))
+        .route("/lists/unpinned", get(list_unpinned))
 }
 
 async fn list(
@@ -92,7 +94,7 @@ async fn get_create(
     })
 }
 
-async fn toggle_publicity(
+async fn edit_private(
     auth_user: AuthUser,
     extract::Tx(mut tx): extract::Tx,
     Path(list_id): Path<Uuid>,
@@ -109,4 +111,36 @@ async fn toggle_publicity(
     tx.commit().await?;
 
     Ok(Redirect::to(&list.path()).into_response())
+}
+
+async fn edit_pinned(
+    auth_user: AuthUser,
+    extract::Tx(mut tx): extract::Tx,
+    Path(list_id): Path<Uuid>,
+    Form(input): Form<EditListPinned>,
+) -> ResponseResult<Response> {
+    let list = db::lists::by_id(&mut tx, list_id).await?;
+
+    if list.user_id != auth_user.user_id {
+        return Err(ResponseError::NotFound);
+    }
+
+    db::lists::set_pinned(&mut tx, list_id, input.pinned).await?;
+
+    tx.commit().await?;
+
+    Ok(Redirect::to(&list.path()).into_response())
+}
+
+// TODO colocate this with view and db code
+async fn list_unpinned(
+    auth_user: AuthUser,
+    extract::Tx(mut tx): extract::Tx,
+) -> ResponseResult<UnpinnedListsTemplate> {
+    let lists = db::lists::list_unpinned(&mut tx, auth_user.user_id).await?;
+
+    Ok(UnpinnedListsTemplate {
+        layout: layout::Template::from_db(&mut tx, Some(&auth_user)).await?,
+        lists,
+    })
 }

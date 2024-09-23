@@ -22,6 +22,7 @@ pub struct List {
     pub title: String,
     pub content: Option<String>,
     pub private: bool,
+    pub pinned: bool,
 }
 
 impl List {
@@ -97,7 +98,7 @@ pub async fn list_pinned_by_user(tx: &mut AppTx, user_id: Uuid) -> ResponseResul
         List,
         r#"
         select * from lists
-        where user_id = $1
+        where user_id = $1 and pinned
         "#,
         user_id,
     )
@@ -150,6 +151,36 @@ pub async fn list_recent(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<Li
     Ok(lists)
 }
 
+pub struct UnpinnedList {
+    pub id: Uuid,
+
+    pub title: String,
+    pub content: Option<String>,
+    pub bookmark_count: i64,
+    pub linked_list_count: i64,
+}
+
+pub async fn list_unpinned(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<UnpinnedList>> {
+    let lists = query_as!(
+        UnpinnedList,
+        r#"
+            select lists.id, title, content,
+                count(links.dest_bookmark_id) as "bookmark_count!",
+                count(links.dest_list_id) as "linked_list_count!"
+            from lists
+            left join links
+                on lists.id = links.src_list_id
+            where lists.user_id = $1 and not pinned
+            group by lists.id
+        "#,
+        user_id,
+    )
+    .fetch_all(&mut **tx)
+    .await?;
+
+    Ok(lists)
+}
+
 pub async fn set_private(tx: &mut AppTx, list_id: Uuid, private: bool) -> ResponseResult<List> {
     let list = query_as!(
         List,
@@ -160,6 +191,24 @@ pub async fn set_private(tx: &mut AppTx, list_id: Uuid, private: bool) -> Respon
         returning *
         "#,
         private,
+        list_id,
+    )
+    .fetch_one(&mut **tx)
+    .await?;
+
+    Ok(list)
+}
+
+pub async fn set_pinned(tx: &mut AppTx, list_id: Uuid, pinned: bool) -> ResponseResult<List> {
+    let list = query_as!(
+        List,
+        r#"
+        update lists
+        set pinned = $1
+        where id = $2
+        returning *
+        "#,
+        pinned,
         list_id,
     )
     .fetch_one(&mut **tx)

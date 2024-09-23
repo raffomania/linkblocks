@@ -52,6 +52,24 @@
           {% endif %}
         </button>
       </form>
+      <form
+        method="post"
+        action="/lists/{{ list.id }}/edit_pinned"
+        id="edit_pinned"
+      >
+        <button
+          class="block px-4 py-1 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
+          name="pinned"
+          value="{{ !list.pinned }}"
+          type="submit"
+        >
+          {% if list.pinned %}
+            Unpin from sidebar
+          {% else %}
+            Pin to sidebar
+          {% endif %}
+        </button>
+      </form>
     </section>
   {% endif %}
   {% for link in links %}
