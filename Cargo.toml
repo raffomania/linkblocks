@@ -10,13 +10,13 @@ publish = false
 doctest = false
 
 [dependencies]
-anyhow = { version = "1.0.86"}
+anyhow = { version = "1.0.89"}
 argon2 = "0.5.3"
 askama = { version = "0.12.1", features = ["with-axum"] }
 askama_axum = "0.4.0"
 axum = { version = "0.7.5", features = ["macros", "tracing"] }
-axum-server = { version = "0.6.0", features = ["tls-rustls"] }
-clap = { version = "4.5.16", features = ["derive", "env"] }
+axum-server = { version = "0.7.1", features = ["tls-rustls"] }
+clap = { version = "4.5.18", features = ["derive", "env"] }
 fake = { version = "2.9.2", default-features = false }
 friendly-zoo = "1.1.0"
 garde = { version = "0.20.0", default-features = false, features = ["derive", "url"]}
@@ -24,17 +24,17 @@ include_dir = "0.7.4"
 listenfd = "1.0.1"
 mime_guess = "2.0.5"
 rand = { version = "0.8.5", default-features = false }
-serde = "1.0.208"
+serde = "1.0.210"
 serde-aux = { version = "4.5.0", default-features = false }
-serde_json = "1.0.125"
+serde_json = "1.0.128"
 serde_qs = "0.13.0"
 sqlx = { version = "0.7.4", features = ["runtime-tokio", "postgres", "tls-rustls", "migrate", "uuid", "time"] }
-thiserror = "1.0.63"
+thiserror = "1.0.64"
 openidconnect="3.5.0"
 time = { version = "0.3.36", default-features = false, features = ["serde"] }
-tokio = { version = "1.39.3", features = ["macros", "rt-multi-thread", "signal"] }
-tower = { version = "0.5.0", features = ["util"] }
-tower-http = { version = "0.5.2", features = ["tracing", "trace"] }
+tokio = { version = "1.40.0", features = ["macros", "rt-multi-thread", "signal"] }
+tower = { version = "0.5.1", features = ["util"] }
+tower-http = { version = "0.6.0", features = ["tracing", "trace"] }
 tower-sessions = { version = "0.9", features = ["postgres-store", "deletion-task"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
@@ -47,7 +47,7 @@ walkdir = "2"
 
 [dev-dependencies]
 http-body-util = "0.1.2"
-serde_json = "1.0.125"
+serde_json = "1.0.128"
 test-log = { version = "0.2.16", features = ["trace"], default-features = false }
 itertools = "0.13.0"
 
