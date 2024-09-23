@@ -3,6 +3,7 @@ use sqlx::PgPool;
 
 pub mod all;
 pub mod items;
+pub mod layout;
 pub mod links;
 pub use links::LinkDestination;
 pub use links::LinkDestinationWithChildren;

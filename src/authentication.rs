@@ -1,6 +1,5 @@
 use crate::{
     db::{self, AppTx},
-    extract,
     forms::users::{CreateOidcUser, CreateUser, Credentials},
     response_error::{ResponseError, ResponseResult},
     server::AppState,
@@ -87,7 +86,6 @@ pub async fn create_and_login_oidc_user(
 #[derive(Debug)]
 pub struct AuthUser {
     pub user_id: Uuid,
-    pub user: db::User,
     session: Session,
 }
 
@@ -103,20 +101,14 @@ impl AuthUser {
         Ok(())
     }
 
-    pub async fn from_session(session: Session, tx: &mut AppTx) -> ResponseResult<Self> {
+    pub async fn from_session(session: Session) -> ResponseResult<Self> {
         let user_id: Uuid = session
             .get(Self::SESSION_KEY)
             .await
             .context("Failed to load authenticated user id")?
             .ok_or(ResponseError::NotAuthenticated)?;
 
-        let user = db::users::by_id(tx, user_id).await?;
-
-        Ok(Self {
-            user_id,
-            user,
-            session,
-        })
+        Ok(Self { user_id, session })
     }
 
     pub async fn logout(self) -> ResponseResult<()> {
@@ -156,15 +148,7 @@ where
             error_redirect.clone()
         })?;
 
-        let extract::Tx(mut tx) =
-            extract::Tx::from_request_parts(req, state)
-                .await
-                .map_err(|e| {
-                    tracing::error!("{e:?}");
-                    error_redirect.clone()
-                })?;
-
-        let auth_user = AuthUser::from_session(session, &mut tx).await;
+        let auth_user = AuthUser::from_session(session).await;
         if let Err(ResponseError::NotAuthenticated) = auth_user {
             return Err(error_redirect);
         }

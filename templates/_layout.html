@@ -4,7 +4,7 @@
     <main class="sm:overflow-y-auto sm:grow">
       {% block content %}{% endblock %}
     </main>
-    {% if layout.authenticated %}
+    {% if let Some(layout) = layout.authed_info %}
       <aside
         id="nav"
         class="bg-neutral-900 sm:max-w-[18rem] sm:w-1/3 sm:max-h-full flex flex-col sm:flex-col-reverse sm:border-r border-neutral-700 border-t sm:border-t-0"
@@ -50,7 +50,7 @@
           class="sticky bottom-0 flex justify-between p-2 leading-8 bg-neutral-900"
         >
           <a href="/" class="px-2 font-bold rounded hover:bg-neutral-800"
-            >{{ layout.logged_in_username }}</a
+            >{{ layout.user_description }}</a
           >
 
           <form action="/logout" method="post">

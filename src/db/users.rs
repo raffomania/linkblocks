@@ -12,10 +12,12 @@ pub struct User {
     pub id: Uuid,
 
     // Password-based login data
+    #[allow(dead_code)]
     pub username: Option<String>,
     pub password_hash: Option<String>,
 
     // SSO-related data
+    #[allow(dead_code)]
     pub email: Option<String>,
     #[allow(dead_code)]
     pub oidc_id: Option<String>,
@@ -77,20 +79,6 @@ pub async fn insert(tx: &mut AppTx, create_user: CreateUser) -> ResponseResult<U
     Ok(user)
 }
 
-pub async fn by_id(tx: &mut AppTx, id: Uuid) -> ResponseResult<User> {
-    let user = query_as!(
-        User,
-        r#"
-        select * from users
-        where id = $1
-        "#,
-        id
-    )
-    .fetch_one(&mut **tx)
-    .await?;
-
-    Ok(user)
-}
 pub async fn by_username(tx: &mut AppTx, username: &str) -> ResponseResult<User> {
     let user = query_as!(
         User,
