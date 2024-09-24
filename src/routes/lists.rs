@@ -55,6 +55,7 @@ async fn list(
         layout: layout::Template::from_db(&mut tx, auth_user.as_ref()).await?,
         links,
         list,
+        metadata: db::lists::metadata_by_id(&mut tx, list_id).await?,
     })
 }
 

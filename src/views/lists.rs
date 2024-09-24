@@ -14,6 +14,7 @@ pub struct ListTemplate {
     pub layout: layout::Template,
     pub links: Vec<db::LinkWithContent>,
     pub list: db::List,
+    pub metadata: db::lists::Metadata,
 }
 
 #[derive(Template)]

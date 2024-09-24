@@ -25,6 +25,13 @@ pub struct List {
     pub pinned: bool,
 }
 
+#[derive(FromRow, Debug, Deserialize, Clone)]
+pub struct Metadata {
+    pub linked_bookmark_count: i64,
+    pub linked_list_count: i64,
+    pub user_description: String,
+}
+
 impl List {
     pub fn path(&self) -> String {
         let id = self.id;
@@ -69,6 +76,29 @@ pub async fn by_id(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<List> {
         r#"
         select * from lists
         where id = $1
+        "#,
+        list_id,
+    )
+    .fetch_one(&mut **tx)
+    .await?;
+
+    Ok(list)
+}
+
+pub async fn metadata_by_id(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Metadata> {
+    let list = query_as!(
+        Metadata,
+        r#"
+            select
+                coalesce(users.username, users.email) as "user_description!",
+                count(links.dest_bookmark_id) as "linked_bookmark_count!",
+                count(links.dest_list_id) as "linked_list_count!"
+            from lists
+            join users on lists.user_id = users.id
+            left join links
+                on lists.id = links.src_list_id
+            where lists.id = $1
+            group by users.username, users.email
         "#,
         list_id,
     )

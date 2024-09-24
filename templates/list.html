@@ -3,13 +3,22 @@
 {% block content %}
   <header class="px-4 pt-3 mb-4">
     <div class="flex items-center justify-between">
-      <h1 class="text-xl font-bold">
-        {% if list.private %}🔒&nbsp;{% endif %}{{ list.title }}
-      </h1>
+      <h1 class="text-xl font-bold">{{ list.title }}</h1>
+    </div>
+    <div class="flex flex-wrap text-sm gap-x-1 text-neutral-400">
+      <p>by {{ metadata.user_description }}</p>
+      ∙
+      <p>{{ metadata.linked_bookmark_count }} bookmarks</p>
+      ∙
+      <p>{{ metadata.linked_list_count }} lists</p>
+      {% if list.private %}
+        ∙
+        <p>private</p>
+      {% endif %}
     </div>
     {% if let Some(content) = list.content %}
       {% if !content.is_empty() %}
-        <p class="mt-2 whitespace-pre-line">{{- content -}}</p>
+        <p class="max-w-2xl mt-2 whitespace-pre-line">{{- content -}}</p>
       {% endif %}
     {% endif %}
   </header>
@@ -90,7 +99,7 @@
           {% if let Some(content) = inner_list.list.content %}
 
             {% if !content.is_empty() %}
-              <p class="mt-2">{{- content -}}</p>
+              <p class="max-w-2xl mt-2">{{- content -}}</p>
             {% endif %}
           {%- endif -%}
 
