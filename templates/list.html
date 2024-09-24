@@ -76,7 +76,7 @@
   {% endif %}
   {% for link in links %}
     <section
-      class="flex flex-wrap items-end justify-between gap-2 px-4 pt-4 pb-4 border-t border-neutral-700"
+      class="flex flex-wrap items-end gap-2 px-4 pt-4 pb-4 border-t border-neutral-700"
     >
       <div class="overflow-hidden">
         {% match link.dest %}
@@ -134,7 +134,7 @@
       </div>
       {% if let Some(authed_info) = layout.authed_info %}
         <div
-          class="flex flex-wrap justify-end pt-2 text-sm gap-x-2 text-neutral-400"
+          class="flex flex-wrap justify-end flex-1 pt-2 text-sm basis-32 gap-x-2 text-neutral-400"
         >
           <a
             class="hover:text-neutral-100"
