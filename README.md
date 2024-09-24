@@ -60,7 +60,7 @@ Then, open [http://localhost:4040] in your browser.
 
 ## Hosting Your Own Instance
 
-⚠️ linkblocks is in a pre-alpha stage. There are no versions and no changelog. Expect data loss.
+⚠️ linkblocks is in a pre-alpha stage. There are no versions and no changelog. All data in the system will be publicly available. There are no authorization checks. Expect data loss.
 
 You can run the container at `ghcr.io/raffomania/linkblocks:latest`. It's automatically updated to contain the latest version of the `main` branch.
 
