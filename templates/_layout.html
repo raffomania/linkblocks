@@ -25,6 +25,7 @@
             >
           </div>
           <ul class="pb-2">
+            {# TODO only show this if there are unsorted bookmarks #}
             <li>
               <a
                 class="block px-4 py-1 overflow-hidden text-ellipsis whitespace-nowrap hover:bg-neutral-800"
@@ -43,6 +44,7 @@
                 </a>
               </li>
             {% endfor %}
+            {# TODO only show this if there are unpinned lists #}
             <li>
               <a
                 class="block px-4 py-1 overflow-hidden text-ellipsis whitespace-nowrap hover:bg-neutral-800 text-neutral-400"
