@@ -97,6 +97,7 @@
     {% call form::errors(errors, "root") %}
 
     {% if input.src.is_some() && input.dest.is_some() %}
+      {# TODO creating the link doesn't update the address bar #}
       <button
         type="button"
         name="submitted"

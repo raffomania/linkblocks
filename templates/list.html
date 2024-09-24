@@ -26,22 +26,9 @@
     {% if authed_info.user_id == list.user_id %}
       <section class="flex flex-wrap m-4 gap-x-4 gap-y-2">
         <a
-          href="/bookmarks/create?parent_id={{ list.id }}"
+          href="/links/create?dest_id={{ list.id }}"
           class="block px-4 py-1 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
-          hx-get="/bookmarks/create?parent_id={{ list.id }}"
-          hx-target="closest section"
-          hx-select="#create_bookmark"
-          >Add new bookmark</a
-        >
-        {# TODO: add an "add to list" / "connect" button #}
-        {# TODO: remove or rephrase "link an item", it's weird #}
-        <a
-          href="/links/create?src_id={{ list.id }}"
-          class="block px-4 py-1 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
-          hx-get="/links/create?src_id={{ list.id }}"
-          hx-target="closest section"
-          hx-select="#create_link"
-          >Link an item</a
+          >Add to other list</a
         >
         <form
           method="post"
@@ -82,6 +69,14 @@
             {% endif %}
           </button>
         </form>
+        <a
+          href="/bookmarks/create?parent_id={{ list.id }}"
+          class="block px-4 py-1 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
+          hx-get="/bookmarks/create?parent_id={{ list.id }}"
+          hx-target="closest section"
+          hx-select="#create_bookmark"
+          >Add new bookmark</a
+        >
       </section>
     {% endif %}
   {% endif %}
@@ -160,7 +155,7 @@
               hx-delete="/links/{{ link.id }}"
               title="Remove from list"
             >
-              Remove from this list
+              Remove from list
             </button>
           {% endif %}
         </div>
