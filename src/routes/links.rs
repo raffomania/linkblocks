@@ -62,6 +62,7 @@ async fn post_create(
         _ => None,
     };
 
+    // TODO exclude items that are already linked
     let search_results = match search_term {
         Some(search_term) => db::lists::search(&mut tx, search_term, auth_user.user_id).await?,
         None => Vec::new(),
@@ -117,6 +118,7 @@ async fn get_create(
         _ => None,
     };
 
+    // TODO exclude items that are already linked
     let search_results = match (src.as_ref(), dest.as_ref()) {
         (None, _) => db::lists::list_recent(&mut tx, auth_user.user_id).await?,
         (_, None) => db::lists::list_recent(&mut tx, auth_user.user_id).await?,

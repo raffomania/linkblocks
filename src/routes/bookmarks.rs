@@ -42,6 +42,7 @@ async fn post_create(
 
     let selected_parents = db::lists::list_by_id(&mut tx, &input.parents).await?;
 
+    // TODO exclude items that are already linked
     let search_results = match input.list_search_term.as_ref() {
         None => db::lists::list_recent(&mut tx, auth_user.user_id).await?,
         Some(term) => db::lists::search(&mut tx, term, auth_user.user_id).await?,
@@ -140,6 +141,7 @@ async fn get_create(
             ..Default::default()
         },
         selected_parents: selected_parent.into_iter().collect(),
+        // TODO exclude items that are already linked
         search_results: db::lists::list_recent(&mut tx, auth_user.user_id).await?,
     })
 }
