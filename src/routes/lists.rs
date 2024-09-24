@@ -34,7 +34,8 @@ async fn list(
     extract::Tx(mut tx): extract::Tx,
     Path(list_id): Path<Uuid>,
 ) -> ResponseResult<ListTemplate> {
-    let links = db::links::list_by_list(&mut tx, list_id).await?;
+    let links =
+        db::links::list_by_list(&mut tx, list_id, auth_user.as_ref().map(|u| u.user_id)).await?;
     let list = db::lists::by_id(&mut tx, list_id).await?;
 
     match auth_user {
@@ -121,6 +122,8 @@ async fn edit_pinned(
 ) -> ResponseResult<Response> {
     let list = db::lists::by_id(&mut tx, list_id).await?;
 
+    dbg!(&list);
+    dbg!(&auth_user.user_id);
     if list.user_id != auth_user.user_id {
         return Err(ResponseError::NotFound);
     }

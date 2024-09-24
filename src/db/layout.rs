@@ -10,6 +10,7 @@ use super::AppTx;
 pub struct AuthedInfo {
     pub user_description: String,
     pub lists: Vec<db::List>,
+    pub user_id: Uuid,
 }
 
 pub async fn by_user_id(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<AuthedInfo> {
@@ -30,5 +31,6 @@ pub async fn by_user_id(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<AuthedI
     Ok(AuthedInfo {
         user_description,
         lists,
+        user_id,
     })
 }

@@ -100,7 +100,11 @@ pub async fn insert(
     Ok(list)
 }
 
-pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<LinkWithContent>> {
+pub async fn list_by_list(
+    tx: &mut AppTx,
+    list_id: Uuid,
+    user_id: Option<Uuid>,
+) -> ResponseResult<Vec<LinkWithContent>> {
     let rows = query!(
         r#"
         select
@@ -134,10 +138,13 @@ pub async fn list_by_list(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Vec<L
         left join bookmarks on bookmarks.id = links.dest_bookmark_id
 
         where links.src_list_id = $1
+            and (lists is null or not lists.private or lists.user_id = $2)
+            and (lists_lists is null or not lists_lists.private or lists.user_id = $2)
         group by links.id, lists.id, bookmarks.id
         order by links.created_at desc
         "#,
-        list_id
+        list_id,
+        user_id
     )
     .fetch_all(&mut **tx)
     .await?;

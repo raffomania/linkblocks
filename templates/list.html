@@ -13,64 +13,66 @@
       {% endif %}
     {% endif %}
   </header>
-  {% if layout.authed_info.is_some() %}
-    <section class="flex flex-wrap m-4 gap-x-4 gap-y-2">
-      <a
-        href="/bookmarks/create?parent_id={{ list.id }}"
-        class="block px-4 py-1 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
-        hx-get="/bookmarks/create?parent_id={{ list.id }}"
-        hx-target="closest section"
-        hx-select="#create_bookmark"
-        >Add new bookmark</a
-      >
-      <a
-        href="/links/create?src_id={{ list.id }}"
-        class="block px-4 py-1 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
-        hx-get="/links/create?src_id={{ list.id }}"
-        hx-target="closest section"
-        hx-select="#create_link"
-        >Link an item</a
-      >
-      <form
-        method="post"
-        action="/lists/{{ list.id }}/edit_private"
-        hx-post="/lists/{{ list.id }}/edit_private"
-        hx-select="#edit_private"
-        hx-target="this"
-        id="edit_private"
-      >
-        <button
+  {% if let Some(authed_info) = layout.authed_info %}
+    {% if authed_info.user_id == list.user_id %}
+      <section class="flex flex-wrap m-4 gap-x-4 gap-y-2">
+        <a
+          href="/bookmarks/create?parent_id={{ list.id }}"
           class="block px-4 py-1 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
-          name="private"
-          value="{{ !list.private }}"
-          type="submit"
+          hx-get="/bookmarks/create?parent_id={{ list.id }}"
+          hx-target="closest section"
+          hx-select="#create_bookmark"
+          >Add new bookmark</a
         >
-          {% if list.private %}
-            Make public
-          {% else %}
-            Make private
-          {% endif %}
-        </button>
-      </form>
-      <form
-        method="post"
-        action="/lists/{{ list.id }}/edit_pinned"
-        id="edit_pinned"
-      >
-        <button
+        <a
+          href="/links/create?src_id={{ list.id }}"
           class="block px-4 py-1 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
-          name="pinned"
-          value="{{ !list.pinned }}"
-          type="submit"
+          hx-get="/links/create?src_id={{ list.id }}"
+          hx-target="closest section"
+          hx-select="#create_link"
+          >Link an item</a
         >
-          {% if list.pinned %}
-            Unpin from sidebar
-          {% else %}
-            Pin to sidebar
-          {% endif %}
-        </button>
-      </form>
-    </section>
+        <form
+          method="post"
+          action="/lists/{{ list.id }}/edit_private"
+          hx-post="/lists/{{ list.id }}/edit_private"
+          hx-select="#edit_private"
+          hx-target="this"
+          id="edit_private"
+        >
+          <button
+            class="block px-4 py-1 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
+            name="private"
+            value="{{ !list.private }}"
+            type="submit"
+          >
+            {% if list.private %}
+              Make public
+            {% else %}
+              Make private
+            {% endif %}
+          </button>
+        </form>
+        <form
+          method="post"
+          action="/lists/{{ list.id }}/edit_pinned"
+          id="edit_pinned"
+        >
+          <button
+            class="block px-4 py-1 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
+            name="pinned"
+            value="{{ !list.pinned }}"
+            type="submit"
+          >
+            {% if list.pinned %}
+              Unpin from sidebar
+            {% else %}
+              Pin to sidebar
+            {% endif %}
+          </button>
+        </form>
+      </section>
+    {% endif %}
   {% endif %}
   {% for link in links %}
     <section
@@ -78,23 +80,23 @@
     >
       <div class="overflow-hidden">
         {% match link.dest %}
-          {% when db::LinkDestinationWithChildren::List with (list) %}
+          {% when db::LinkDestinationWithChildren::List with (inner_list) %}
           <a
             class="block overflow-hidden font-semibold leading-8 hover:text-fuchsia-300 text-ellipsis whitespace-nowrap"
-            href="/lists/{{ list.list.id }}"
+            href="/lists/{{ inner_list.list.id }}"
           >
-            {{ list.list.title }}
+            {{ inner_list.list.title }}
           </a>
-          {% if let Some(content) = list.list.content %}
+          {% if let Some(content) = inner_list.list.content %}
 
             {% if !content.is_empty() %}
               <p class="mt-2">{{- content -}}</p>
             {% endif %}
           {%- endif -%}
 
-          {%- if list.links.len() > 0 -%}
+          {%- if inner_list.links.len() > 0 -%}
             <ul class="flex flex-col mt-2 gap-y-2">
-              {% for link in list.links %}
+              {% for link in inner_list.links %}
                 {%- match link -%}
                   {%- when db::LinkDestination::Bookmark with (bookmark) -%}
                   <li>
@@ -106,13 +108,13 @@
                     </a>
                     {% call content::link_url(bookmark.url) %}
                   </li>
-                  {%- when db::LinkDestination::List with (list) -%}
+                  {%- when db::LinkDestination::List with (inner_inner_list) -%}
                   <li>
                     <a
                       class="block leading-8 text-fuchsia-100 hover:text-fuchsia-300"
-                      href="/lists/{{ list.id }}"
+                      href="/lists/{{ inner_inner_list.id }}"
                     >
-                      {{ list.title }} →
+                      {{ inner_inner_list.title }} →
                     </a>
                   </li>
                   {% when _ %}
@@ -130,7 +132,7 @@
           {% call content::link_url(bookmark.url) %}
         {% endmatch %}
       </div>
-      {% if layout.authed_info.is_some() %}
+      {% if let Some(authed_info) = layout.authed_info %}
         <div
           class="flex flex-wrap justify-end pt-2 text-sm gap-x-2 text-neutral-400"
         >
@@ -138,16 +140,18 @@
             class="hover:text-neutral-100"
             href="/links/create?dest_id={{ link.dest.id() }}"
           >
-            Add to other list
+            Connect
           </a>
-          ∙
-          <button
-            class="hover:text-neutral-100"
-            hx-delete="/links/{{ link.id }}"
-            title="Remove from list"
-          >
-            Remove from this list
-          </button>
+          {% if authed_info.user_id == list.user_id %}
+            <span>∙</span>
+            <button
+              class="hover:text-neutral-100"
+              hx-delete="/links/{{ link.id }}"
+              title="Remove from list"
+            >
+              Remove from this list
+            </button>
+          {% endif %}
         </div>
       {% endif %}
     </section>
