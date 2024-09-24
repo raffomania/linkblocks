@@ -40,7 +40,6 @@ async fn post_create(
 ) -> ResponseResult<Response> {
     let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
 
-    dbg!(&input);
     let selected_parents = db::lists::list_by_id(&mut tx, &input.parents).await?;
 
     let search_results = match input.list_search_term.as_ref() {

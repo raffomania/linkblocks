@@ -123,8 +123,6 @@ async fn edit_pinned(
 ) -> ResponseResult<Response> {
     let list = db::lists::by_id(&mut tx, list_id).await?;
 
-    dbg!(&list);
-    dbg!(&auth_user.user_id);
     if list.user_id != auth_user.user_id {
         return Err(ResponseError::NotFound);
     }
