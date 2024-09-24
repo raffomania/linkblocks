@@ -16,8 +16,7 @@
             <h3
               class="px-2 py-1 text-sm font-bold tracking-tight text-neutral-400"
             >
-              {# TODO create an explicit "unpinned lists" link at the bottom of the sidebar #}
-              <a href="/lists/unpinned">Lists</a>
+              Lists
             </h3>
             <a
               href="/lists/create"
@@ -44,6 +43,14 @@
                 </a>
               </li>
             {% endfor %}
+            <li>
+              <a
+                class="block px-4 py-1 overflow-hidden text-ellipsis whitespace-nowrap hover:bg-neutral-800 text-neutral-400"
+                href="/lists/unpinned"
+              >
+                Unpinned lists
+              </a>
+            </li>
           </ul>
         </div>
 
