@@ -75,7 +75,7 @@
       hx-swap="outerHTML"
       class="rounded py-1.5 px-3 my-2 bg-neutral-900"
     />
-    <div id="search_results">
+    <div id="search_results" class="overflow-y-scroll max-h-96">
       {% for list in search_results %}
         <button
           hx-post="/bookmarks/create"

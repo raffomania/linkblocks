@@ -63,7 +63,7 @@ async fn post_create(
     };
 
     let search_results = match search_term {
-        Some(search_term) => db::items::search(&mut tx, search_term, auth_user.user_id).await?,
+        Some(search_term) => db::lists::search(&mut tx, search_term, auth_user.user_id).await?,
         None => Vec::new(),
     };
 
@@ -118,12 +118,8 @@ async fn get_create(
     };
 
     let search_results = match (src.as_ref(), dest.as_ref()) {
-        (None, _) => db::lists::list_recent(&mut tx, auth_user.user_id)
-            .await?
-            .into_iter()
-            .map(LinkDestination::List)
-            .collect(),
-        (_, None) => db::items::list_recent(&mut tx, auth_user.user_id).await?,
+        (None, _) => db::lists::list_recent(&mut tx, auth_user.user_id).await?,
+        (_, None) => db::lists::list_recent(&mut tx, auth_user.user_id).await?,
         _ => Vec::new(),
     };
 

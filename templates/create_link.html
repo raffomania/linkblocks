@@ -77,19 +77,19 @@
       </label>
     {%- endif -%}
 
-    <div id="search_results">
-      {% for result in search_results %}
+    <div id="search_results" class="overflow-y-scroll max-h-96">
+      {% for list in search_results %}
         <button
           hx-post="/links/create"
           class="block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700"
-          value="{{ result.id() }}"
+          value="{{ list.id }}"
           {%- if input.src.is_some() -%}
             name="dest"
           {%- else -%}
             name="src"
           {%- endif -%}
         >
-          {% call link_dest(result) %}
+          <p class="text-fuchsia-100">️🧵 {{ list.title }}</p>
         </button>
       {% endfor %}
     </div>

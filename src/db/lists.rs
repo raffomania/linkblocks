@@ -171,7 +171,7 @@ pub async fn list_recent(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<Li
                 max(src_links.created_at) desc nulls last,
                 max(dest_links.created_at) nulls last,
                 max(lists.created_at) desc
-            limit 10
+            limit 500
         "#,
         user_id,
     )

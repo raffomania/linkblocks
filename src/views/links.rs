@@ -15,7 +15,7 @@ pub struct CreateLinkTemplate {
 
     pub errors: FormErrors,
     pub input: PartialCreateLink,
-    pub search_results: Vec<LinkDestination>,
+    pub search_results: Vec<db::List>,
     pub src_from_db: Option<LinkDestination>,
     pub dest_from_db: Option<LinkDestination>,
 }

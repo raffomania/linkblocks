@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            select lists.*\n            from lists\n            left join links as src_links on lists.id = src_links.src_list_id\n            left join links as dest_links on lists.id = dest_links.dest_list_id\n            where lists.user_id = $1\n            group by lists.id\n            order by\n                max(src_links.created_at) desc nulls last,\n                max(dest_links.created_at) nulls last,\n                max(lists.created_at) desc\n            limit 10\n        ",
+  "query": "\n            select lists.*\n            from lists\n            left join links as src_links on lists.id = src_links.src_list_id\n            left join links as dest_links on lists.id = dest_links.dest_list_id\n            where lists.user_id = $1\n            group by lists.id\n            order by\n                max(src_links.created_at) desc nulls last,\n                max(dest_links.created_at) nulls last,\n                max(lists.created_at) desc\n            limit 500\n        ",
   "describe": {
     "columns": [
       {
@@ -54,5 +54,5 @@
       false
     ]
   },
-  "hash": "bf78d8c6464f39f3c33ee565e305dd7593734983c97fe9ba14f67016673e7bf1"
+  "hash": "39b4e79e2c6df2bb2c6dafae57f730209b963373cfa3a715aaf35e612d626a7f"
 }
