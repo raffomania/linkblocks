@@ -56,6 +56,9 @@ uuid = { version = "1.11.0", features = ["v4", "serde"] }
 visdom = "1.0.2"
 tower-sessions-sqlx-store = { version = "0.15.0", features = ["postgres"] }
 rustls = { version = "0.23.20", default-features = false, features = ["ring"] }
+htmf = { git = "https://github.com/raffomania/htmf", features = [
+    "pretty-print",
+] }
 
 [patch.crates-io]
 askama_axum = { git = "https://github.com/bikesheddev/askama.git", rev = "baa0aef8e3307f9a8575f8e36a59db221b18eaff" }

@@ -13,6 +13,7 @@ path = [
     ".github/**.yml",
     "pre-commit.sh",
     "Cargo.toml",
+    ".rustfmt.toml",
     "package.json",
     "Dockerfile",
     ".dockerignore",
