@@ -40,6 +40,7 @@ tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 uuid = { version = "1.10.0", features = ["v4"] }
 visdom = "1.0.1"
+htmf = { path = "../htmf"}
 
 [build-dependencies]
 railwind = "0.1.5"

@@ -2,7 +2,7 @@ use anyhow::{anyhow, Context};
 use askama_axum::IntoResponse;
 use axum::{
     extract::{Query, State},
-    response::{Redirect, Response},
+    response::{Html, Redirect, Response},
     routing::{get, post},
     Router,
 };
@@ -16,7 +16,7 @@ use crate::{
     oidc,
     response_error::ResponseResult,
     server::AppState,
-    views::{layout, login, users::ProfileTemplate},
+    views::{self, layout, login, users::ProfileTemplate},
 };
 use serde::Deserialize;
 
@@ -136,13 +136,16 @@ async fn get_profile(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
     State(state): State<AppState>,
-) -> ResponseResult<ProfileTemplate> {
+) -> ResponseResult<Html<String>> {
     let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
 
-    Ok(ProfileTemplate {
-        layout,
-        base_url: state.base_url,
-    })
+    Ok(Html(
+        views::users::profile(&ProfileTemplate {
+            layout,
+            base_url: state.base_url,
+        })
+        .to_html(),
+    ))
 }
 
 async fn logout(auth_user: AuthUser) -> ResponseResult<Redirect> {
