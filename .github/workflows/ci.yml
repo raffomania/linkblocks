@@ -29,23 +29,11 @@ jobs:
           # For cargo-run-bin
           cache-directories: ".bin"
 
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          cache: npm
-          cache-dependency-path: "package-lock.json"
-
-      # this is needed because `npx` won't install prettier plugins
-      - name: Install node dependencies
-        run: npm install
-
       - name: Install REUSE tool
         run: pipx install reuse
 
       - name: Install cargo-run-bin
         run: cargo install cargo-run-bin
-
-      - run: cargo bin just format
 
       - run: cargo bin just lint
 
@@ -79,6 +67,40 @@ jobs:
       - name: podman manifest push latest
         run: podman manifest push linkblocks ghcr.io/raffomania/linkblocks:latest
         if: github.ref == 'refs/heads/main'
+
+  format-nightly:
+    name: Check Formatting (nightly)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@nightly
+
+      - name: Setup rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          # For cargo-run-bin
+          cache-directories: ".bin"
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          cache: npm
+          cache-dependency-path: "package-lock.json"
+
+      # this is needed because `npx` won't install prettier plugins
+      - name: Install node dependencies
+        run: npm install
+
+      - name: Install cargo-run-bin
+        run: cargo install cargo-run-bin
+
+      - run: cargo bin just format
 
   test:
     name: Test

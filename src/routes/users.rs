@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Context};
 use axum::{
     extract::{Query, State},
-    response::{IntoResponse, Redirect, Response},
+    response::{Html, IntoResponse, Redirect, Response},
     routing::{get, post},
     Router,
 };
@@ -175,13 +175,16 @@ async fn get_profile(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
     State(state): State<AppState>,
-) -> ResponseResult<ProfileTemplate> {
+) -> ResponseResult<Html<String>> {
     let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
 
-    Ok(ProfileTemplate {
-        layout,
-        base_url: state.base_url,
-    })
+    Ok(Html(
+        views::users::profile(&ProfileTemplate {
+            layout,
+            base_url: state.base_url,
+        })
+        .to_html(),
+    ))
 }
 
 async fn logout(auth_user: AuthUser) -> ResponseResult<Redirect> {

@@ -27,6 +27,8 @@ fn main() {
         })
         .collect();
 
+    // TODO gather classes from htmf views
+
     let source = Source::Files(templates);
     railwind::parse_to_file(source, dest_path.to_str().unwrap(), false, &mut Vec::new());
 }
