@@ -3,5 +3,5 @@
 // Without it, the extension will disable itself.
 // To configure how tailwind CSS gets generated, look at the `build.rs` file.
 module.exports = {
-  content: ["templates/**/*.html"],
+  content: ["templates/**/*.html", "src/views/*.rs"],
 };

@@ -1695,6 +1695,33 @@
       "version": "0.1.6"
     },
     {
+      "author": "Pig Fang <g-plane@hotmail.com>",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#css_dataset@0.4.1",
+      "description": "CSS dataset about functions, properties, etc.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/g-plane/css_dataset"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "25670139e591f1c2869eb8d0d977028f8d05e859132b4c874ecd02a00d3c9174"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
+        }
+      ],
+      "name": "css_dataset",
+      "purl": "pkg:cargo/css_dataset@0.4.1",
+      "scope": "required",
+      "type": "library",
+      "version": "0.4.1"
+    },
+    {
       "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#curve25519-dalek-derive@0.1.1",
       "description": "curve25519-dalek Derives",
       "externalReferences": [
@@ -3323,6 +3350,27 @@
       "version": "0.5.11"
     },
     {
+      "author": "Rafael Epplée <hello@rafa.ee>",
+      "bom-ref": "git+https://github.com/raffomania/htmf#0.3.0",
+      "description": "hypertext markup functions: functions for generating HTML",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/raffomania/htmf"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT OR Apache-2.0"
+        }
+      ],
+      "name": "htmf",
+      "purl": "pkg:cargo/htmf@0.3.0?vcs_url=git%2Bhttps://github.com/raffomania/htmf%40693f55601e698709f5bf82c638388c6d97a85848",
+      "scope": "required",
+      "type": "library",
+      "version": "0.3.0"
+    },
+    {
       "author": "ganmin <jxz_211@163.com>",
       "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#htmlentity@1.3.2",
       "description": "A library for encoding and decoding HTML entities.",
@@ -4373,6 +4421,37 @@
       "version": "0.10.5"
     },
     {
+      "author": "bluss",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#itertools@0.13.0",
+      "description": "Extra iterator adaptors, iterator methods, free functions, and macros.",
+      "externalReferences": [
+        {
+          "type": "documentation",
+          "url": "https://docs.rs/itertools/"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/rust-itertools/itertools"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT OR Apache-2.0"
+        }
+      ],
+      "name": "itertools",
+      "purl": "pkg:cargo/itertools@0.13.0",
+      "scope": "required",
+      "type": "library",
+      "version": "0.13.0"
+    },
+    {
       "author": "David Tolnay <dtolnay@gmail.com>",
       "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#itoa@1.0.14",
       "description": "Fast integer primitive to string conversion",
@@ -4704,6 +4783,33 @@
       "scope": "required",
       "type": "library",
       "version": "0.4.22"
+    },
+    {
+      "author": "Pig Fang <g-plane@hotmail.com>",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#markup_fmt@0.19.0",
+      "description": "Configurable HTML, Vue, Svelte, Astro, Angular, Jinja, Twig, Nunjucks and Vento formatter.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/g-plane/markup_fmt"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a7d75c5f415bb645c5715a1f5f72319b880133b9c4905b7867120a283bff5b2d"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
+        }
+      ],
+      "name": "markup_fmt",
+      "purl": "pkg:cargo/markup_fmt@0.19.0",
+      "scope": "required",
+      "type": "library",
+      "version": "0.19.0"
     },
     {
       "author": "Eliza Weisman <eliza@buoyant.io>",
@@ -8451,6 +8557,33 @@
       "version": "0.3.37"
     },
     {
+      "author": "Pig Fang <g-plane@hotmail.com>",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#tiny_pretty@0.2.0",
+      "description": "Tiny implementation of Wadler-style pretty printer.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/g-plane/tiny_pretty"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4b3f46f0549180b9c6f7f76270903f1a06867c43a03998b99dce81aa1760c3b2"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
+        }
+      ],
+      "name": "tiny_pretty",
+      "purl": "pkg:cargo/tiny_pretty@0.2.0",
+      "scope": "required",
+      "type": "library",
+      "version": "0.2.0"
+    },
+    {
       "author": "The ICU4X Project Developers",
       "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#tinystr@0.7.6",
       "description": "A small ASCII-only bounded length string representation.",
@@ -9438,6 +9571,37 @@
       "version": "0.1.3"
     },
     {
+      "author": "kwantam <kwantam@gmail.com>, Manish Goregaokar <manishsmail@gmail.com>",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#unicode-width@0.1.14",
+      "description": "Determine displayed width of `char` and `str` types according to Unicode Standard Annex #11 rules. ",
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://github.com/unicode-rs/unicode-width"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/unicode-rs/unicode-width"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7dd6e30e90baa6f72411720665d41d89b9a3d039dc45b8faea1ddd07f617f6af"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT OR Apache-2.0"
+        }
+      ],
+      "name": "unicode-width",
+      "purl": "pkg:cargo/unicode-width@0.1.14",
+      "scope": "required",
+      "type": "library",
+      "version": "0.1.14"
+    },
+    {
       "author": "Brian Smith <brian@briansmith.org>",
       "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#untrusted@0.9.0",
       "description": "Safe, fast, zero-panic, zero-crashing, zero-allocation parsing of untrusted inputs in Rust.",
@@ -10211,6 +10375,12 @@
     },
     {
       "dependsOn": [
+        "registry+https://github.com/rust-lang/crates.io-index#markup_fmt@0.19.0"
+      ],
+      "ref": "git+https://github.com/raffomania/htmf#0.3.0"
+    },
+    {
+      "dependsOn": [
         "git+https://github.com/rinja-rs/askama.git#askama_derive@0.13.0",
         "git+https://github.com/rinja-rs/askama.git#askama_escape@0.11.0",
         "registry+https://github.com/rust-lang/crates.io-index#humansize@2.1.3",
@@ -10254,6 +10424,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#fake@3.1.0",
         "registry+https://github.com/rust-lang/crates.io-index#friendly-zoo@1.1.0",
         "registry+https://github.com/rust-lang/crates.io-index#garde@0.21.1",
+        "git+https://github.com/raffomania/htmf#0.3.0",
         "registry+https://github.com/rust-lang/crates.io-index#include_dir@0.7.4",
         "registry+https://github.com/rust-lang/crates.io-index#listenfd@1.0.1",
         "registry+https://github.com/rust-lang/crates.io-index#mime_guess@2.0.5",
@@ -10609,6 +10780,10 @@
         "registry+https://github.com/rust-lang/crates.io-index#typenum@1.17.0"
       ],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.1.6"
+    },
+    {
+      "dependsOn": [],
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#css_dataset@0.4.1"
     },
     {
       "dependsOn": [
@@ -11292,6 +11467,12 @@
       "ref": "registry+https://github.com/rust-lang/crates.io-index#itertools@0.10.5"
     },
     {
+      "dependsOn": [
+        "registry+https://github.com/rust-lang/crates.io-index#either@1.13.0"
+      ],
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#itertools@0.13.0"
+    },
+    {
       "dependsOn": [],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#itoa@1.0.14"
     },
@@ -11345,6 +11526,16 @@
     {
       "dependsOn": [],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#log@0.4.22"
+    },
+    {
+      "dependsOn": [
+        "registry+https://github.com/rust-lang/crates.io-index#aho-corasick@1.1.3",
+        "registry+https://github.com/rust-lang/crates.io-index#css_dataset@0.4.1",
+        "registry+https://github.com/rust-lang/crates.io-index#itertools@0.13.0",
+        "registry+https://github.com/rust-lang/crates.io-index#memchr@2.7.4",
+        "registry+https://github.com/rust-lang/crates.io-index#tiny_pretty@0.2.0"
+      ],
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#markup_fmt@0.19.0"
     },
     {
       "dependsOn": [
@@ -12354,6 +12545,12 @@
     },
     {
       "dependsOn": [
+        "registry+https://github.com/rust-lang/crates.io-index#unicode-width@0.1.14"
+      ],
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#tiny_pretty@0.2.0"
+    },
+    {
+      "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#displaydoc@0.2.5",
         "registry+https://github.com/rust-lang/crates.io-index#zerovec@0.10.4"
       ],
@@ -12608,6 +12805,10 @@
     {
       "dependsOn": [],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#unicode-properties@0.1.3"
+    },
+    {
+      "dependsOn": [],
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#unicode-width@0.1.14"
     },
     {
       "dependsOn": [],
