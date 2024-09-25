@@ -1235,6 +1235,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "htmf"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "abcb5a4078c86d49875d3079c1b31c3bd5c277ad6adb88800a4d5c6af0fec9b2"
+
+[[package]]
 name = "htmlentity"
 version = "1.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1714,6 +1720,7 @@ dependencies = [
  "fake",
  "friendly-zoo",
  "garde",
+ "htmf",
  "http-body-util",
  "include_dir",
  "insta",
