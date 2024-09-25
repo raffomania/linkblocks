@@ -1,3 +1,5 @@
+#![allow(clippy::wildcard_imports)]
+pub mod base_document;
 pub mod bookmarks;
 pub mod index;
 pub mod layout;
