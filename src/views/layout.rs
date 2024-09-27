@@ -26,16 +26,18 @@ impl Template {
     }
 }
 
-pub fn layout<'a>(children: Vec<Element<'a>>, layout: &'a Template) -> Element<'a> {
-    base_document(vec![div().class("flex-row-reverse h-full sm:flex").with([
-        main_()
-            .class("sm:overflow-y-auto sm:grow")
-            .with([fragment(children)]),
-        match &layout.authed_info {
-            Some(info) => sidebar(info),
-            None => fragment([]),
-        },
-    ])])
+pub fn layout<'a>(children: Element<'a>, layout: &'a Template) -> Element<'a> {
+    base_document()
+        .div()
+        .class("flex-row-reverse h-full sm:flex")
+        .with([
+            main_().class("sm:overflow-y-auto sm:grow").with([children]),
+            match &layout.authed_info {
+                Some(info) => sidebar(info),
+                None => fragment([]),
+            },
+        ])
+        .into()
 }
 
 fn sidebar(authed_info: &AuthedInfo) -> Element<'_> {

@@ -14,14 +14,14 @@ pub struct ProfileTemplate {
 
 pub fn profile(template: &ProfileTemplate) -> Element {
     layout(
-        vec![
+        fragment([
             header().class("px-4 pt-3 mb-2").with([h1()
                 .class("text-xl font-bold")
                 .with([text("Install Bookmarklet")])]),
             section()
                 .class("p-4")
                 .with([bookmarklet_help(), bookmarklet()]),
-        ],
+        ]),
         &template.layout,
     )
 }
