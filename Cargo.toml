@@ -16,7 +16,7 @@ askama = { version = "0.12.1", features = ["with-axum"] }
 askama_axum = "0.4.0"
 axum = { version = "0.7.7", features = ["macros", "tracing"] }
 axum-server = { version = "0.7.1", features = ["tls-rustls"] }
-clap = { version = "4.5.19", features = ["derive", "env"] }
+clap = { version = "4.5.20", features = ["derive", "env"] }
 fake = { version = "2.10.0", default-features = false }
 friendly-zoo = "1.1.0"
 garde = { version = "0.20.0", default-features = false, features = ["derive", "url"]}
