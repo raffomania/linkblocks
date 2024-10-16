@@ -1,9 +1,10 @@
 use askama::Template;
+use uuid::Uuid;
 
 use crate::{
     db::{self},
     form_errors::FormErrors,
-    forms::lists::CreateList,
+    forms::{self, lists::CreateList},
 };
 
 use super::layout;
@@ -23,6 +24,15 @@ pub struct CreateListTemplate {
     pub layout: layout::Template,
     pub input: CreateList,
     pub errors: FormErrors,
+}
+
+#[derive(Template)]
+#[template(path = "edit_list_title.html")]
+pub struct EditListTitleTemplate {
+    pub layout: layout::Template,
+    pub input: forms::lists::EditTitle,
+    pub errors: FormErrors,
+    pub list_id: Uuid,
 }
 
 #[derive(Template)]

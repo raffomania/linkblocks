@@ -1,4 +1,5 @@
 use serde::Deserialize;
+use sqlx::query;
 use sqlx::query_as;
 use sqlx::FromRow;
 use time::OffsetDateTime;
@@ -68,6 +69,20 @@ pub async fn insert(
     .await?;
 
     Ok(list)
+}
+pub async fn edit_title(tx: &mut AppTx, list_id: Uuid, new_title: String) -> ResponseResult<()> {
+    query!(
+        r#"
+        update lists
+        set title = $1
+        where id = $2"#,
+        new_title,
+        list_id,
+    )
+    .execute(&mut **tx)
+    .await?;
+
+    Ok(())
 }
 
 pub async fn by_id(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<List> {

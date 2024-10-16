@@ -70,6 +70,11 @@
           </button>
         </form>
         <a
+          href="/lists/{{ list.id }}/edit_title"
+          class="block px-4 py-1 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
+          >Rename</a
+        >
+        <a
           href="/bookmarks/create?parent_id={{ list.id }}"
           class="block px-4 py-1 border rounded hover:bg-neutral-700 border-neutral-700 w-max"
           hx-get="/bookmarks/create?parent_id={{ list.id }}"

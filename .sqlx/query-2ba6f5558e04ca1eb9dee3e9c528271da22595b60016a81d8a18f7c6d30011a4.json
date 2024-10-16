@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        update lists\n        set title = $1\n        where id = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "2ba6f5558e04ca1eb9dee3e9c528271da22595b60016a81d8a18f7c6d30011a4"
+}

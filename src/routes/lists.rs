@@ -2,13 +2,13 @@ use crate::form_errors::FormErrors;
 use crate::forms::lists::{CreateList, EditListPinned, EditListPrivate};
 use crate::response_error::ResponseError;
 use crate::server::AppState;
-use crate::views::lists::{CreateListTemplate, UnpinnedListsTemplate};
+use crate::views::lists::{CreateListTemplate, EditListTitleTemplate, UnpinnedListsTemplate};
 use crate::{authentication::AuthUser, response_error::ResponseResult};
 use crate::{
     db::{self},
     views::{layout, lists::ListTemplate},
 };
-use crate::{extract, views};
+use crate::{extract, forms, views};
 use askama_axum::IntoResponse;
 use axum::extract::Path;
 use axum::response::Redirect;
@@ -25,6 +25,8 @@ pub fn router() -> Router<AppState> {
         .route("/lists/create", get(get_create).post(post_create))
         .route("/lists/:list_id", get(list))
         .route("/lists/:list_id/edit_private", post(edit_private))
+        .route("/lists/:list_id/edit_title", post(post_edit_title))
+        .route("/lists/:list_id/edit_title", get(get_edit_title))
         .route("/lists/:list_id/edit_pinned", post(edit_pinned))
         .route("/lists/unpinned", get(list_unpinned))
 }
@@ -94,6 +96,46 @@ async fn get_create(
         errors: FormErrors::default(),
         input: CreateList::default(),
     })
+}
+
+async fn get_edit_title(
+    extract::Tx(mut tx): extract::Tx,
+    auth_user: AuthUser,
+    Path(list_id): Path<Uuid>,
+) -> ResponseResult<EditListTitleTemplate> {
+    let list = db::lists::by_id(&mut tx, list_id).await?;
+
+    if list.user_id != auth_user.user_id {
+        return Err(ResponseError::NotFound);
+    }
+
+    let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
+
+    Ok(EditListTitleTemplate {
+        layout,
+        errors: FormErrors::default(),
+        input: forms::lists::EditTitle::default(),
+        list_id,
+    })
+}
+
+async fn post_edit_title(
+    auth_user: AuthUser,
+    extract::Tx(mut tx): extract::Tx,
+    Path(list_id): Path<Uuid>,
+    Form(input): Form<forms::lists::EditTitle>,
+) -> ResponseResult<Response> {
+    let list = db::lists::by_id(&mut tx, list_id).await?;
+
+    if list.user_id != auth_user.user_id {
+        return Err(ResponseError::NotFound);
+    }
+
+    db::lists::edit_title(&mut tx, list_id, input.title).await?;
+
+    tx.commit().await?;
+
+    Ok(Redirect::to(&list.path()).into_response())
 }
 
 async fn edit_private(

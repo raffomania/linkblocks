@@ -12,6 +12,11 @@ pub struct CreateList {
     pub private: bool,
 }
 
+#[derive(Deserialize, Default)]
+pub struct EditTitle {
+    pub title: String,
+}
+
 #[derive(Deserialize)]
 pub struct EditListPrivate {
     pub private: bool,
