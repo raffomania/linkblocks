@@ -34,10 +34,10 @@ openidconnect="3.5.0"
 time = { version = "0.3.36", default-features = false, features = ["serde"] }
 tokio = { version = "1.41.1", features = ["macros", "rt-multi-thread", "signal"] }
 tower = { version = "0.5.1", features = ["util"] }
-tower-http = { version = "0.6.1", features = ["tracing", "trace"] }
+tower-http = { version = "0.6.2", features = ["tracing", "trace"] }
 tower-sessions = { version = "0.9", features = ["postgres-store", "deletion-task"] }
-tracing = "0.1.40"
-tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 uuid = { version = "1.10.0", features = ["v4"] }
 visdom = "1.0.2"
 
