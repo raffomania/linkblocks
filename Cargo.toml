@@ -10,13 +10,13 @@ publish = false
 doctest = false
 
 [dependencies]
-anyhow = { version = "1.0.93"}
+anyhow = { version = "1.0.94"}
 argon2 = "0.5.3"
 askama = { version = "0.12.1", features = ["with-axum"] }
 askama_axum = "0.4.0"
 axum = { version = "0.7.9", features = ["macros", "tracing"] }
 axum-server = { version = "0.7.1", features = ["tls-rustls"] }
-clap = { version = "4.5.21", features = ["derive", "env"] }
+clap = { version = "4.5.23", features = ["derive", "env"] }
 fake = { version = "3.0.1", default-features = false }
 friendly-zoo = "1.1.0"
 garde = { version = "0.20.0", default-features = false, features = ["derive", "url"]}
@@ -29,15 +29,15 @@ serde-aux = { version = "4.5.0", default-features = false }
 serde_json = "1.0.133"
 serde_qs = "0.13.0"
 sqlx = { version = "0.7.4", features = ["runtime-tokio", "postgres", "tls-rustls", "migrate", "uuid", "time"] }
-thiserror = "2.0.3"
+thiserror = "2.0.6"
 openidconnect="3.5.0"
-time = { version = "0.3.36", default-features = false, features = ["serde"] }
-tokio = { version = "1.41.1", features = ["macros", "rt-multi-thread", "signal"] }
+time = { version = "0.3.37", default-features = false, features = ["serde"] }
+tokio = { version = "1.42.0", features = ["macros", "rt-multi-thread", "signal"] }
 tower = { version = "0.5.1", features = ["util"] }
-tower-http = { version = "0.6.1", features = ["tracing", "trace"] }
+tower-http = { version = "0.6.2", features = ["tracing", "trace"] }
 tower-sessions = { version = "0.9", features = ["postgres-store", "deletion-task"] }
-tracing = "0.1.40"
-tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 uuid = { version = "1.10.0", features = ["v4"] }
 visdom = "1.0.2"
 
