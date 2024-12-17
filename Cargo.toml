@@ -34,11 +34,11 @@ serde_qs = "0.13.0"
 sqlx = { version = "0.8.2", features = [
     "runtime-tokio",
     "postgres",
-    "tls-rustls",
     "migrate",
     "uuid",
     "time",
-] }
+    "json",
+], default-features = false }
 thiserror = "2.0.7"
 openidconnect = "3.5.0"
 time = { version = "0.3.37", default-features = false, features = ["serde"] }
