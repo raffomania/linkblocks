@@ -10,16 +10,19 @@ publish = false
 doctest = false
 
 [dependencies]
-anyhow = { version = "1.0.94"}
+anyhow = { version = "1.0.94" }
 argon2 = "0.5.3"
 askama = { version = "0.12.1", features = ["with-axum"] }
 askama_axum = "0.4.0"
 axum = { version = "0.7.9", features = ["macros", "tracing"] }
-axum-server = { version = "0.7.1", features = ["tls-rustls"] }
+axum-server = { version = "0.7.1", features = ["tls-rustls-no-provider"] }
 clap = { version = "4.5.23", features = ["derive", "env"] }
 fake = { version = "3.0.1", default-features = false }
 friendly-zoo = "1.1.0"
-garde = { version = "0.20.0", default-features = false, features = ["derive", "url"]}
+garde = { version = "0.20.0", default-features = false, features = [
+    "derive",
+    "url",
+] }
 include_dir = "0.7.4"
 listenfd = "1.0.1"
 mime_guess = "2.0.5"
@@ -28,18 +31,31 @@ serde = "1.0.216"
 serde-aux = { version = "4.5.0", default-features = false }
 serde_json = "1.0.133"
 serde_qs = "0.13.0"
-sqlx = { version = "0.7.4", features = ["runtime-tokio", "postgres", "tls-rustls", "migrate", "uuid", "time"] }
+sqlx = { version = "0.8.2", features = [
+    "runtime-tokio",
+    "postgres",
+    "tls-rustls",
+    "migrate",
+    "uuid",
+    "time",
+] }
 thiserror = "2.0.7"
-openidconnect="3.5.0"
+openidconnect = "3.5.0"
 time = { version = "0.3.37", default-features = false, features = ["serde"] }
-tokio = { version = "1.42.0", features = ["macros", "rt-multi-thread", "signal"] }
+tokio = { version = "1.42.0", features = [
+    "macros",
+    "rt-multi-thread",
+    "signal",
+] }
 tower = { version = "0.5.2", features = ["util"] }
 tower-http = { version = "0.6.2", features = ["tracing", "trace"] }
-tower-sessions = { version = "0.9", features = ["postgres-store", "deletion-task"] }
+tower-sessions = { version = "0.13" }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
-uuid = { version = "1.10.0", features = ["v4"] }
+uuid = { version = "1.11.0", features = ["v4", "serde"] }
 visdom = "1.0.2"
+tower-sessions-sqlx-store = { version = "0.14.2", features = ["postgres"] }
+rustls = { version = "0.23.20", default-features = false, features = ["ring"] }
 
 [build-dependencies]
 railwind = "0.1.5"
@@ -48,7 +64,9 @@ walkdir = "2"
 [dev-dependencies]
 http-body-util = "0.1.2"
 serde_json = "1.0.133"
-test-log = { version = "0.2.16", features = ["trace"], default-features = false }
+test-log = { version = "0.2.16", features = [
+    "trace",
+], default-features = false }
 itertools = "0.13.0"
 
 [package.metadata.bin]

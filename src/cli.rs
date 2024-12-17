@@ -134,6 +134,10 @@ pub async fn run() -> Result<()> {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
+    rustls::crypto::ring::default_provider()
+        .install_default()
+        .map_err(|_| anyhow!("Failed to set default crypto provider"))?;
+
     let cli = Cli::parse();
 
     match cli.command {

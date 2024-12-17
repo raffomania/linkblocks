@@ -24,7 +24,7 @@ pub struct AppState {
 }
 
 pub async fn app(state: AppState) -> anyhow::Result<Router> {
-    let session_store = tower_sessions::PostgresStore::new(state.pool.clone());
+    let session_store = tower_sessions_sqlx_store::PostgresStore::new(state.pool.clone());
     session_store.migrate().await?;
     tokio::task::spawn(
         session_store
