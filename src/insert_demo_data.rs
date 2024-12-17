@@ -103,7 +103,7 @@ pub async fn insert_demo_data(
     Ok(())
 }
 
-fn random_link_reference(bookmarks: &Vec<db::Bookmark>, lists: &Vec<db::List>) -> Result<Uuid> {
+fn random_link_reference(bookmarks: &[db::Bookmark], lists: &[db::List]) -> Result<Uuid> {
     Ok(match rand::thread_rng().gen_range(0..=1) {
         0 => {
             bookmarks
