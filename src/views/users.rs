@@ -1,6 +1,6 @@
 use askama::Template;
 #[allow(clippy::wildcard_imports)]
-use htmf::declare::*;
+use htmf::prelude::*;
 
 use super::layout::{self, layout};
 
@@ -11,7 +11,7 @@ pub struct ProfileTemplate {
     pub base_url: String,
 }
 
-pub fn profile(template: &ProfileTemplate) -> Builder {
+pub fn profile(template: &ProfileTemplate) -> Element {
     layout(
         fragment().with([
             header(class("px-4 pt-3 mb-2"))
@@ -22,27 +22,30 @@ pub fn profile(template: &ProfileTemplate) -> Builder {
     )
 }
 
-fn bookmarklet_help() -> Builder<'static> {
+fn bookmarklet_help() -> Element<'static> {
     fragment().with([
-        p(class("mb-2")).text(
+        p(class("mb-2")).with(
             "Click the bookmarklet on any website to add it as a bookmark in
       linkblocks!",
         ),
-        p([]).text("To install, drag the following link to your bookmarks / favorites toolbar:"),
+        p([]).with("To install, drag the following link to your bookmarks / favorites toolbar:"),
     ])
 }
 
-fn bookmarklet(base_url: &str) -> Builder<'static> {
+fn bookmarklet(base_url: &str) -> Element<'static> {
     // window.open(
     //   "{ base_url }/bookmarks/create?url="
     //   +encodeURIComponent(window.location.href)
     //   +"&title="
     //   +encodeURIComponent(document.title)
     // )
-    a(class("block my-2 font-bold text-orange-200").href(format!(
-        "javascript:(function()%7Bwindow.open(%0A%20%20%22{base_url}%2Fbookmarks%2Fcreate%3Furl%\
-         3D%22%0A%20%20%2BencodeURIComponent(window.location.href)%0A%20%20%2B%22%26title%3D%22%\
-         0A%20%20%2BencodeURIComponent(document.title)%0A)%7D)()",
-    )))
-    .text("Add to linkblocks")
+    a([
+        class("block my-2 font-bold text-orange-200"),
+        href(format!(
+            "javascript:(function()%7Bwindow.open(%0A%20%20%22{base_url}%2Fbookmarks%2Fcreate%\
+             3Furl%3D%22%0A%20%20%2BencodeURIComponent(window.location.href)%0A%20%20%2B%22%\
+             26title%3D%22%0A%20%20%2BencodeURIComponent(document.title)%0A)%7D)()",
+        )),
+    ])
+    .with("Add to linkblocks")
 }
