@@ -1,11 +1,8 @@
-use askama::Template;
 #[allow(clippy::wildcard_imports)]
 use htmf::prelude::*;
 
 use super::layout::{self, layout};
 
-#[derive(Template)]
-#[template(path = "profile.html")]
 pub struct ProfileTemplate {
     pub layout: layout::Template,
     pub base_url: String,
