@@ -22,6 +22,7 @@ async fn can_login(pool: Pool<Postgres>) -> anyhow::Result<()> {
     let mut app = TestApp::new(pool).await;
 
     let login_page = app.req().get("/login").await.dom().await;
+    insta::assert_snapshot!(login_page.htmls());
 
     let form = login_page.find("form");
 

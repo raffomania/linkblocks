@@ -68,9 +68,14 @@ test-log = { version = "0.2.16", features = [
     "trace",
 ], default-features = false }
 itertools = "0.13.0"
+insta = "1.41.1"
 
 [package.metadata.bin]
 just = { version = "1.21.0", locked = true }
 cargo-watch = { version = "8.5.1", locked = true }
 systemfd = { version = "0.4.1", locked = true }
 sqlx-cli = { version = "0.7.3", locked = true, bins = ["sqlx"] }
+
+[profile.dev.package]
+insta.opt-level = 3
+similar.opt-level = 3
