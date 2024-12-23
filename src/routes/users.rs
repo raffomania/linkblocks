@@ -37,7 +37,10 @@ async fn post_login(
     QsForm(input): QsForm<Login>,
 ) -> ResponseResult<Response> {
     if let Err(errors) = input.validate() {
-        return Ok(login::Template::new(errors, input, state.oidc_state).into_response());
+        return Ok(Html(
+            login::login(&login::Template::new(errors, input, state.oidc_state)).to_html(),
+        )
+        .into_response());
     };
 
     let logged_in = authentication::login(&mut tx, session, &input.credentials).await;
@@ -47,7 +50,10 @@ async fn post_login(
             garde::Path::new("root"),
             garde::Error::new("Username or password not correct"),
         );
-        return Ok(login::Template::new(errors, input, state.oidc_state).into_response());
+        return Ok(Html(
+            login::login(&login::Template::new(errors, input, state.oidc_state)).to_html(),
+        )
+        .into_response());
     }
 
     let redirect_to = input.previous_uri.unwrap_or("/".to_string());
@@ -120,13 +126,16 @@ async fn get_login(
     if state.demo_mode {
         Ok(login::DemoTemplate {}.into_response())
     } else {
-        Ok(login::Template::new(
-            Report::new(),
-            Login {
-                previous_uri: query.previous_uri,
-                ..Default::default()
-            },
-            state.oidc_state,
+        Ok(Html(
+            login::login(&login::Template::new(
+                Report::new(),
+                Login {
+                    previous_uri: query.previous_uri,
+                    ..Default::default()
+                },
+                state.oidc_state,
+            ))
+            .to_html(),
         )
         .into_response())
     }
