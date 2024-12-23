@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Context};
 use axum::{
     extract::{Query, State},
-    response::{Html, IntoResponse, Redirect, Response},
+    response::{IntoResponse, Redirect, Response},
     routing::{get, post},
     Router,
 };
@@ -13,6 +13,7 @@ use crate::{
     db,
     extract::{self, qs_form::QsForm},
     forms::users::{CreateOidcUser, Login, OidcLoginQuery, OidcSelectUsername},
+    htmf_response::HtmfResponse,
     oidc::{self},
     response_error::{ResponseError, ResponseResult},
     server::AppState,
@@ -38,7 +39,12 @@ async fn post_login(
     QsForm(input): QsForm<Login>,
 ) -> ResponseResult<Response> {
     if let Err(errors) = input.validate() {
-        return Ok(login::Template::new(errors, input, state.oidc_state).into_response());
+        return Ok(HtmfResponse(login::login(&login::Template::new(
+            errors,
+            input,
+            state.oidc_state,
+        )))
+        .into_response());
     };
 
     let logged_in = authentication::login(&mut tx, session, &input.credentials).await;
@@ -48,7 +54,12 @@ async fn post_login(
             garde::Path::new("root"),
             garde::Error::new("Username or password not correct"),
         );
-        return Ok(login::Template::new(errors, input, state.oidc_state).into_response());
+        return Ok(HtmfResponse(login::login(&login::Template::new(
+            errors,
+            input,
+            state.oidc_state,
+        )))
+        .into_response());
     }
 
     let redirect_to = input.previous_uri.unwrap_or("/".to_string());
@@ -159,14 +170,14 @@ async fn get_login(
     if state.demo_mode {
         Ok(login::DemoTemplate {}.into_response())
     } else {
-        Ok(login::Template::new(
+        Ok(HtmfResponse(login::login(&login::Template::new(
             Report::new(),
             Login {
                 previous_uri: query.previous_uri,
                 ..Default::default()
             },
             state.oidc_state,
-        )
+        )))
         .into_response())
     }
 }
@@ -175,16 +186,13 @@ async fn get_profile(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
     State(state): State<AppState>,
-) -> ResponseResult<Html<String>> {
+) -> ResponseResult<HtmfResponse> {
     let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
 
-    Ok(Html(
-        views::users::profile(&ProfileTemplate {
-            layout,
-            base_url: state.base_url,
-        })
-        .to_html(),
-    ))
+    Ok(HtmfResponse(views::users::profile(&ProfileTemplate {
+        layout,
+        base_url: state.base_url,
+    })))
 }
 
 async fn logout(auth_user: AuthUser) -> ResponseResult<Redirect> {
