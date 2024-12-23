@@ -3,7 +3,7 @@ use axum::response::{Html, IntoResponse};
 
 use crate::response_error::ResponseError;
 
-pub struct HtmfResponse(htmf::element::Element);
+pub struct HtmfResponse(pub htmf::element::Element);
 
 impl IntoResponse for HtmfResponse {
     #[cfg(debug_assertions)]
