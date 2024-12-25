@@ -22,7 +22,7 @@ pub fn profile(template: &ProfileTemplate) -> Element {
     )
 }
 
-fn bookmarklet_help() -> Element<'static> {
+fn bookmarklet_help() -> Element {
     fragment().with([
         p(class("mb-2")).with(
             "Click the bookmarklet on any website to add it as a bookmark in
@@ -32,7 +32,7 @@ fn bookmarklet_help() -> Element<'static> {
     ])
 }
 
-fn bookmarklet(base_url: &str) -> Element<'static> {
+fn bookmarklet(base_url: &str) -> Element {
     // window.open(
     //   "{ base_url }/bookmarks/create?url="
     //   +encodeURIComponent(window.location.href)

@@ -25,7 +25,7 @@ impl Template {
     }
 }
 
-pub fn layout<'a>(children: Element<'a>, layout: &'a Template) -> Element<'a> {
+pub fn layout(children: Element, layout: &Template) -> Element {
     base_document(div(class("flex-row-reverse h-full sm:flex")).with([
         main_(class("sm:overflow-y-auto sm:grow")).with(children),
         match &layout.authed_info {
@@ -35,7 +35,7 @@ pub fn layout<'a>(children: Element<'a>, layout: &'a Template) -> Element<'a> {
     ]))
 }
 
-fn sidebar(authed_info: &AuthedInfo) -> Element<'_> {
+fn sidebar(authed_info: &AuthedInfo) -> Element {
     aside(id("nav").class(
         "bg-neutral-900 sm:max-w-[18rem] sm:w-1/3 sm:max-h-full flex flex-col sm:flex-col-reverse \
          sm:border-r border-neutral-700 border-t sm:border-t-0",
@@ -55,7 +55,7 @@ fn sidebar(authed_info: &AuthedInfo) -> Element<'_> {
     ])
 }
 
-fn lists_header() -> Element<'static> {
+fn lists_header() -> Element {
     div(class(
         "sticky top-0 flex items-center justify-between px-2 pt-2 sm:top-0 bg-neutral-900",
     ))
