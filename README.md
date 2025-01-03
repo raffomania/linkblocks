@@ -86,9 +86,9 @@ This web app is implemented using technologies hand-picked for a smooth developm
 
 ## Acknowledgements
 
-![NLnet](doc/nlnet.svg)
+![NLnet](doc/nlnet.svg?raw=true)
 
-![NGI Zero Commons](doc/ngi_zero.svg)
+![NGI Zero Commons](doc/ngi_zero.svg?raw=true)
 
 linkblocks is made possible with a [donation](https://nlnet.nl/commonsfund/acknowledgement.pdf) from NGI Zero Commons Fund.
 NGI Zero Commons Fund is part of the [European Commission](https://ec.europa.eu/)'s [Next Generation Internet](https://ngi.eu/) initiative, established under the aegis of the [DG Communications Networks, Content and Technology](https://ec.europa.eu/info/departments/communications-networks-content-and-technology_en).
