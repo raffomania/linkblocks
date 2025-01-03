@@ -83,3 +83,13 @@ This web app is implemented using technologies hand-picked for a smooth developm
 - PostgreSQL as the only service dependency
 - Built-in CLI for production maintenance
 - Auto-reload in development [without dropped connections](https://github.com/mitsuhiko/listenfd)
+
+## Acknowledgements
+
+![NLnet](doc/nlnet.svg)
+
+![NGI Zero Commons](doc/ngi_zero.svg)
+
+linkblocks is made possible with a [donation](https://nlnet.nl/commonsfund/acknowledgement.pdf) from NGI Zero Commons Fund.
+NGI Zero Commons Fund is part of the [European Commission](https://ec.europa.eu/)'s [Next Generation Internet](https://ngi.eu/) initiative, established under the aegis of the [DG Communications Networks, Content and Technology](https://ec.europa.eu/info/departments/communications-networks-content-and-technology_en).
+Additional funding is made available by the Swiss State Secretariat for Education, Research and Innovation (SERI).
