@@ -9,10 +9,9 @@ use crate::{
     views::{layout, lists::ListTemplate},
 };
 use crate::{extract, forms, views};
-use askama_axum::IntoResponse;
 use axum::extract::Path;
-use axum::response::Redirect;
 use axum::response::Response;
+use axum::response::{IntoResponse, Redirect};
 use axum::routing::post;
 use axum::Form;
 use axum::{routing::get, Router};
@@ -20,14 +19,14 @@ use garde::Validate;
 use uuid::Uuid;
 
 pub fn router() -> Router<AppState> {
-    let router = Router::new();
+    let router: Router<AppState> = Router::new();
     router
         .route("/lists/create", get(get_create).post(post_create))
-        .route("/lists/:list_id", get(list))
-        .route("/lists/:list_id/edit_private", post(edit_private))
-        .route("/lists/:list_id/edit_title", post(post_edit_title))
-        .route("/lists/:list_id/edit_title", get(get_edit_title))
-        .route("/lists/:list_id/edit_pinned", post(edit_pinned))
+        .route("/lists/{list_id}", get(list))
+        .route("/lists/{list_id}/edit_private", post(edit_private))
+        .route("/lists/{list_id}/edit_title", post(post_edit_title))
+        .route("/lists/{list_id}/edit_title", get(get_edit_title))
+        .route("/lists/{list_id}/edit_pinned", post(edit_pinned))
         .route("/lists/unpinned", get(list_unpinned))
 }
 
