@@ -8,8 +8,7 @@ use anyhow::{anyhow, Context};
 use argon2::PasswordVerifier;
 use askama::filters::urlencode;
 use axum::{
-    async_trait,
-    extract::{FromRef, FromRequestParts, OriginalUri},
+    extract::{FromRequestParts, OptionalFromRequestParts, OriginalUri},
     http::request::Parts,
     response::Redirect,
 };
@@ -120,17 +119,12 @@ impl AuthUser {
     }
 }
 
-#[async_trait]
-impl<S> FromRequestParts<S> for AuthUser
-where
-    AppState: FromRef<S>,
-    S: Send + Sync,
-{
+impl FromRequestParts<AppState> for AuthUser {
     type Rejection = Redirect;
 
     async fn from_request_parts(
         req: &mut Parts,
-        state: &S,
+        state: &AppState,
     ) -> std::result::Result<Self, Self::Rejection> {
         let uri = OriginalUri::from_request_parts(req, state).await.unwrap();
 
@@ -138,7 +132,9 @@ where
             .path_and_query()
             .map(|pq| pq.as_str())
             .unwrap_or_default();
-        let redirect_after_login = urlencode(redirect_after_login).unwrap_or_default();
+        // TODO log error here, maybe return 500
+        let redirect_after_login =
+            urlencode(redirect_after_login).map_err(|_| Redirect::to("/login"))?;
 
         let redirect_to = format!("/login?previous_uri={redirect_after_login}",);
         let error_redirect = Redirect::to(&redirect_to);
@@ -153,9 +149,29 @@ where
             return Err(error_redirect);
         }
 
-        Ok(auth_user.map_err(|e| {
+        auth_user.map_err(|e| {
             tracing::error!("{e:?}");
             error_redirect
-        })?)
+        })
+    }
+}
+
+impl OptionalFromRequestParts<AppState> for AuthUser {
+    type Rejection = ResponseError;
+
+    async fn from_request_parts(
+        req: &mut Parts,
+        state: &AppState,
+    ) -> std::result::Result<Option<Self>, Self::Rejection> {
+        let session = Session::from_request_parts(req, state)
+            .await
+            .map_err(|(_status, description)| anyhow!(description))?;
+
+        let auth_user = AuthUser::from_session(session).await;
+        if let Err(ResponseError::NotAuthenticated) = auth_user {
+            return Ok(None);
+        }
+
+        Ok(Some(auth_user?))
     }
 }

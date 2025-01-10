@@ -14,7 +14,7 @@ use mime_guess::Mime;
 pub fn router() -> Router {
     Router::new()
         .route("/assets/railwind.css", get(railwind_generated_css))
-        .route("/assets/*path", get(assets))
+        .route("/assets/{*path}", get(assets))
 }
 
 static ASSETS_DIR: Dir = include_dir!("assets");

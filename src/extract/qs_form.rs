@@ -8,10 +8,10 @@ use crate::response_error::ResponseError;
 
 pub struct QsForm<T>(pub T);
 
-#[axum::async_trait]
 impl<T, S> FromRequest<S> for QsForm<T>
 where
     T: serde::de::DeserializeOwned,
+    S: std::marker::Sync,
 {
     type Rejection = ResponseError;
 

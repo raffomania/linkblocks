@@ -1,9 +1,8 @@
 use anyhow::Context;
-use askama_axum::IntoResponse;
 use axum::{
     extract::{Path, Query},
     http::HeaderMap,
-    response::{Redirect, Response},
+    response::{IntoResponse, Redirect, Response},
     routing::{delete, get},
     Router,
 };
@@ -25,7 +24,7 @@ use crate::{
 pub fn router() -> Router<AppState> {
     Router::new()
         .route("/links/create", get(get_create).post(post_create))
-        .route("/links/:id", delete(delete_by_id))
+        .route("/links/{id}", delete(delete_by_id))
 }
 
 async fn post_create(

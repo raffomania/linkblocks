@@ -1,9 +1,8 @@
 use anyhow::Context;
-use askama_axum::IntoResponse;
 use axum::{
     extract::{Path, Query},
     http::HeaderMap,
-    response::{Redirect, Response},
+    response::{IntoResponse, Redirect, Response},
     routing::{delete, get},
     Router,
 };
@@ -30,7 +29,7 @@ pub fn router() -> Router<AppState> {
     Router::new()
         .route("/bookmarks/create", get(get_create).post(post_create))
         .route("/bookmarks/unsorted", get(get_unsorted))
-        .route("/bookmarks/:id", delete(delete_by_id))
+        .route("/bookmarks/{id}", delete(delete_by_id))
 }
 
 async fn post_create(

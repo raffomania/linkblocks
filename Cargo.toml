@@ -12,8 +12,8 @@ doctest = false
 [dependencies]
 anyhow = { version = "1.0.95" }
 argon2 = "0.5.3"
-askama = { version = "0.12.1", features = ["with-axum"] }
-askama_axum = "0.4.0"
+askama = { version = "0.13.0", features = ["with-axum"] }
+askama_axum = "0.6.0"
 axum = { version = "0.8.1", features = ["macros", "tracing"] }
 axum-server = { version = "0.7.1", features = ["tls-rustls-no-provider"] }
 clap = { version = "4.5.23", features = ["derive", "env"] }
@@ -56,6 +56,10 @@ uuid = { version = "1.11.0", features = ["v4", "serde"] }
 visdom = "1.0.2"
 tower-sessions-sqlx-store = { version = "0.15.0", features = ["postgres"] }
 rustls = { version = "0.23.20", default-features = false, features = ["ring"] }
+
+[patch.crates-io]
+askama_axum = { git = "https://github.com/bikesheddev/askama.git", rev = "baa0aef8e3307f9a8575f8e36a59db221b18eaff" }
+askama = { git = "https://github.com/rinja-rs/askama.git" }
 
 [build-dependencies]
 railwind = "0.1.5"

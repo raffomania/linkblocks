@@ -1,8 +1,7 @@
 use anyhow::{anyhow, Context};
-use askama_axum::IntoResponse;
 use axum::{
     extract::{Query, State},
-    response::{Redirect, Response},
+    response::{IntoResponse, Redirect, Response},
     routing::{get, post},
     Router,
 };
