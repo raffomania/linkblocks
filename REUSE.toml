@@ -1,0 +1,64 @@
+# NOTE: This project does not attribute contributors individually. Instead refer to `git log --format="%an <%aE>" | sort -u` for a list of individual contributors.
+version = 1
+SPDX-PackageName = "linkblocks"
+SPDX-PackageDownloadLocation = "https://github.com/raffomania/linkblocks"
+
+# "Proper" Source Code is AGPL-licensed
+[[annotations]]
+path = [
+    "**.rs",
+    "migrations/*.sql",
+    "templates/*.html",
+    "Justfile",
+    ".github/**.yml",
+    "pre-commit.sh",
+    "Cargo.toml",
+    "package.json",
+    "Dockerfile",
+    ".dockerignore",
+    "Containerfile",
+    ".gitignore",
+    ".gitattributes",
+    ".editorconfig",
+    ".vscode/settings.json",
+    ".prettierrc.json",
+    "tailwind.config.js",
+]
+SPDX-FileCopyrightText = "linkblocks Contributors"
+SPDX-License-Identifier = "AGPL-3.0-only"
+
+# For docs, other prose, and images, a CC-style license is better suited
+[[annotations]]
+path = ["**.md", "doc/*.svg"]
+SPDX-FileCopyrightText = "linkblocks Contributors"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+# People deploying linkblocks can copy .env.example and do whatever they wish with it.
+[[annotations]]
+path = [".env.example"]
+SPDX-FileCopyrightText = "linkblocks Contributors"
+SPDX-License-Identifier = "CC0-1.0"
+
+# Vendored dependencies
+[[annotations]]
+path = ["assets/htmx.1.9.9.js"]
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "0BSD"
+
+[[annotations]]
+path = ["assets/preflight.css"]
+SPDX-FileCopyrightText = "Tailwind Labs, Inc"
+SPDX-License-Identifier = "MIT"
+
+# Generated files are "uncopyrightable",
+# see https://reuse.software/faq/#uncopyrightable for more
+[[annotations]]
+path = [
+    ".sqlx/*.json",
+    "Cargo.lock",
+    "package-lock.json",
+    "src/tests/snapshots/*.snap",
+    "linkblocks.cdx.json",
+]
+SPDX-FileCopyrightText = "linkblocks Contributors"
+SPDX-License-Identifier = "CC0-1.0"

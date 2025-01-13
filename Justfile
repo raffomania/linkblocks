@@ -117,8 +117,11 @@ ci-dev: start-database migrate-database start-test-database && lint format test
 
     cargo build --release
 
-lint *args:
+lint *args: reuse-lint
     cargo clippy {{args}} -- -D warnings
+
+reuse-lint:
+    reuse --root . lint
 
 format: format-templates
     cargo fmt --all

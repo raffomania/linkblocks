@@ -25,6 +25,9 @@ jobs:
 
       - name: Setup rust cache
         uses: Swatinem/rust-cache@v2
+        with:
+          # For cargo-run-bin
+          cache-directories: ".bin"
 
       - name: Setup node
         uses: actions/setup-node@v4
@@ -32,6 +35,9 @@ jobs:
       # this is needed because `npx` won't install prettier plugins
       - name: Install node dependencies
         run: npm install
+
+      - name: Install REUSE tool
+        run: pipx install reuse
 
       - name: Install cargo-run-bin
         run: cargo install cargo-run-bin
