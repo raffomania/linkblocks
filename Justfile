@@ -121,10 +121,18 @@ lint *args:
     cargo clippy {{args}} -- -D warnings
 
 format: format-templates
-    cargo fmt --all -- --check
+    cargo fmt --all
 
 format-templates:
     npx prettier --write '**/*.html'
+
+generate-sbom:
+    cargo bin cargo-cyclonedx --format json --describe binaries
+    # Remove some fields that make the sbom non-reproducible.
+    # https://github.com/CycloneDX/cyclonedx-rust-cargo/issues/556
+    # https://github.com/CycloneDX/cyclonedx-rust-cargo/issues/514
+    jq --sort-keys '.components |= sort_by(.purl) | del(.serialNumber) | del(.metadata.timestamp) | del(..|select(type == "string" and test("^path\\+file")))' linkblocks_bin.cdx.json > linkblocks.cdx.json
+    rm linkblocks_bin.cdx.json
 
 install-git-hooks:
     ln -srf pre-commit.sh .git/hooks/pre-commit

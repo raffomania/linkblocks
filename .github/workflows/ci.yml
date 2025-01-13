@@ -26,13 +26,35 @@ jobs:
       - name: Setup rust cache
         uses: Swatinem/rust-cache@v2
 
+      - name: Setup node
+        uses: actions/setup-node@v4
+
+      # this is needed because `npx` won't install prettier plugins
+      - name: Install node dependencies
+        run: npm install
+
+      - name: Install cargo-run-bin
+        run: cargo install cargo-run-bin
+
+      - run: cargo bin just format
+
+      - run: cargo bin just lint
+
+      - run: cargo bin just generate-sbom
+
+      - name: Check for file changes
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "::error::Detected changes in the following files:"
+            git status --porcelain
+            echo "Diff:"
+            git diff
+            exit 1
+          fi
+
       - run: cargo build --release
         env:
           SQLX_OFFLINE: true
-
-      - run: cargo fmt --all -- --check
-
-      - run: cargo clippy -- -D warnings
 
       - name: podman login
         env:

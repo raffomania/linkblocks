@@ -79,6 +79,7 @@ just = { version = "1.38.0", locked = true }
 cargo-watch = { version = "8.5.3", locked = true }
 systemfd = { version = "0.4.3", locked = true }
 sqlx-cli = { version = "0.8.3", locked = true, bins = ["sqlx"] }
+cargo-cyclonedx = { version = "0.5.7", locked = true }
 
 [profile.dev.package]
 insta.opt-level = 3
