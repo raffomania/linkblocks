@@ -39,7 +39,7 @@ cargo install cargo-run-bin
 
 Copy `.env.example` to `.env` and edit it to your liking.
 
-Optional: run `just install-git-hooks` to automatically run checks before committing.
+Optional: run `cargo bin just install-git-hooks` to automatically run checks before committing.
 
 In the root of the repository, launch the server:
 
@@ -83,6 +83,10 @@ This web app is implemented using technologies hand-picked for a smooth developm
 - PostgreSQL as the only service dependency
 - Built-in CLI for production maintenance
 - Auto-reload in development [without dropped connections](https://github.com/mitsuhiko/listenfd)
+
+## Software Bill of Materials
+
+An up-to-date Software Bill of Materials can be found in the [linkblocks.cdx.json](linkblocks.cdx.json) file.
 
 ## Acknowledgements
 
