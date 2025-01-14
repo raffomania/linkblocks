@@ -132,9 +132,9 @@ impl FromRequestParts<AppState> for AuthUser {
             .path_and_query()
             .map(|pq| pq.as_str())
             .unwrap_or_default();
-        // TODO log error here, maybe return 500
-        let redirect_after_login =
-            urlencode(redirect_after_login).map_err(|_| Redirect::to("/login"))?;
+        let redirect_after_login = urlencode(redirect_after_login)
+            .map(|d| d.to_string())
+            .unwrap_or_default();
 
         let redirect_to = format!("/login?previous_uri={redirect_after_login}",);
         let error_redirect = Redirect::to(&redirect_to);
