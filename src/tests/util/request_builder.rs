@@ -64,6 +64,8 @@ impl RequestBuilder {
             .await
             .unwrap();
 
+        tracing::debug!("{:?}", response.headers());
+
         Self::assert_expected_status(self.expected_status, &response, "GET", url);
 
         TestResponse {
@@ -83,7 +85,10 @@ impl RequestBuilder {
             .await
             .unwrap();
 
+        tracing::debug!("{:?}", response.headers());
+
         Self::assert_expected_status(self.expected_status, &response, "GET", url);
+
         TestResponse {
             response,
             router: self.router,
@@ -112,6 +117,7 @@ pub struct TestResponse {
 }
 
 impl TestResponse {
+    #[expect(dead_code)]
     pub async fn dom(self) -> visdom::types::Elements<'static> {
         let body = self
             .response

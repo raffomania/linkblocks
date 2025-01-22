@@ -2,6 +2,7 @@
 //! for information on why our tests are inside the `src` folder.
 #![allow(clippy::unwrap_used)]
 #![allow(clippy::expect_used)]
+mod federation;
 mod index;
 mod users;
 mod util;
