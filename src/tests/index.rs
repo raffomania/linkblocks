@@ -1,7 +1,7 @@
 use axum::http::StatusCode;
 use sqlx::{Pool, Postgres};
 
-use super::util::TestApp;
+use crate::tests::util::test_app::TestApp;
 
 #[test_log::test(sqlx::test)]
 async fn index(pool: Pool<Postgres>) -> anyhow::Result<()> {
