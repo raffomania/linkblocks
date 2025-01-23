@@ -2,24 +2,14 @@ use axum::http::{header, StatusCode};
 use sqlx::{Pool, Postgres};
 
 use crate::{
-    forms::users::{CreateUser, Credentials, Login},
+    forms::users::{Credentials, Login},
     tests::util::test_app::TestApp,
 };
 
 #[test_log::test(sqlx::test)]
 async fn can_login(pool: Pool<Postgres>) -> anyhow::Result<()> {
-    let mut tx = pool.begin().await?;
-    crate::db::users::create_user_if_not_exists(
-        &mut tx,
-        CreateUser {
-            username: "test".to_string(),
-            password: "testpassword".to_string(),
-        },
-    )
-    .await?;
-    tx.commit().await?;
-
     let mut app = TestApp::new(pool).await;
+    app.create_user("test", "testpassword").await;
 
     let login_page = app.req().get("/login").await.test_page().await;
     insta::assert_snapshot!(login_page.dom.htmls());
