@@ -106,7 +106,7 @@ start-test-database:
     done
 
 test *args: start-test-database
-    DATABASE_URL=${DATABASE_URL_TEST} SQLX_OFFLINE=true cargo test {{args}}
+    RUST_BACKTRACE=1 DATABASE_URL=${DATABASE_URL_TEST} SQLX_OFFLINE=true cargo test {{args}}
 
 development-cert:
     mkdir -p development_cert
