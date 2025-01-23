@@ -3,7 +3,7 @@ use sqlx::{Pool, Postgres};
 
 use crate::{
     forms::users::{CreateUser, Credentials, Login},
-    tests::util::{dom::assert_form_matches, TestApp},
+    tests::util::test_app::TestApp,
 };
 
 #[test_log::test(sqlx::test)]
@@ -21,10 +21,8 @@ async fn can_login(pool: Pool<Postgres>) -> anyhow::Result<()> {
 
     let mut app = TestApp::new(pool).await;
 
-    let login_page = app.req().get("/login").await.dom().await;
-    insta::assert_snapshot!(login_page.htmls());
-
-    let form = login_page.find("form");
+    let login_page = app.req().get("/login").await.test_page().await;
+    insta::assert_snapshot!(login_page.dom.htmls());
 
     let input = Login {
         credentials: Credentials {
@@ -33,14 +31,10 @@ async fn can_login(pool: Pool<Postgres>) -> anyhow::Result<()> {
         },
         previous_uri: None,
     };
-    assert_form_matches(&form, &input);
 
-    dbg!(serde_qs::to_string(&input)?);
-
-    let login_response = app
-        .req()
+    let login_response = login_page
         .expect_status(StatusCode::SEE_OTHER)
-        .post("/login", &input)
+        .fill_form("form", &input)
         .await;
 
     let cookie = login_response.headers().get("Set-Cookie").unwrap();

@@ -9,18 +9,20 @@ use serde::Serialize;
 use tower::{Service, ServiceExt};
 use visdom::Vis;
 
-pub struct RequestBuilder<'app> {
-    router: &'app mut axum::Router,
+use super::dom::assert_form_matches;
+
+pub struct RequestBuilder {
+    router: axum::Router,
     /// This is the HTTP status that we expect the backend to return.
     /// If it returns a different status, we'll panic.
     expected_status: StatusCode,
     request: request::Builder,
 }
 
-impl<'app> RequestBuilder<'app> {
-    pub fn new(router: &'app mut Router) -> Self {
+impl RequestBuilder {
+    pub fn new(router: &Router) -> Self {
         RequestBuilder {
-            router,
+            router: router.clone(),
             expected_status: StatusCode::OK,
             request: Request::builder(),
         }
@@ -64,7 +66,11 @@ impl<'app> RequestBuilder<'app> {
 
         Self::assert_expected_status(self.expected_status, &response, "GET", url);
 
-        TestResponse { response }
+        TestResponse {
+            response,
+            router: self.router,
+            original_url: url.to_string(),
+        }
     }
 
     pub async fn get(mut self, url: &str) -> TestResponse {
@@ -78,7 +84,11 @@ impl<'app> RequestBuilder<'app> {
             .unwrap();
 
         Self::assert_expected_status(self.expected_status, &response, "GET", url);
-        TestResponse { response }
+        TestResponse {
+            response,
+            router: self.router,
+            original_url: url.to_string(),
+        }
     }
 
     fn assert_expected_status(
@@ -97,6 +107,8 @@ impl<'app> RequestBuilder<'app> {
 
 pub struct TestResponse {
     response: Response<Body>,
+    original_url: String,
+    router: axum::Router,
 }
 
 impl TestResponse {
@@ -114,5 +126,43 @@ impl TestResponse {
 
     pub fn headers(&self) -> &HeaderMap {
         self.response.headers()
+    }
+
+    pub async fn test_page(self) -> TestPage {
+        let body = self
+            .response
+            .into_body()
+            .collect()
+            .await
+            .unwrap()
+            .to_bytes()
+            .to_vec();
+        let dom = Vis::load(String::from_utf8(body).unwrap()).unwrap();
+
+        TestPage {
+            dom,
+            url: self.original_url,
+            request_builder: RequestBuilder::new(&self.router),
+        }
+    }
+}
+
+pub struct TestPage {
+    pub dom: visdom::types::Elements<'static>,
+    pub url: String,
+    pub request_builder: RequestBuilder,
+}
+
+impl TestPage {
+    pub async fn fill_form<I: Serialize>(self, form_selector: &str, input: &I) -> TestResponse {
+        let form = self.dom.find(form_selector);
+        assert_form_matches(&form, &input);
+
+        self.request_builder.post(&self.url, input).await
+    }
+
+    pub fn expect_status(mut self, expected: StatusCode) -> Self {
+        self.request_builder = self.request_builder.expect_status(expected);
+        self
     }
 }
