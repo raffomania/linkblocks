@@ -62,7 +62,7 @@ impl<'app> RequestBuilder<'app> {
             .await
             .unwrap();
 
-        assert_eq!(response.status(), self.expected_status);
+        Self::assert_expected_status(self.expected_status, &response, "GET", url);
 
         TestResponse { response }
     }
@@ -77,8 +77,21 @@ impl<'app> RequestBuilder<'app> {
             .await
             .unwrap();
 
-        assert_eq!(response.status(), self.expected_status);
+        Self::assert_expected_status(self.expected_status, &response, "GET", url);
         TestResponse { response }
+    }
+
+    fn assert_expected_status(
+        expected_status: StatusCode,
+        response: &Response<Body>,
+        method: &str,
+        url: &str,
+    ) {
+        assert_eq!(
+            response.status(),
+            expected_status,
+            "expected {expected_status}: {method} {url}"
+        );
     }
 }
 
