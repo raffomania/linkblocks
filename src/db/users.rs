@@ -13,7 +13,7 @@ pub struct User {
 
     // Password-based login data
     #[expect(dead_code)]
-    pub username: Option<String>,
+    pub username: String,
     pub password_hash: Option<String>,
 
     // SSO-related data
@@ -43,11 +43,12 @@ pub async fn insert_oidc(tx: &mut AppTx, create_user: CreateOidcUser) -> Respons
         User,
         r#"
         insert into users
-        (email, oidc_id)
-        values ($1, $2)
+        (email, oidc_id, username)
+        values ($1, $2, $3)
         returning *"#,
         create_user.email,
         create_user.oidc_id,
+        create_user.username
     )
     .fetch_one(&mut **tx)
     .await;

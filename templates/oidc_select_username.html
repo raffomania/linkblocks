@@ -1,0 +1,43 @@
+{% import "_form.html" as form %} {% extends "_base.html" %}
+{% block body %}
+  <div class="flex flex-col justify-center max-w-md min-h-full px-4 mx-auto">
+    <form
+      method="post"
+      hx-boost="true"
+      hx-disabled-elt="button"
+      class="flex flex-col w-full"
+    >
+      <h1 class="text-2xl font-bold tracking-tight text-center">
+        Welcome to linkblocks! Please select a username.
+      </h1>
+      <p>
+        - alphanumeric, 3 to 50 characters long - this will be your handle on
+        the fediverse: @username@base_url
+      </p>
+      <label class="mt-10 text-neutral-400" name="username">Username</label>
+      {%
+        call form::errors(errors,
+        "username")
+      %}
+      <input
+        type="text"
+        name="username"
+        class="rounded py-1.5 px-3 mt-2 bg-neutral-900"
+        value="{{ input.username }}"
+        required
+      />
+      {% call form::errors(errors, "root") %}
+      <button
+        type="submit"
+        class="leading-6 bg-neutral-300 mt-5 font-semibold rounded py-1.5 flex items-center justify-center disabled:bg-neutral-500 text-neutral-900"
+      >
+        <span class="inline-block w-0 h-4">
+          <span
+            class="block w-4 h-4 -ml-6 border-2 rounded-full border-neutral-900 animate-spin border-t-transparent htmx-indicator"
+          ></span
+        ></span>
+        Sign in
+      </button>
+    </form>
+  </div>
+{% endblock %}

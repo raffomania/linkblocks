@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        insert into users\n        (email, oidc_id)\n        values ($1, $2)\n        returning *",
+  "query": "\n        insert into users\n        (email, oidc_id, username)\n        values ($1, $2, $3)\n        returning *",
   "describe": {
     "columns": [
       {
@@ -32,16 +32,17 @@
     "parameters": {
       "Left": [
         "Text",
+        "Text",
         "Text"
       ]
     },
     "nullable": [
       false,
       true,
-      true,
+      false,
       true,
       true
     ]
   },
-  "hash": "a318ecb17b4c69ea9efe97c56237838ca73e27dc8c1842af21e59963ebf8c267"
+  "hash": "b1b2fb79267b5a924e32faa3f3dcd4151925864aac8404f3ad8df6afdb696601"
 }

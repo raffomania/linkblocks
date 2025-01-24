@@ -1,5 +1,5 @@
 use crate::{
-    db::{self, AppTx},
+    db::{self, AppTx, User},
     forms::users::{CreateOidcUser, CreateUser, Credentials},
     response_error::{ResponseError, ResponseResult},
     server::AppState,
@@ -48,7 +48,7 @@ pub async fn login(tx: &mut AppTx, session: Session, creds: &Credentials) -> Res
 
     verify_password(&user, &creds.password)?;
 
-    AuthUser::save_in_session(&session, &user.id).await?;
+    AuthUser::save_in_session(&session, user.id).await?;
 
     Ok(())
 }
@@ -59,7 +59,7 @@ pub async fn create_and_login_temp_user(tx: &mut AppTx, session: Session) -> Res
     let password = Uuid::new_v4().to_string();
     let user = db::users::insert(tx, CreateUser { username, password }).await?;
 
-    AuthUser::save_in_session(&session, &user.id).await?;
+    AuthUser::save_in_session(&session, user.id).await?;
 
     Ok(())
 }
@@ -77,9 +77,13 @@ pub async fn create_and_login_oidc_user(
         Err(_) => return Err(anyhow!("Failed to look up user by OIDC id").into()),
     };
 
-    AuthUser::save_in_session(session, &user.id).await?;
+    AuthUser::save_in_session(session, user.id).await?;
 
     Ok(())
+}
+
+pub async fn login_oidc_user(session: &Session, user: &User) -> ResponseResult<()> {
+    AuthUser::save_in_session(session, user.id).await
 }
 
 #[derive(Debug)]
@@ -91,7 +95,7 @@ pub struct AuthUser {
 impl AuthUser {
     const SESSION_KEY: &'static str = "auth_user_id";
 
-    pub async fn save_in_session(session: &Session, id: &Uuid) -> ResponseResult<()> {
+    pub async fn save_in_session(session: &Session, id: Uuid) -> ResponseResult<()> {
         session
             .insert(Self::SESSION_KEY, id)
             .await

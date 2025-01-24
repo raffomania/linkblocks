@@ -13,8 +13,34 @@ use openidconnect::{
 use tower_sessions::Session;
 
 use crate::cli::OidcArgs;
-use crate::forms::users::CreateOidcUser;
 use crate::response_error::ResponseResult;
+
+#[derive(Serialize, Deserialize)]
+pub struct AuthenticatedOidcUserInfo {
+    pub oidc_id: String,
+    pub email: String,
+}
+
+impl AuthenticatedOidcUserInfo {
+    const SESSION_KEY: &'static str = "oidc_user_info";
+
+    pub async fn save_in_session(self, session: &Session) -> ResponseResult<()> {
+        session
+            .insert(Self::SESSION_KEY, self)
+            .await
+            .context("Failed to insert oidc data into session")?;
+
+        Ok(())
+    }
+
+    pub async fn from_session(session: &Session) -> ResponseResult<Self> {
+        Ok(session
+            .get(Self::SESSION_KEY)
+            .await
+            .context("Failed to load oidc data from session")?
+            .context("oidc data not found in session")?)
+    }
+}
 
 #[derive(Serialize, Deserialize)]
 pub struct LoginAttempt {
@@ -25,7 +51,7 @@ pub struct LoginAttempt {
 }
 
 impl LoginAttempt {
-    const SESSION_KEY: &'static str = "oidc_session";
+    const SESSION_KEY: &'static str = "oidc_login_attempt";
 
     pub fn new(client: &CoreClient) -> Self {
         let (pkce_challenge, pkce_verifier) = PkceCodeChallenge::new_random_sha256();
@@ -54,7 +80,7 @@ impl LoginAttempt {
         session
             .insert(Self::SESSION_KEY, self)
             .await
-            .context("Failed to insert oidc data into session")?;
+            .context("Failed to insert login attempt into session")?;
 
         Ok(())
     }
@@ -63,8 +89,8 @@ impl LoginAttempt {
         Ok(session
             .get(Self::SESSION_KEY)
             .await
-            .context("Failed to load oidc data from session")?
-            .context("oidc data not found in session")?)
+            .context("Failed to load oidc login attempt from session")?
+            .context("oidc login attempt not found in session")?)
     }
 
     pub async fn login(
@@ -72,7 +98,7 @@ impl LoginAttempt {
         oidc_client: &CoreClient,
         csrf_token: CsrfToken,
         code: AuthorizationCode,
-    ) -> ResponseResult<CreateOidcUser> {
+    ) -> ResponseResult<AuthenticatedOidcUserInfo> {
         if csrf_token.secret() != self.csrf_token.secret() {
             return Err(anyhow!("CSRF token mismatch").into());
         }
@@ -112,7 +138,7 @@ impl LoginAttempt {
 
         let oidc_id = id_token_claims.subject().to_string();
 
-        Ok(CreateOidcUser { oidc_id, email })
+        Ok(AuthenticatedOidcUserInfo { oidc_id, email })
     }
 }
 

@@ -22,17 +22,18 @@ pub async fn insert_demo_data(
     let mut users = Vec::new();
     for _ in 0..5 {
         let email: Option<String> = fake::faker::internet::en::SafeEmail().fake();
+        let username: String = fake::faker::name::en::Name().fake();
+        let username = username.to_lowercase();
+        let username = username.replace(' ', "");
         if let Some(email) = email {
             let create_oidc_user = CreateOidcUser {
                 oidc_id: Uuid::new_v4().to_string(),
                 email,
+                username,
             };
 
             users.push(db::users::insert_oidc(&mut tx, create_oidc_user).await?);
         } else {
-            let username: String = fake::faker::name::en::Name().fake();
-            let username = username.to_lowercase();
-            let username = username.replace(' ', "");
             let create_user = CreateUser {
                 username,
                 password: "testpassword".to_string(),

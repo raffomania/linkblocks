@@ -10,6 +10,12 @@ pub struct CreateUser {
     pub password: String,
 }
 
+#[derive(Validate, Default, Deserialize, Debug)]
+pub struct OidcSelectUsername {
+    #[garde(alphanumeric, ascii, length(min = 3, max = 50))]
+    pub username: String,
+}
+
 #[derive(Serialize, Deserialize, Validate, Debug, Default)]
 pub struct Login {
     #[garde(skip)]
@@ -38,4 +44,6 @@ pub struct CreateOidcUser {
     pub oidc_id: String,
     #[garde(length(max = 500))]
     pub email: String,
+    #[garde(alphanumeric, ascii, length(min = 3, max = 50))]
+    pub username: String,
 }
