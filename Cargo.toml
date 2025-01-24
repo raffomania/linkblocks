@@ -19,10 +19,7 @@ axum-server = { version = "0.7.1", features = ["tls-rustls-no-provider"] }
 clap = { version = "4.5.23", features = ["derive", "env"] }
 fake = { version = "3.1.0", default-features = false }
 friendly-zoo = "1.1.0"
-garde = { version = "0.21.1", default-features = false, features = [
-    "derive",
-    "url",
-] }
+garde = { version = "0.21.1", default-features = false, features = ["derive", "url"] }
 include_dir = "0.7.4"
 listenfd = "1.0.1"
 mime_guess = "2.0.5"
@@ -56,6 +53,10 @@ uuid = { version = "1.11.0", features = ["v4", "serde"] }
 visdom = "1.0.2"
 tower-sessions-sqlx-store = { version = "0.15.0", features = ["postgres"] }
 rustls = { version = "0.23.20", default-features = false, features = ["ring"] }
+activitypub_federation = { version = "0.6.2", default-features = false }
+url = { version = "2.5.4", features = ["serde"] }
+async-trait = "0.1.85"
+chrono = "0.4.39"
 
 [patch.crates-io]
 askama_axum = { git = "https://github.com/bikesheddev/askama.git", rev = "baa0aef8e3307f9a8575f8e36a59db221b18eaff" }
