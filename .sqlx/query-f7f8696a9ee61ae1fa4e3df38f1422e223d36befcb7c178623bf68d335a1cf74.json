@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        insert into users\n        (username, password_hash)\n        values ($1, $2)\n        returning *\n        ",
+  "query": "\n        insert into users\n        (username, password_hash, ap_user_id)\n        values ($1, $2, $3)\n        returning *\n        ",
   "describe": {
     "columns": [
       {
@@ -27,12 +27,18 @@
         "ordinal": 4,
         "name": "oidc_id",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "ap_user_id",
+        "type_info": "Uuid"
       }
     ],
     "parameters": {
       "Left": [
         "Text",
-        "Text"
+        "Text",
+        "Uuid"
       ]
     },
     "nullable": [
@@ -40,8 +46,9 @@
       true,
       false,
       true,
-      true
+      true,
+      false
     ]
   },
-  "hash": "cc0f9deb60e3e4834e165e1a3ea2383b7638652cb82d5b16ccd8c189c5c6a924"
+  "hash": "f7f8696a9ee61ae1fa4e3df38f1422e223d36befcb7c178623bf68d335a1cf74"
 }

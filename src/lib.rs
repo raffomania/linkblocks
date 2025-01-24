@@ -16,6 +16,8 @@ mod routes;
 pub mod server;
 mod views;
 
+mod date_time;
+mod federation;
 mod htmf_response;
 #[cfg(debug_assertions)]
 mod insert_demo_data;

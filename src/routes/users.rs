@@ -162,8 +162,9 @@ async fn post_login_oidc_redirect(
 async fn post_login_demo(
     extract::Tx(mut tx): extract::Tx,
     session: Session,
+    State(state): State<AppState>,
 ) -> ResponseResult<Response> {
-    authentication::create_and_login_temp_user(&mut tx, session).await?;
+    authentication::create_and_login_temp_user(&mut tx, session, &state.base_url).await?;
     tx.commit().await?;
 
     Ok(Redirect::to("/").into_response())
