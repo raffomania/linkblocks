@@ -27,7 +27,7 @@ async fn assets(Path(path): Path<PathBuf>) -> ResponseResult<(HeaderMap, &'stati
 
     let mime_type = get_mime(&path)?;
 
-    #[allow(clippy::from_iter_instead_of_collect)]
+    #[expect(clippy::from_iter_instead_of_collect)]
     let headers = HeaderMap::from_iter(
         [(
             header::CONTENT_TYPE,
@@ -47,7 +47,7 @@ async fn railwind_generated_css() -> ResponseResult<(HeaderMap, &'static [u8])> 
 
     let mime_type = mime_guess::mime::TEXT_CSS;
 
-    #[allow(clippy::from_iter_instead_of_collect)]
+    #[expect(clippy::from_iter_instead_of_collect)]
     let headers = HeaderMap::from_iter(
         [(
             header::CONTENT_TYPE,

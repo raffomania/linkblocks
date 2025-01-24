@@ -15,9 +15,8 @@ use super::LinkDestination;
 pub struct List {
     pub id: Uuid,
     #[serde(with = "time::serde::iso8601")]
-    #[allow(dead_code)]
+    #[expect(dead_code)]
     pub created_at: OffsetDateTime,
-    #[allow(dead_code)]
     pub user_id: Uuid,
 
     pub title: String,

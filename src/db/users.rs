@@ -12,14 +12,14 @@ pub struct User {
     pub id: Uuid,
 
     // Password-based login data
-    #[allow(dead_code)]
+    #[expect(dead_code)]
     pub username: Option<String>,
     pub password_hash: Option<String>,
 
     // SSO-related data
-    #[allow(dead_code)]
+    #[expect(dead_code)]
     pub email: Option<String>,
-    #[allow(dead_code)]
+    #[expect(dead_code)]
     pub oidc_id: Option<String>,
 }
 

@@ -10,7 +10,7 @@ use crate::response_error::ResponseResult;
 use super::{AppTx, LinkDestination};
 
 // We'll use this for global search later
-#[allow(dead_code)]
+#[expect(dead_code)]
 pub async fn search(
     tx: &mut AppTx,
     term: &str,

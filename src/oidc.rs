@@ -126,7 +126,7 @@ pub struct Config {
 // semantics. As such, it's expected that the
 // `NotConfigured` variant will take up lots of space,
 // Just like `None` would
-#[allow(clippy::large_enum_variant)]
+#[expect(clippy::large_enum_variant)]
 #[derive(Clone)]
 pub enum State {
     NotConfigured,

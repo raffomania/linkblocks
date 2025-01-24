@@ -49,7 +49,7 @@ pub struct OidcArgs {
 
 // Since this enum is only ever constructed once,
 // we only waste very little memory due to large enum variants.
-#[allow(clippy::large_enum_variant)]
+#[expect(clippy::large_enum_variant)]
 #[derive(Parser)]
 enum Command {
     /// Migrate the database, then start the server
