@@ -36,14 +36,6 @@ async fn spin_up_two_instances() -> anyhow::Result<()> {
     // Check that we can't access instance B with user A
     let login_page = app_b.req().get("/login").await.test_page().await;
 
-    let input = Login {
-        credentials: Credentials {
-            username: "testa".to_string(),
-            password: "testpassword".to_string(),
-        },
-        previous_uri: None,
-    };
-
     let login_response = login_page
         .expect_status(StatusCode::OK)
         .fill_form("form", &input)
