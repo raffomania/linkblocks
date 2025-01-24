@@ -1,14 +1,13 @@
 use axum::http::{StatusCode, header};
-use sqlx::{Pool, Postgres};
 
 use crate::{
     forms::users::{Credentials, Login},
     tests::util::test_app::TestApp,
 };
 
-#[test_log::test(sqlx::test)]
-async fn can_login(pool: Pool<Postgres>) -> anyhow::Result<()> {
-    let mut app = TestApp::new(pool).await;
+#[test_log::test(tokio::test)]
+async fn can_login() -> anyhow::Result<()> {
+    let mut app = TestApp::new().await;
     app.create_user("test", "testpassword").await;
 
     let login_page = app.req().get("/login").await.test_page().await;

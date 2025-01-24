@@ -2,6 +2,7 @@ use anyhow::{Result, anyhow};
 use fake::Fake;
 use rand::{Rng, seq::IndexedRandom};
 use sqlx::PgPool;
+use url::Url;
 use uuid::Uuid;
 
 use crate::{
@@ -16,6 +17,7 @@ use crate::{
 pub async fn insert_demo_data(
     pool: &PgPool,
     dev_user_credentials: Option<CreateUser>,
+    base_url: &Url,
 ) -> Result<()> {
     let mut tx = pool.begin().await?;
 
@@ -39,12 +41,12 @@ pub async fn insert_demo_data(
                 password: "testpassword".to_string(),
             };
 
-            users.push(db::users::insert(&mut tx, create_user).await?);
+            users.push(db::users::insert(&mut tx, create_user, base_url).await?);
         }
     }
 
     if let Some(create_dev_user) = dev_user_credentials {
-        users.push(db::users::create_user_if_not_exists(&mut tx, create_dev_user).await?);
+        users.push(db::users::create_user_if_not_exists(&mut tx, create_dev_user, base_url).await?);
     }
 
     let mut bookmarks = Vec::new();

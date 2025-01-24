@@ -9,7 +9,7 @@ use url::Url;
 #[cfg(debug_assertions)]
 use crate::insert_demo_data::insert_demo_data;
 use crate::{
-    db,
+    db, federation,
     forms::users::CreateUser,
     oidc,
     server::{self, AppState},
@@ -29,6 +29,8 @@ struct Cli {
 struct SharedConfig {
     #[clap(env, long, hide_env_values = true)]
     database_url: String,
+    #[clap(long, env)]
+    base_url: Url,
 }
 
 #[derive(Args, Debug)]
@@ -50,7 +52,7 @@ pub struct OidcArgs {
 
 // Since this enum is only ever constructed once,
 // we only waste very little memory due to large enum variants.
-#[expect(clippy::large_enum_variant)]
+#[allow(clippy::large_enum_variant)]
 #[derive(Parser)]
 enum Command {
     /// Migrate the database, then start the server
@@ -69,8 +71,6 @@ enum Command {
         tls_key: Option<PathBuf>,
         #[clap(flatten)]
         admin_credentials: AdminCredentials,
-        #[clap(long, env)]
-        base_url: Url,
         #[clap(long, env, default_value = "false")]
         demo_mode: bool,
         #[clap(flatten)]
@@ -143,13 +143,14 @@ pub async fn run() -> Result<()> {
 
     let cli = Cli::parse();
 
+    let base_url = cli.config.base_url;
+
     match cli.command {
         Command::Start {
             listen: listen_address,
             admin_credentials,
             tls_cert,
             tls_key,
-            base_url,
             demo_mode,
             oidc_args,
         } => {
@@ -162,17 +163,18 @@ pub async fn run() -> Result<()> {
                     return Err(anyhow!("Invalid credentials for admin user provided:\n{e}"));
                 }
                 let mut tx = pool.begin().await?;
-                db::users::create_user_if_not_exists(&mut tx, create).await?;
+                db::users::create_user_if_not_exists(&mut tx, create, &base_url).await?;
                 tx.commit().await?;
             }
 
-            let oidc_state = oidc::State::initialize(base_url.clone(), oidc_args).await;
+            let oidc_state = oidc::State::initialize(&base_url, oidc_args).await;
 
             let app = server::app(AppState {
-                pool,
+                pool: pool.clone(),
                 base_url: base_url.clone(),
                 demo_mode,
                 oidc_state,
+                federation_config: federation::config::new_config(pool, base_url.clone()).await?,
             })
             .await?;
             server::start(listen_address, app, tls_cert, tls_key).await?;
@@ -188,7 +190,12 @@ pub async fn run() -> Result<()> {
             dev_user_credentials,
         } => {
             let pool = db::pool(&cli.config.database_url).await?;
-            insert_demo_data(&pool, Option::<CreateUser>::from(dev_user_credentials)).await?;
+            insert_demo_data(
+                &pool,
+                Option::<CreateUser>::from(dev_user_credentials),
+                &base_url,
+            )
+            .await?;
         }
     }
 

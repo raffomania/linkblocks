@@ -197,7 +197,7 @@ impl State {
         }
     }
 
-    pub async fn initialize(base_url: Url, args: Option<OidcArgs>) -> State {
+    pub async fn initialize(base_url: &Url, args: Option<OidcArgs>) -> State {
         match Self::try_initialize_state(base_url, args).await {
             Ok(conf) => {
                 tracing::info!("OIDC enabled.");
@@ -210,7 +210,10 @@ impl State {
         }
     }
 
-    async fn try_initialize_state(base_url: Url, args: Option<OidcArgs>) -> anyhow::Result<Config> {
+    async fn try_initialize_state(
+        base_url: &Url,
+        args: Option<OidcArgs>,
+    ) -> anyhow::Result<Config> {
         let reqwest_client = openidconnect::reqwest::ClientBuilder::new()
             .redirect(openidconnect::reqwest::redirect::Policy::none())
             .build()
@@ -228,10 +231,9 @@ impl State {
         // Set up the config for the OIDC process.
         let client =
             CoreClient::from_provider_metadata(provider_metadata, client_id, Some(client_secret))
-                .set_redirect_uri(
-                    RedirectUrl::new(base_url.join("/login_oidc_redirect")?.to_string())
-                        .context("Invalid redirect URL")?,
-                );
+                .set_redirect_uri(RedirectUrl::from_url(
+                    base_url.join("/login_oidc_redirect")?,
+                ));
 
         Ok(Config {
             client,

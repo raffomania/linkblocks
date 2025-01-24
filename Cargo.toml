@@ -58,10 +58,16 @@ htmf = { git = "https://github.com/raffomania/htmf", features = [
     "pretty-print",
 ] }
 percent-encoding = "2.3.1"
-url = "2.5.4"
+activitypub_federation = { version = "0.6.5", default-features = false, features = [
+    "axum",
+] }
+url = { version = "2.5.4", features = ["serde"] }
+async-trait = "0.1.85"
+chrono = "0.4.39"
 
 [patch.crates-io]
 garde = { git = "https://github.com/raffomania/garde", branch = "url-length" }
+activitypub_federation = { git = "https://github.com/raffomania/activitypub-federation-rust", branch = "update-axum" }
 
 [build-dependencies]
 railwind = "0.1.5"

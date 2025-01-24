@@ -15,7 +15,7 @@ pub enum ResponseError {
     #[error("Unknown Error")]
     Anyhow(#[from] anyhow::Error),
     #[error("Internal Error")]
-    Url(#[from] url::ParseError),
+    UrlParseError(#[from] url::ParseError),
 }
 
 impl IntoResponse for ResponseError {
@@ -25,9 +25,20 @@ impl IntoResponse for ResponseError {
             ResponseError::NotFound => StatusCode::NOT_FOUND,
             // TODO redirect to login instead of returning an error
             ResponseError::NotAuthenticated => StatusCode::UNAUTHORIZED,
-            ResponseError::Anyhow(_) | ResponseError::Url(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            ResponseError::Anyhow(_) | ResponseError::UrlParseError(_) => {
+                StatusCode::INTERNAL_SERVER_ERROR
+            }
         };
         (status, self.to_string()).into_response()
+    }
+}
+
+/// Map [`ResponseError::NotFound`] to `None`
+pub fn into_option<T>(result: ResponseResult<T>) -> ResponseResult<Option<T>> {
+    match result {
+        Ok(val) => Ok(Some(val)),
+        Err(ResponseError::NotFound) => Ok(None),
+        Err(e) => Err(e),
     }
 }
 

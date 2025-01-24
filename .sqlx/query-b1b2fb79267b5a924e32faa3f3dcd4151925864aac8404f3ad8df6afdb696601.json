@@ -27,6 +27,11 @@
         "ordinal": 4,
         "name": "oidc_id",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "ap_user_id",
+        "type_info": "Uuid"
       }
     ],
     "parameters": {
@@ -41,7 +46,8 @@
       true,
       false,
       true,
-      true
+      true,
+      false
     ]
   },
   "hash": "b1b2fb79267b5a924e32faa3f3dcd4151925864aac8404f3ad8df6afdb696601"

@@ -7,6 +7,7 @@ use axum::{
 };
 use percent_encoding::utf8_percent_encode;
 use tower_sessions::Session;
+use url::Url;
 use uuid::Uuid;
 
 use crate::{
@@ -54,11 +55,15 @@ pub async fn login(tx: &mut AppTx, session: Session, creds: &Credentials) -> Res
     Ok(())
 }
 
-pub async fn create_and_login_temp_user(tx: &mut AppTx, session: Session) -> ResponseResult<()> {
+pub async fn create_and_login_temp_user(
+    tx: &mut AppTx,
+    session: Session,
+    base_url: &Url,
+) -> ResponseResult<()> {
     let username =
         friendly_zoo::Zoo::new(friendly_zoo::Species::CustomDelimiter(' '), 1).generate();
     let password = Uuid::new_v4().to_string();
-    let user = db::users::insert(tx, CreateUser { username, password }).await?;
+    let user = db::users::insert(tx, CreateUser { username, password }, base_url).await?;
 
     AuthUser::save_in_session(&session, user.id).await?;
 
