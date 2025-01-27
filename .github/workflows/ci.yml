@@ -71,6 +71,8 @@ jobs:
           PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: podman login --username "$USER" --password "$PASSWORD" ghcr.io
 
+      - run: podman system migrate
+
       - name: podman build linux/amd64
         run: podman build --format docker --platform linux/amd64 --manifest linkblocks -f Containerfile target/release
 
