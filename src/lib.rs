@@ -16,6 +16,8 @@ mod routes;
 pub mod server;
 mod views;
 
+mod date_time;
+mod federation;
 pub mod insert_demo_data;
 #[cfg(test)]
 mod tests;
