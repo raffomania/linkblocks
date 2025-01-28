@@ -63,18 +63,27 @@
       {% endfor %}
     </div>
     {% call form::errors(errors, "list_search_term") %}
-    <input
-      type="search"
-      name="list_search_term"
-      id="list_search_term"
-      value="{{ input.list_search_term.as_deref().unwrap_or_default() }}"
-      hx-trigger="input changed delay:300ms,search"
-      hx-post="/bookmarks/create"
-      hx-target="#search_results"
-      hx-select="#search_results"
-      hx-swap="outerHTML"
-      class="rounded py-1.5 px-3 my-2 bg-neutral-900"
-    />
+    <div class="relative">
+      <input
+        type="search"
+        name="list_search_term"
+        id="list_search_term"
+        value="{{ input.list_search_term.as_deref().unwrap_or_default() }}"
+        hx-trigger="input changed delay:200ms,search"
+        hx-post="/bookmarks/create"
+        hx-target="#search_results"
+        hx-select="#search_results"
+        hx-swap="outerHTML"
+        hx-indicator="#list_search_term_indicator"
+        class="rounded py-1.5 px-3 my-2 bg-neutral-900 w-full"
+      />
+      <span class="absolute right-0 inline-flex items-center w-0 h-full">
+        <span
+          id="list_search_term_indicator"
+          class="block w-4 h-4 -ml-6 border-2 rounded-full border-neutral-400 animate-spin border-t-neutral-900 htmx-indicator"
+        ></span
+      ></span>
+    </div>
     <div id="search_results" class="overflow-y-scroll max-h-96">
       {% for list in search_results %}
         <button
