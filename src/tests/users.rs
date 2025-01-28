@@ -32,7 +32,14 @@ async fn can_login(pool: Pool<Postgres>) -> anyhow::Result<()> {
     let cookie = cookie.to_str()?.split_once(';').unwrap().0;
 
     // Check that we can access the index using the auth cookie
-    app.req().header(header::COOKIE, cookie).get("/").await;
+    let index = app
+        .req()
+        .header(header::COOKIE, cookie)
+        .get("/")
+        .await
+        .test_page()
+        .await;
+    insta::assert_snapshot!(index.dom.htmls());
 
     Ok(())
 }
