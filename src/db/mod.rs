@@ -2,6 +2,8 @@ use anyhow::{Context, Result};
 use sqlx::PgPool;
 
 pub mod all;
+pub mod ap_users;
+pub use ap_users::ApUser;
 pub mod items;
 pub mod layout;
 pub mod links;

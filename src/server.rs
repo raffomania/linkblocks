@@ -1,14 +1,16 @@
 use std::{path::PathBuf, time::Duration};
 
+use activitypub_federation::config::FederationConfig;
 use anyhow::{anyhow, Context};
 use axum_server::tls_rustls::RustlsConfig;
 use sqlx::PgPool;
 use tower_sessions::ExpiredDeletion;
+use url::Url;
 
 use crate::{
     cli::ListenArgs,
     db::{self},
-    oidc, routes,
+    federation, oidc, routes,
 };
 
 use axum::Router;
@@ -18,9 +20,10 @@ use tower_http::trace::TraceLayer;
 #[derive(Clone)]
 pub struct AppState {
     pub pool: sqlx::PgPool,
-    pub base_url: String,
+    pub base_url: Url,
     pub demo_mode: bool,
     pub oidc_state: oidc::State,
+    pub federation_config: FederationConfig<federation::Context>,
 }
 
 pub async fn app(state: AppState) -> anyhow::Result<Router> {
@@ -55,7 +58,9 @@ pub async fn app(state: AppState) -> anyhow::Result<Router> {
         .merge(routes::lists::router())
         .merge(routes::bookmarks::router())
         .merge(routes::links::router())
+        .merge(routes::federation::router())
         .merge(routes::assets::router().with_state(()))
+        // .layer(FederationMiddleware::new(ap_config))
         .layer(TraceLayer::new_for_http())
         .layer(session_service)
         .with_state(state))
