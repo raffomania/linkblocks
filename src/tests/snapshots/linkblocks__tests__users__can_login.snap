@@ -21,8 +21,7 @@ expression: login_page.dom.htmls()
         <label class="mt-4 text-neutral-400" for="credentials[password]">Password</label>
         <input type="password" name="credentials[password]" class="rounded py-1.5 px-3 mt-2 bg-neutral-900" required="true" />
         <button type="submit" class="leading-6 bg-neutral-300 mt-5 font-semibold rounded py-1.5 flex items-center justify-center disabled:bg-neutral-500 text-neutral-900">
-          <span class="inline-block w-0 h-4">
-            <span class="block w-4 h-4 -ml-6 border-2 rounded-full border-neutral-900 animate-spin border-t-transparent htmx-indicator"></span></span>Sign in
+          <span class="inline-block w-0 h-4"><span class="block w-4 h-4 -ml-6 border-2 rounded-full border-neutral-900 animate-spin border-t-transparent htmx-indicator"></span></span>Sign in
         </button>
       </form>
     </div>
