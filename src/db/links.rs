@@ -10,73 +10,73 @@ use super::AppTx;
 #[derive(FromRow, Debug)]
 #[expect(dead_code)]
 pub struct Link {
-    pub id: Uuid,
-    pub created_at: OffsetDateTime,
-    pub user_id: Uuid,
+  pub id: Uuid,
+  pub created_at: OffsetDateTime,
+  pub user_id: Uuid,
 
-    pub src_list_id: Option<Uuid>,
+  pub src_list_id: Option<Uuid>,
 
-    pub dest_bookmark_id: Option<Uuid>,
-    pub dest_list_id: Option<Uuid>,
+  pub dest_bookmark_id: Option<Uuid>,
+  pub dest_list_id: Option<Uuid>,
 }
 
 #[derive(Deserialize)]
 #[serde(untagged)]
 pub enum LinkDestinationWithChildren {
-    Bookmark(db::Bookmark),
-    List(db::ListWithLinks),
+  Bookmark(db::Bookmark),
+  List(db::ListWithLinks),
 }
 
 impl LinkDestinationWithChildren {
-    pub fn id(&self) -> Uuid {
-        match self {
-            LinkDestinationWithChildren::Bookmark(b) => b.id,
-            LinkDestinationWithChildren::List(l) => l.list.id,
-        }
+  pub fn id(&self) -> Uuid {
+    match self {
+      LinkDestinationWithChildren::Bookmark(b) => b.id,
+      LinkDestinationWithChildren::List(l) => l.list.id,
     }
+  }
 }
 
 #[derive(Debug, Deserialize, Clone)]
 #[serde(untagged)]
 pub enum LinkDestination {
-    Bookmark(db::Bookmark),
-    List(db::List),
+  Bookmark(db::Bookmark),
+  List(db::List),
 }
 
 impl LinkDestination {
-    pub fn id(&self) -> Uuid {
-        match self {
-            LinkDestination::Bookmark(b) => b.id,
-            LinkDestination::List(n) => n.id,
-        }
+  pub fn id(&self) -> Uuid {
+    match self {
+      LinkDestination::Bookmark(b) => b.id,
+      LinkDestination::List(n) => n.id,
     }
+  }
 
-    pub fn path(&self) -> String {
-        match self {
-            LinkDestination::Bookmark(b) => b.path(),
-            LinkDestination::List(n) => n.path(),
-        }
+  pub fn path(&self) -> String {
+    match self {
+      LinkDestination::Bookmark(b) => b.path(),
+      LinkDestination::List(n) => n.path(),
     }
+  }
 }
 
 pub struct LinkWithContent {
-    pub id: Uuid,
-    #[expect(dead_code)]
-    pub created_at: OffsetDateTime,
-    #[expect(dead_code)]
-    pub user_id: Uuid,
+  pub id: Uuid,
+  #[expect(dead_code)]
+  pub created_at: OffsetDateTime,
+  #[expect(dead_code)]
+  pub user_id: Uuid,
 
-    pub dest: LinkDestinationWithChildren,
+  pub dest: LinkDestinationWithChildren,
 }
 
 pub async fn insert(
-    tx: &mut AppTx,
-    user_id: Uuid,
-    create_link: CreateLink,
+  tx: &mut AppTx,
+  user_id: Uuid,
+  create_link: CreateLink,
 ) -> ResponseResult<Link> {
-    let list = query_as!(
-        Link,
-        r#"
+  let list = query_as!(
+    Link,
+    r#"
         insert into links
         (
             user_id,
@@ -90,23 +90,23 @@ pub async fn insert(
             (select id from lists where id = $3)
         )
         returning *"#,
-        user_id,
-        create_link.src,
-        create_link.dest
-    )
-    .fetch_one(&mut **tx)
-    .await?;
+    user_id,
+    create_link.src,
+    create_link.dest
+  )
+  .fetch_one(&mut **tx)
+  .await?;
 
-    Ok(list)
+  Ok(list)
 }
 
 pub async fn list_by_list(
-    tx: &mut AppTx,
-    list_id: Uuid,
-    user_id: Option<Uuid>,
+  tx: &mut AppTx,
+  list_id: Uuid,
+  user_id: Option<Uuid>,
 ) -> ResponseResult<Vec<LinkWithContent>> {
-    let rows = query!(
-        r#"
+  let rows = query!(
+    r#"
         select
             links.id as link_id,
             links.created_at as link_created_at,
@@ -143,40 +143,40 @@ pub async fn list_by_list(
         group by links.id, lists.id, bookmarks.id
         order by links.created_at desc
         "#,
-        list_id,
-        user_id
-    )
-    .fetch_all(&mut **tx)
-    .await?;
+    list_id,
+    user_id
+  )
+  .fetch_all(&mut **tx)
+  .await?;
 
-    let results = rows
-        .into_iter()
-        .map(|row| {
-            let dest: LinkDestinationWithChildren = serde_json::from_value(row.dest.into())?;
-            Ok(LinkWithContent {
-                id: row.link_id,
-                created_at: row.link_created_at,
-                user_id: row.link_user_id,
-                dest,
-            })
-        })
-        .collect::<anyhow::Result<Vec<_>>>()?;
+  let results = rows
+    .into_iter()
+    .map(|row| {
+      let dest: LinkDestinationWithChildren = serde_json::from_value(row.dest.into())?;
+      Ok(LinkWithContent {
+        id: row.link_id,
+        created_at: row.link_created_at,
+        user_id: row.link_user_id,
+        dest,
+      })
+    })
+    .collect::<anyhow::Result<Vec<_>>>()?;
 
-    Ok(results)
+  Ok(results)
 }
 
 pub async fn delete_by_id(tx: &mut AppTx, id: Uuid) -> ResponseResult<Link> {
-    let link = query_as!(
-        Link,
-        r#"
+  let link = query_as!(
+    Link,
+    r#"
         delete from links
         where id = $1
         returning *
         "#,
-        id
-    )
-    .fetch_one(&mut **tx)
-    .await?;
+    id
+  )
+  .fetch_one(&mut **tx)
+  .await?;
 
-    Ok(link)
+  Ok(link)
 }

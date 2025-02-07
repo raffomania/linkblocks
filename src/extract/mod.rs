@@ -7,14 +7,14 @@ pub mod qs_form;
 pub struct Tx(pub AppTx);
 
 impl FromRequestParts<AppState> for Tx {
-    type Rejection = ResponseError;
+  type Rejection = ResponseError;
 
-    async fn from_request_parts(
-        _parts: &mut Parts,
-        state: &AppState,
-    ) -> Result<Self, Self::Rejection> {
-        let conn = state.pool.begin().await?;
+  async fn from_request_parts(
+    _parts: &mut Parts,
+    state: &AppState,
+  ) -> Result<Self, Self::Rejection> {
+    let conn = state.pool.begin().await?;
 
-        Ok(Self(conn))
-    }
+    Ok(Self(conn))
+  }
 }
