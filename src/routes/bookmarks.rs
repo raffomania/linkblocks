@@ -2,7 +2,7 @@ use anyhow::Context;
 use axum::{
   extract::{Path, Query},
   http::HeaderMap,
-  response::{IntoResponse, Redirect, Response},
+  response::{Html, IntoResponse, Redirect, Response},
   routing::{delete, get},
   Router,
 };
@@ -18,11 +18,7 @@ use crate::{
   forms::{bookmarks::CreateBookmark, links::CreateLink, lists::CreateList},
   response_error::ResponseResult,
   server::AppState,
-  views::{
-    self,
-    bookmarks::{CreateBookmarkTemplate, UnsortedBookmarksTemplate},
-    layout,
-  },
+  views::{self, bookmarks::CreateBookmarkTemplate, layout, unsorted_bookmarks},
 };
 
 pub fn router() -> Router<AppState> {
@@ -150,11 +146,13 @@ async fn get_create(
 async fn get_unsorted(
   extract::Tx(mut tx): extract::Tx,
   auth_user: AuthUser,
-) -> ResponseResult<UnsortedBookmarksTemplate> {
+) -> ResponseResult<Html<String>> {
   let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
   let bookmarks = db::bookmarks::list_unsorted(&mut tx, auth_user.user_id).await?;
 
-  Ok(UnsortedBookmarksTemplate { layout, bookmarks })
+  Ok(Html(
+    unsorted_bookmarks::view(&unsorted_bookmarks::Data { layout, bookmarks }).to_string(),
+  ))
 }
 
 async fn delete_by_id(
