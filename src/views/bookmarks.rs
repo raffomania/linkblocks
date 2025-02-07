@@ -18,10 +18,3 @@ pub struct CreateBookmarkTemplate {
   pub selected_parents: Vec<db::List>,
   pub search_results: Vec<db::List>,
 }
-
-#[derive(Template)]
-#[template(path = "unsorted_bookmarks.html")]
-pub struct UnsortedBookmarksTemplate {
-  pub layout: layout::Template,
-  pub bookmarks: Vec<db::Bookmark>,
-}

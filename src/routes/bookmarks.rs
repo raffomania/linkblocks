@@ -16,13 +16,10 @@ use crate::{
   extract::{self, qs_form::QsForm},
   form_errors::FormErrors,
   forms::{bookmarks::CreateBookmark, links::CreateLink, lists::CreateList},
+  htmf_response::HtmfResponse,
   response_error::ResponseResult,
   server::AppState,
-  views::{
-    self,
-    bookmarks::{CreateBookmarkTemplate, UnsortedBookmarksTemplate},
-    layout,
-  },
+  views::{self, bookmarks::CreateBookmarkTemplate, layout, unsorted_bookmarks},
 };
 
 pub fn router() -> Router<AppState> {
@@ -150,11 +147,13 @@ async fn get_create(
 async fn get_unsorted(
   extract::Tx(mut tx): extract::Tx,
   auth_user: AuthUser,
-) -> ResponseResult<UnsortedBookmarksTemplate> {
+) -> ResponseResult<HtmfResponse> {
   let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
   let bookmarks = db::bookmarks::list_unsorted(&mut tx, auth_user.user_id).await?;
 
-  Ok(UnsortedBookmarksTemplate { layout, bookmarks })
+  Ok(HtmfResponse(unsorted_bookmarks::view(
+    &unsorted_bookmarks::Data { layout, bookmarks },
+  )))
 }
 
 async fn delete_by_id(
