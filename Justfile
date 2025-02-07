@@ -131,7 +131,7 @@ reuse-lint:
     reuse --root . lint
 
 format: format-templates
-    cargo fmt --all
+    cargo +nightly fmt --all
 
 format-templates:
     npx prettier --write '**/*.html'
