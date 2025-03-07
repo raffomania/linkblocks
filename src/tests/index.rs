@@ -12,5 +12,12 @@ async fn index(pool: Pool<Postgres>) -> anyhow::Result<()> {
         .get("/")
         .await;
 
+    app.create_test_user().await;
+    app.login_test_user().await;
+    // Check that we can access the index when logged in
+    let index = app.req().get("/").await.test_page().await;
+
+    insta::assert_snapshot!(index.dom.htmls());
+
     Ok(())
 }
