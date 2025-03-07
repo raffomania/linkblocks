@@ -5,5 +5,6 @@
 mod bookmarks;
 mod federation;
 mod index;
+mod lists;
 mod users;
 mod util;
