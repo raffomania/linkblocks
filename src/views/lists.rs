@@ -4,7 +4,7 @@ use uuid::Uuid;
 use crate::{
   db::{self},
   form_errors::FormErrors,
-  forms::{self, lists::CreateList},
+  forms::{self},
 };
 
 use super::layout;
@@ -16,14 +16,6 @@ pub struct ListTemplate {
   pub links: Vec<db::LinkWithContent>,
   pub list: db::List,
   pub metadata: db::lists::Metadata,
-}
-
-#[derive(Template)]
-#[template(path = "create_list.html")]
-pub struct CreateListTemplate {
-  pub layout: layout::Template,
-  pub input: CreateList,
-  pub errors: FormErrors,
 }
 
 #[derive(Template)]

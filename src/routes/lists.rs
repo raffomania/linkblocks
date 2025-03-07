@@ -1,8 +1,9 @@
 use crate::form_errors::FormErrors;
 use crate::forms::lists::{CreateList, EditListPinned, EditListPrivate};
+use crate::htmf_response::HtmfResponse;
 use crate::response_error::ResponseError;
 use crate::server::AppState;
-use crate::views::lists::{CreateListTemplate, EditListTitleTemplate, UnpinnedListsTemplate};
+use crate::views::lists::{EditListTitleTemplate, UnpinnedListsTemplate};
 use crate::{authentication::AuthUser, response_error::ResponseResult};
 use crate::{
   db::{self},
@@ -70,11 +71,12 @@ async fn post_create(
 
   if let Err(errors) = input.validate() {
     return Ok(
-      views::lists::CreateListTemplate {
+      views::create_list::view(&views::create_list::Data {
         layout,
-        errors: errors.into(),
         input,
-      }
+        errors: errors.into(),
+      })
+      .to_html()
       .into_response(),
     );
   };
@@ -89,14 +91,16 @@ async fn post_create(
 async fn get_create(
   extract::Tx(mut tx): extract::Tx,
   auth_user: AuthUser,
-) -> ResponseResult<CreateListTemplate> {
+) -> ResponseResult<HtmfResponse> {
   let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
 
-  Ok(CreateListTemplate {
-    layout,
-    errors: FormErrors::default(),
-    input: CreateList::default(),
-  })
+  Ok(HtmfResponse(views::create_list::view(
+    &views::create_list::Data {
+      layout,
+      input: CreateList::default(),
+      errors: FormErrors::default(),
+    },
+  )))
 }
 
 async fn get_edit_title(
