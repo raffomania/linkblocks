@@ -19,7 +19,7 @@ fn main() {
         .map(|entry| entry.into_path())
         .collect();
 
-    let templates = paths
+    let mut railwind_sources: Vec<_> = paths
         .iter()
         .map(|p| SourceOptions {
             input: p,
@@ -27,8 +27,18 @@ fn main() {
         })
         .collect();
 
-    // TODO gather classes from htmf views
+    let paths: Vec<_> = walkdir::WalkDir::new("src/views")
+        .into_iter()
+        .map(|e| e.expect("Error while searching for templates"))
+        .filter(|e| e.file_type().is_file())
+        .map(|entry| entry.into_path())
+        .collect();
 
-    let source = Source::Files(templates);
+    railwind_sources.extend(paths.iter().map(|p| SourceOptions {
+        input: p,
+        option: railwind::CollectionOptions::String,
+    }));
+
+    let source = Source::Files(railwind_sources);
     railwind::parse_to_file(source, dest_path.to_str().unwrap(), false, &mut Vec::new());
 }
