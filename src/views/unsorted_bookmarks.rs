@@ -11,17 +11,16 @@ pub struct Data {
 
 pub fn view(data: &Data) -> Element {
   layout::layout(
-    fragment().with([
-      header(class("px-4 pt-3 mb-4"))
-        .with([h1(class("text-xl font-bold")).with("Unsorted Bookmarks")]),
-      fragment().with(
+    fragment()
+      .with([header(class("px-4 pt-3 mb-4"))
+        .with([h1(class("text-xl font-bold")).with("Unsorted Bookmarks")])])
+      .with(
         data
           .bookmarks
           .iter()
           .map(bookmark_entry)
           .collect::<Vec<Element>>(),
       ),
-    ]),
     &data.layout,
   )
 }
