@@ -7,7 +7,7 @@ use crate::views::lists::{EditListTitleTemplate, UnpinnedListsTemplate};
 use crate::{authentication::AuthUser, response_error::ResponseResult};
 use crate::{
   db::{self},
-  views::{layout, lists::ListTemplate},
+  views::layout,
 };
 use crate::{extract, forms, views};
 use axum::extract::Path;
@@ -35,7 +35,7 @@ async fn list(
   auth_user: Option<AuthUser>,
   extract::Tx(mut tx): extract::Tx,
   Path(list_id): Path<Uuid>,
-) -> ResponseResult<ListTemplate> {
+) -> ResponseResult<HtmfResponse> {
   let links =
     db::links::list_by_list(&mut tx, list_id, auth_user.as_ref().map(|u| u.user_id)).await?;
   let list = db::lists::by_id(&mut tx, list_id).await?;
@@ -53,12 +53,12 @@ async fn list(
     }
   }
 
-  Ok(ListTemplate {
+  Ok(HtmfResponse(views::list::view(&views::list::Data {
     layout: layout::Template::from_db(&mut tx, auth_user.as_ref()).await?,
     links,
     list,
     metadata: db::lists::metadata_by_id(&mut tx, list_id).await?,
-  })
+  })))
 }
 
 async fn post_create(

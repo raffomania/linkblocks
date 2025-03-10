@@ -1243,7 +1243,7 @@ dependencies = [
 [[package]]
 name = "htmf"
 version = "0.3.0"
-source = "git+https://github.com/raffomania/htmf#693f55601e698709f5bf82c638388c6d97a85848"
+source = "git+https://github.com/raffomania/htmf#b59093d3457d44ce48a17f5460c703d8553d24de"
 dependencies = [
  "markup_fmt",
 ]

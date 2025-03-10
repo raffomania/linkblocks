@@ -99,7 +99,6 @@
             {{ inner_list.list.title }}
           </a>
           {% if let Some(content) = inner_list.list.content %}
-
             {% if !content.is_empty() %}
               <p class="max-w-2xl mt-2">{{- content -}}</p>
             {% endif %}

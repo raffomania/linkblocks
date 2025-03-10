@@ -10,15 +10,6 @@ use crate::{
 use super::layout;
 
 #[derive(Template)]
-#[template(path = "list.html")]
-pub struct ListTemplate {
-  pub layout: layout::Template,
-  pub links: Vec<db::LinkWithContent>,
-  pub list: db::List,
-  pub metadata: db::lists::Metadata,
-}
-
-#[derive(Template)]
 #[template(path = "edit_list_title.html")]
 pub struct EditListTitleTemplate {
   pub layout: layout::Template,
