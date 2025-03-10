@@ -2,7 +2,7 @@ use htmf::{into_attrs::IntoAttrs, prelude::*};
 
 use crate::{form_errors::FormErrors, forms::lists::CreateList};
 
-use super::{form, layout};
+use super::layout;
 
 pub struct Data {
   pub layout: layout::Template,
@@ -10,7 +10,13 @@ pub struct Data {
   pub errors: FormErrors,
 }
 
-pub fn view(data: &Data) -> Element {
+pub fn view(
+  Data {
+    layout,
+    input: input_data,
+    errors,
+  }: &Data,
+) -> Element {
   layout::layout(
     fragment().with([form([
       action("/lists/create"),
@@ -20,21 +26,21 @@ pub fn view(data: &Data) -> Element {
     .with([
       header(class("mt-3 mb-4")).with([h1(class("text-xl font-bold")).with("Create a list")]),
       label(for_("title")).with("Title"),
-      form::errors(&data.errors, "title"),
+      errors.view("title"),
       input([
         required(""),
         name("title"),
         type_("text"),
-        value(&data.input.title),
+        value(&input_data.title),
         class("rounded py-1.5 px-3 mt-2 bg-neutral-900"),
       ]),
       label(class("mt-4")).with([
         text("Note"),
-        form::errors(&data.errors, "content"),
+        errors.view("content"),
         textarea([
           name("content"),
           placeholder(""),
-          value(data.input.content.as_deref().unwrap_or("")),
+          value(input_data.content.as_deref().unwrap_or("")),
           class("rounded py-1.5 px-3 mt-2 bg-neutral-900 block w-full"),
         ]),
       ]),
@@ -43,17 +49,17 @@ pub fn view(data: &Data) -> Element {
           type_("checkbox"),
           name("private"),
           value("true"),
-          data.input.private.then(checked).into_attrs(),
+          input_data.private.then(checked).into_attrs(),
         ]),
         text("Private"),
       ])]),
-      form::errors(&data.errors, "root"),
+      errors.view("root"),
       button([
         type_("submit"),
         class("bg-neutral-300 py-1.5 px-3 text-neutral-900 rounded mt-4 self-end"),
       ])
       .with("Add List"),
     ])]),
-    &data.layout,
+    layout,
   )
 }

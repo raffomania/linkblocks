@@ -8,7 +8,7 @@ use crate::{
   oidc,
 };
 
-use super::{base_document::base_document, forms::form_errors};
+use super::base_document::base_document;
 
 pub enum OidcInfo {
   NotConfigured,
@@ -82,7 +82,7 @@ fn login_form(template: &Template) -> Element {
       .map(|previous_uri| input([type_("hidden"), name("previous_uri"), value(previous_uri)]))
       .into(),
     submit_button(),
-    form_errors(&template.errors, "root"),
+    template.errors.view("root"),
   ])
 }
 
@@ -93,7 +93,7 @@ fn username_field(errors: &FormErrors, val: &str) -> Element {
       for_("credentials[username]"),
     ])
     .with("Username"),
-    form_errors(errors, "credentials.username"),
+    errors.view("credentials.username"),
     input([
       type_("text"),
       name("credentials[username]"),
@@ -111,7 +111,7 @@ fn password_field(errors: &FormErrors) -> Element {
       for_("credentials[password]"),
     ])
     .with("Password"),
-    form_errors(errors, "credentials.password"),
+    errors.view("credentials.password"),
     input([
       type_("password"),
       name("credentials[password]"),
