@@ -19,7 +19,7 @@ use crate::{
   htmf_response::HtmfResponse,
   response_error::ResponseResult,
   server::AppState,
-  views::{self, bookmarks::CreateBookmarkTemplate, layout, unsorted_bookmarks},
+  views::{self, layout, unsorted_bookmarks},
 };
 
 pub fn router() -> Router<AppState> {
@@ -47,13 +47,15 @@ async fn post_create(
   let insert_bookmark = match InsertBookmark::try_from(input.clone()) {
     Err(errors) => {
       return Ok(
-        views::bookmarks::CreateBookmarkTemplate {
-          layout,
-          errors,
-          input,
-          selected_parents,
-          search_results,
-        }
+        HtmfResponse(views::create_bookmark::view(
+          &views::create_bookmark::Data {
+            layout,
+            errors,
+            input,
+            selected_parents,
+            search_results,
+          },
+        ))
         .into_response(),
       );
     }
@@ -121,7 +123,7 @@ async fn get_create(
   extract::Tx(mut tx): extract::Tx,
   auth_user: AuthUser,
   Query(query): Query<CreateBookmarkQuery>,
-) -> ResponseResult<CreateBookmarkTemplate> {
+) -> ResponseResult<HtmfResponse> {
   let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
 
   let selected_parent = match query.parent_id {
@@ -129,19 +131,21 @@ async fn get_create(
     _ => None,
   };
 
-  Ok(CreateBookmarkTemplate {
-    layout,
-    errors: FormErrors::default(),
-    input: CreateBookmark {
-      parents: Vec::new(),
-      url: query.url.unwrap_or_default(),
-      title: query.title.unwrap_or_default(),
-      ..Default::default()
+  Ok(HtmfResponse(views::create_bookmark::view(
+    &views::create_bookmark::Data {
+      layout,
+      errors: FormErrors::default(),
+      input: CreateBookmark {
+        parents: Vec::new(),
+        url: query.url.unwrap_or_default(),
+        title: query.title.unwrap_or_default(),
+        ..Default::default()
+      },
+      selected_parents: selected_parent.into_iter().collect(),
+      // TODO exclude items that are already linked
+      search_results: db::lists::list_recent(&mut tx, auth_user.user_id).await?,
     },
-    selected_parents: selected_parent.into_iter().collect(),
-    // TODO exclude items that are already linked
-    search_results: db::lists::list_recent(&mut tx, auth_user.user_id).await?,
-  })
+  )))
 }
 
 async fn get_unsorted(
