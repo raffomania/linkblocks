@@ -10,27 +10,27 @@ publish = false
 doctest = false
 
 [dependencies]
-anyhow = { version = "1.0.95" }
+anyhow = { version = "1.0.97" }
 argon2 = "0.5.3"
 askama = { version = "0.13.0", features = ["with-axum"] }
 askama_axum = "0.6.0"
 axum = { version = "0.8.1", features = ["macros", "tracing"] }
 axum-server = { version = "0.7.1", features = ["tls-rustls-no-provider"] }
-clap = { version = "4.5.23", features = ["derive", "env"] }
-fake = { version = "3.1.0", default-features = false }
+clap = { version = "4.5.31", features = ["derive", "env"] }
+fake = { version = "4.0.0", default-features = false }
 friendly-zoo = "1.1.0"
-garde = { version = "0.21.1", default-features = false, features = [
+garde = { version = "0.22.0", default-features = false, features = [
     "derive",
     "url",
 ] }
 include_dir = "0.7.4"
-listenfd = "1.0.1"
+listenfd = "1.0.2"
 mime_guess = "2.0.5"
-rand = { version = "0.8.5", default-features = false }
-serde = "1.0.217"
-serde-aux = { version = "4.5.0", default-features = false }
-serde_json = "1.0.134"
-serde_qs = "0.13.0"
+rand = { version = "0.9.0", default-features = false }
+serde = "1.0.219"
+serde-aux = { version = "4.6.0", default-features = false }
+serde_json = "1.0.140"
+serde_qs = "0.14.0"
 sqlx = { version = "0.8.3", features = [
     "runtime-tokio",
     "postgres",
@@ -39,10 +39,10 @@ sqlx = { version = "0.8.3", features = [
     "time",
     "json",
 ], default-features = false }
-thiserror = "2.0.11"
-openidconnect = "3.5.0"
-time = { version = "0.3.37", default-features = false, features = ["serde"] }
-tokio = { version = "1.42.0", features = [
+thiserror = "2.0.12"
+openidconnect = "4.0.0"
+time = { version = "0.3.39", default-features = false, features = ["serde"] }
+tokio = { version = "1.44.0", features = [
     "macros",
     "rt-multi-thread",
     "signal",
@@ -52,10 +52,10 @@ tower-http = { version = "0.6.2", features = ["tracing", "trace"] }
 tower-sessions = { version = "0.14" }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
-uuid = { version = "1.11.0", features = ["v4", "serde"] }
+uuid = { version = "1.15.1", features = ["v4", "serde"] }
 visdom = "1.0.2"
 tower-sessions-sqlx-store = { version = "0.15.0", features = ["postgres"] }
-rustls = { version = "0.23.20", default-features = false, features = ["ring"] }
+rustls = { version = "0.23.23", default-features = false, features = ["ring"] }
 htmf = { git = "https://github.com/raffomania/htmf", features = [
     "pretty-print",
 ] }
@@ -70,12 +70,12 @@ walkdir = "2"
 
 [dev-dependencies]
 http-body-util = "0.1.2"
-serde_json = "1.0.134"
-test-log = { version = "0.2.16", features = [
+serde_json = "1.0.140"
+test-log = { version = "0.2.17", features = [
     "trace",
 ], default-features = false }
 itertools = "0.14.0"
-insta = "1.42.0"
+insta = "1.42.2"
 
 [package.metadata.bin]
 just = { version = "1.38.0", locked = true }
