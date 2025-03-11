@@ -79,6 +79,7 @@ pub async fn start(
         let listener = listenfd
             .take_tcp_listener(0)?
             .ok_or(anyhow!("No systemfd TCP socket found"))?;
+        listener.set_nonblocking(true)?;
         tokio::net::TcpListener::from_std(listener)?
     };
 

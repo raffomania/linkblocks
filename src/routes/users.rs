@@ -72,11 +72,11 @@ async fn get_login_oidc(
     session: Session,
 ) -> ResponseResult<Response> {
     // TODO: Store the CSRF and none states in a way that is more secure than this, although the current method is already quite secure.
-    let client = state
+    let oidc_config = state
         .oidc_state
-        .get_client()
+        .get_config()
         .context("OIDC client not configured")?;
-    let attempt = oidc::LoginAttempt::new(&client);
+    let attempt = oidc::LoginAttempt::new(&oidc_config.client);
     let authorize_url = attempt.authorize_url.clone();
     attempt.save_in_session(&session).await?;
 
@@ -89,15 +89,20 @@ async fn get_login_oidc_redirect(
     state: State<AppState>,
     extract::Tx(mut tx): extract::Tx,
 ) -> ResponseResult<Response> {
-    let oidc_client = state
+    let oidc_config = state
         .oidc_state
         .clone()
-        .get_client()
-        .context("OIDC client not configured")?;
+        .get_config()
+        .context("OIDC not configured")?;
 
     let oidc_session: oidc::LoginAttempt = oidc::LoginAttempt::from_session(&session).await?;
     let authed_oidc_info = oidc_session
-        .login(&oidc_client, query.state, query.code)
+        .login(
+            &oidc_config.client,
+            &oidc_config.reqwest_client,
+            query.state,
+            query.code,
+        )
         .await?;
 
     let existing_user = db::users::user_by_oidc_id(&mut tx, &authed_oidc_info.oidc_id).await;
