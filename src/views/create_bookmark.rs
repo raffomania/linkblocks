@@ -75,7 +75,7 @@ pub fn view(
             .iter()
             .map(|parent_name| {
               label(class("block leading-8")).with([
-                text("New public list"),
+                text("New public list "),
                 span(class("text-fuchsia-100")).with(format!("🧵 {parent_name}")),
                 input([
                   name("create_parents[]"),
@@ -128,58 +128,54 @@ fn search(
         type_("search"),
         value(input_data.list_search_term.as_deref().unwrap_or_default()),
       ]),
-      span(class(
-        "absolute right-0 inline-flex items-center w-0 h-full",
-      ))
-      .with(span([
+      span(class("absolute flex items-center right-0 top-0 w-0 h-full")).with(span([
         class(
           "block w-4 h-4 -ml-6 border-2 rounded-full border-neutral-400 animate-spin \
            border-t-neutral-900 htmx-indicator",
         ),
         id("list_search_term_indicator"),
       ])),
-      div([class("overflow-y-scroll max-h-96"), id("search_results")]).with([
-        if search_results.is_empty() {
-          if let Some(term) = &input_data.list_search_term {
-            button([
-              class(
-                "block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 \
-                 text-fuchsia-100",
-              ),
-              attr("hx-params", "not list_search_term"),
-              attr("hx-post", "/bookmarks/create"),
-              attr("hx-select", "#selected_lists"),
-              attr("hx-target", "#selected_lists"),
-              name("create_parents[]"),
-              value(term),
-            ])
-            .with(format!(r#"Create public list "{term}""#))
-          } else {
-            nothing()
-          }
+    ]),
+    div([class("overflow-y-scroll max-h-96"), id("search_results")]).with([
+      if search_results.is_empty() {
+        if let Some(term) = &input_data.list_search_term {
+          button([
+            class(
+              "block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 text-fuchsia-100",
+            ),
+            attr("hx-params", "not list_search_term"),
+            attr("hx-post", "/bookmarks/create"),
+            attr("hx-select", "#selected_lists"),
+            attr("hx-target", "#selected_lists"),
+            name("create_parents[]"),
+            value(term),
+          ])
+          .with(format!(r#"Create public list "{term}""#))
         } else {
-          fragment().with(
-            search_results
-              .iter()
-              .map(|list| {
-                button([
-                  class(
-                    "block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 \
-                     text-fuchsia-100",
-                  ),
-                  attr("hx-params", "not list_search_term"),
-                  attr("hx-post", "/bookmarks/create"),
-                  attr("hx-select", "#selected_lists"),
-                  attr("hx-target", "#selected_lists"),
-                  name("parents[]"),
-                  value(list.id),
-                ])
-                .with(format!("🧵 {}", list.title))
-              })
-              .collect::<Vec<_>>(),
-          )
-        },
-      ]),
+          nothing()
+        }
+      } else {
+        fragment().with(
+          search_results
+            .iter()
+            .map(|list| {
+              button([
+                class(
+                  "block w-full px-4 pt-1 pb-2 text-left rounded hover:bg-neutral-700 \
+                   text-fuchsia-100",
+                ),
+                attr("hx-params", "not list_search_term"),
+                attr("hx-post", "/bookmarks/create"),
+                attr("hx-select", "#selected_lists"),
+                attr("hx-target", "#selected_lists"),
+                name("parents[]"),
+                value(list.id),
+              ])
+              .with(format!("🧵 {}", list.title))
+            })
+            .collect::<Vec<_>>(),
+        )
+      },
     ]),
   ])
 }
