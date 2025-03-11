@@ -3365,7 +3365,7 @@
         }
       ],
       "name": "htmf",
-      "purl": "pkg:cargo/htmf@0.3.0?vcs_url=git%2Bhttps://github.com/raffomania/htmf%40693f55601e698709f5bf82c638388c6d97a85848",
+      "purl": "pkg:cargo/htmf@0.3.0?vcs_url=git%2Bhttps://github.com/raffomania/htmf%40b59093d3457d44ce48a17f5460c703d8553d24de",
       "scope": "required",
       "type": "library",
       "version": "0.3.0"
@@ -10431,6 +10431,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#openidconnect@3.5.0",
         "registry+https://github.com/rust-lang/crates.io-index#railwind@0.1.5",
         "registry+https://github.com/rust-lang/crates.io-index#rand@0.8.5",
+        "registry+https://github.com/rust-lang/crates.io-index#regex@1.11.1",
         "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.21",
         "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.217",
         "registry+https://github.com/rust-lang/crates.io-index#serde-aux@4.5.0",
