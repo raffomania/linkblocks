@@ -1747,6 +1747,7 @@ dependencies = [
  "openidconnect",
  "railwind",
  "rand",
+ "regex",
  "rustls 0.23.21",
  "serde",
  "serde-aux",

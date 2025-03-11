@@ -67,6 +67,7 @@ askama = { git = "https://github.com/rinja-rs/askama.git" }
 [build-dependencies]
 railwind = "0.1.5"
 walkdir = "2"
+regex = "1.11.1"
 
 [dev-dependencies]
 http-body-util = "0.1.2"

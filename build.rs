@@ -1,4 +1,5 @@
 use railwind::{Source, SourceOptions};
+use regex::Regex;
 use std::{env, path::Path};
 
 fn main() {
@@ -7,6 +8,7 @@ fn main() {
   println!("cargo:rerun-if-changed=migrations");
 
   println!("cargo:rerun-if-changed=templates");
+  println!("cargo:rerun-if-changed=src/views");
 
   let out_dir = env::var("OUT_DIR").unwrap();
 
@@ -36,7 +38,7 @@ fn main() {
 
   railwind_sources.extend(paths.iter().map(|p| SourceOptions {
     input: p,
-    option: railwind::CollectionOptions::String,
+    option: railwind::CollectionOptions::Regex(Regex::new(r#"class[\n\s\(]*"([^"]+)""#).unwrap()),
   }));
 
   let source = Source::Files(railwind_sources);
