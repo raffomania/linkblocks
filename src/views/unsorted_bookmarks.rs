@@ -39,7 +39,7 @@ fn bookmark_entry(bookmark: &Bookmark) -> Element {
          text-ellipsis whitespace-nowrap",
       ),
     ])
-    .with(["📄 ", &bookmark.title, " → "])
+    .with(&bookmark.title)
     .with(content::link_url(&bookmark.url)),
     div(class("flex justify-end gap-2 mx-4 grow text-neutral-300")).with([a([
       href(format!("/links/create?dest_id={bookmark_id}")),
