@@ -25,7 +25,7 @@ impl From<oidc::State> for OidcInfo {
     fn from(value: oidc::State) -> Self {
         match value {
             oidc::State::NotConfigured => Self::NotConfigured,
-            oidc::State::Configured(oidc::Config { client: _, name }) => Self::Configured { name },
+            oidc::State::Configured(oidc::Config { name, .. }) => Self::Configured { name },
         }
     }
 }

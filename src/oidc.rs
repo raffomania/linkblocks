@@ -5,10 +5,10 @@ use serde::{Deserialize, Serialize};
 use openidconnect::core::{
     CoreClient, CoreIdTokenVerifier, CoreProviderMetadata, CoreResponseType,
 };
-use openidconnect::reqwest::async_http_client;
 use openidconnect::{
-    AccessTokenHash, AuthenticationFlow, AuthorizationCode, ClientId, ClientSecret, CsrfToken,
-    IssuerUrl, Nonce, OAuth2TokenResponse, PkceCodeChallenge, PkceCodeVerifier, RedirectUrl, Scope,
+    reqwest, AccessTokenHash, AuthenticationFlow, AuthorizationCode, ClientId, ClientSecret,
+    CsrfToken, IssuerUrl, Nonce, OAuth2TokenResponse, PkceCodeChallenge, PkceCodeVerifier,
+    RedirectUrl, Scope,
 };
 use tower_sessions::Session;
 
@@ -53,7 +53,7 @@ pub struct LoginAttempt {
 impl LoginAttempt {
     const SESSION_KEY: &'static str = "oidc_login_attempt";
 
-    pub fn new(client: &CoreClient) -> Self {
+    pub fn new(client: &ConfiguredClient) -> Self {
         let (pkce_challenge, pkce_verifier) = PkceCodeChallenge::new_random_sha256();
 
         // Generate the authorization URL to which we'll redirect the user.
@@ -95,7 +95,8 @@ impl LoginAttempt {
 
     pub async fn login(
         self,
-        oidc_client: &CoreClient,
+        oidc_client: &ConfiguredClient,
+        reqwest_client: &reqwest::Client,
         csrf_token: CsrfToken,
         code: AuthorizationCode,
     ) -> ResponseResult<AuthenticatedOidcUserInfo> {
@@ -105,8 +106,9 @@ impl LoginAttempt {
         let token_response = oidc_client
             .clone()
             .exchange_code(code)
+            .context("Failed to set exchange code")?
             .set_pkce_verifier(self.pkce_verifier)
-            .request_async(async_http_client)
+            .request_async(reqwest_client)
             .await
             .context("failed to get token response")?;
         let id_token_verifier: CoreIdTokenVerifier = oidc_client.id_token_verifier();
@@ -121,9 +123,12 @@ impl LoginAttempt {
         if let Some(expected_access_token_hash) = id_token_claims.access_token_hash() {
             let actual_access_token_hash = AccessTokenHash::from_token(
                 token_response.access_token(),
-                &id_token
+                id_token
                     .signing_alg()
                     .context("failed to get signing algorithm")?,
+                id_token
+                    .signing_key(&id_token_verifier)
+                    .context("Failed to get signing key")?,
             )
             .context("Failed to get access token hash from token response")?;
             if actual_access_token_hash != *expected_access_token_hash {
@@ -142,17 +147,45 @@ impl LoginAttempt {
     }
 }
 
+type ConfiguredClient = openidconnect::Client<
+    openidconnect::EmptyAdditionalClaims,
+    openidconnect::core::CoreAuthDisplay,
+    openidconnect::core::CoreGenderClaim,
+    openidconnect::core::CoreJweContentEncryptionAlgorithm,
+    openidconnect::core::CoreJsonWebKey,
+    openidconnect::core::CoreAuthPrompt,
+    openidconnect::StandardErrorResponse<openidconnect::core::CoreErrorResponseType>,
+    openidconnect::StandardTokenResponse<
+        openidconnect::IdTokenFields<
+            openidconnect::EmptyAdditionalClaims,
+            openidconnect::EmptyExtraTokenFields,
+            openidconnect::core::CoreGenderClaim,
+            openidconnect::core::CoreJweContentEncryptionAlgorithm,
+            openidconnect::core::CoreJwsSigningAlgorithm,
+        >,
+        openidconnect::core::CoreTokenType,
+    >,
+    openidconnect::StandardTokenIntrospectionResponse<
+        openidconnect::EmptyExtraTokenFields,
+        openidconnect::core::CoreTokenType,
+    >,
+    openidconnect::core::CoreRevocableToken,
+    openidconnect::StandardErrorResponse<openidconnect::RevocationErrorResponseType>,
+    openidconnect::EndpointSet,
+    openidconnect::EndpointNotSet,
+    openidconnect::EndpointNotSet,
+    openidconnect::EndpointNotSet,
+    openidconnect::EndpointMaybeSet,
+    openidconnect::EndpointMaybeSet,
+>;
+
 #[derive(Clone)]
 pub struct Config {
-    pub client: CoreClient,
+    pub client: ConfiguredClient,
+    pub reqwest_client: reqwest::Client,
     pub name: String,
 }
 
-// This enum is basically an Option with additional
-// semantics. As such, it's expected that the
-// `NotConfigured` variant will take up lots of space,
-// Just like `None` would
-#[expect(clippy::large_enum_variant)]
 #[derive(Clone)]
 pub enum State {
     NotConfigured,
@@ -161,10 +194,10 @@ pub enum State {
 
 impl State {
     #[must_use]
-    pub fn get_client(self) -> Option<CoreClient> {
+    pub fn get_config(self) -> Option<Config> {
         match self {
             State::NotConfigured => None,
-            State::Configured(Config { client, name: _ }) => Some(client),
+            State::Configured(config) => Some(config),
         }
     }
 
@@ -185,13 +218,18 @@ impl State {
         base_url: String,
         args: Option<OidcArgs>,
     ) -> anyhow::Result<Config> {
+        let reqwest_client = openidconnect::reqwest::ClientBuilder::new()
+            .redirect(openidconnect::reqwest::redirect::Policy::none())
+            .build()
+            .context("Failed to build reqwest client")?;
+
         let args = args.context("OIDC configuration is absent or incomplete.")?;
         let client_id = ClientId::new(args.oidc_client_id);
         let client_secret = ClientSecret::new(args.oidc_client_secret);
         let issuer_url =
             IssuerUrl::new(args.oidc_issuer_url).context("failed to parse issuer URL")?;
 
-        let provider_metadata = CoreProviderMetadata::discover_async(issuer_url, async_http_client)
+        let provider_metadata = CoreProviderMetadata::discover_async(issuer_url, &reqwest_client)
             .await
             .context("failed to discover provider")?;
         // Set up the config for the OIDC process.
@@ -204,6 +242,7 @@ impl State {
 
         Ok(Config {
             client,
+            reqwest_client,
             name: args.oidc_issuer_name,
         })
     }

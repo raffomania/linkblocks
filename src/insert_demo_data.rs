@@ -1,6 +1,6 @@
 use anyhow::{anyhow, Result};
 use fake::Fake;
-use rand::{seq::SliceRandom, Rng};
+use rand::{seq::IndexedRandom, Rng};
 use sqlx::PgPool;
 use uuid::Uuid;
 
@@ -89,7 +89,7 @@ pub async fn insert_demo_data(
     for user in users {
         for _ in 0..1000 {
             let src = lists
-                .choose(&mut rand::thread_rng())
+                .choose(&mut rand::rng())
                 .ok_or(anyhow!("Found no random list to put into a link"))?
                 .id;
             let dest = random_link_reference(&bookmarks, &lists)?;
@@ -105,16 +105,16 @@ pub async fn insert_demo_data(
 }
 
 fn random_link_reference(bookmarks: &[db::Bookmark], lists: &[db::List]) -> Result<Uuid> {
-    Ok(match rand::thread_rng().gen_range(0..=1) {
+    Ok(match rand::rng().random_range(0..=1) {
         0 => {
             bookmarks
-                .choose(&mut rand::thread_rng())
+                .choose(&mut rand::rng())
                 .ok_or(anyhow!("Found no random bookmark to put into a link"))?
                 .id
         }
         1 => {
             lists
-                .choose(&mut rand::thread_rng())
+                .choose(&mut rand::rng())
                 .ok_or(anyhow!("Found no random list to put into a link"))?
                 .id
         }
