@@ -112,7 +112,7 @@ development-cert:
     mkdir -p development_cert
     test -f development_cert/localhost.crt || mkcert -cert-file development_cert/localhost.crt -key-file development_cert/localhost.key localhost 127.0.0.1 ::1
 
-ci-dev : start-database migrate-database start-test-database
+ci-dev : migrate-database start-test-database && generate-sbom
     #!/usr/bin/env bash
     export RUSTFLAGS="-D warnings"
     # Prevent full recompilations in the normal dev setup which has different rustflags
