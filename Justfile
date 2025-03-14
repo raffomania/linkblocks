@@ -127,6 +127,9 @@ ci-dev : migrate-database start-test-database && generate-sbom
 lint *args: reuse-lint
     cargo clippy {{args}} -- -D warnings
 
+lint-fix *args: reuse-lint
+    cargo clippy --fix {{args}}
+
 reuse-lint:
     reuse --root . lint
 
