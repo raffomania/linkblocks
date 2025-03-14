@@ -59,6 +59,10 @@ rustls = { version = "0.23.23", default-features = false, features = ["ring"] }
 htmf = { git = "https://github.com/raffomania/htmf", features = [
     "pretty-print",
 ] }
+activitypub_federation = { version = "0.6.2", default-features = false }
+url = { version = "2.5.4", features = ["serde"] }
+async-trait = "0.1.85"
+chrono = "0.4.39"
 
 [patch.crates-io]
 askama_axum = { git = "https://github.com/bikesheddev/askama.git", rev = "baa0aef8e3307f9a8575f8e36a59db221b18eaff" }

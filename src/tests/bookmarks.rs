@@ -1,10 +1,8 @@
-use sqlx::{Pool, Postgres};
-
 use crate::tests::util::test_app::TestApp;
 
-#[test_log::test(sqlx::test)]
-async fn get_unsorted_bookmarks(pool: Pool<Postgres>) -> anyhow::Result<()> {
-    let mut app = TestApp::new(pool).await;
+#[test_log::test(tokio::test)]
+async fn get_unsorted_bookmarks() -> anyhow::Result<()> {
+    let mut app = TestApp::new().await;
     app.create_test_user().await;
     app.login_test_user().await;
 

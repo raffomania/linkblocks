@@ -1,3 +1,4 @@
+pub mod ap_users;
 pub mod bookmarks;
 pub mod links;
 pub mod lists;
