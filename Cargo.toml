@@ -14,10 +14,10 @@ anyhow = { version = "1.0.97" }
 argon2 = "0.5.3"
 askama = { version = "0.13.0", features = ["with-axum"] }
 askama_axum = "0.6.0"
-axum = { version = "0.8.1", features = ["macros", "tracing"] }
-axum-server = { version = "0.7.1", features = ["tls-rustls-no-provider"] }
-clap = { version = "4.5.32", features = ["derive", "env"] }
-fake = { version = "4.0.0", default-features = false }
+axum = { version = "0.8.3", features = ["macros", "tracing"] }
+axum-server = { version = "0.7.2", features = ["tls-rustls-no-provider"] }
+clap = { version = "4.5.34", features = ["derive", "env"] }
+fake = { version = "4.2.0", default-features = false }
 friendly-zoo = "1.1.0"
 garde = { version = "0.22.0", default-features = false, features = [
     "derive",
@@ -41,8 +41,8 @@ sqlx = { version = "0.8.3", features = [
 ], default-features = false }
 thiserror = "2.0.12"
 openidconnect = "4.0.0"
-time = { version = "0.3.39", default-features = false, features = ["serde"] }
-tokio = { version = "1.44.0", features = [
+time = { version = "0.3.41", default-features = false, features = ["serde"] }
+tokio = { version = "1.44.1", features = [
     "macros",
     "rt-multi-thread",
     "signal",
@@ -52,10 +52,10 @@ tower-http = { version = "0.6.2", features = ["tracing", "trace"] }
 tower-sessions = { version = "0.14" }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
-uuid = { version = "1.15.1", features = ["v4", "serde"] }
-visdom = "1.0.2"
+uuid = { version = "1.16.0", features = ["v4", "serde"] }
+visdom = "1.0.3"
 tower-sessions-sqlx-store = { version = "0.15.0", features = ["postgres"] }
-rustls = { version = "0.23.23", default-features = false, features = ["ring"] }
+rustls = { version = "0.23.25", default-features = false, features = ["ring"] }
 htmf = { git = "https://github.com/raffomania/htmf", features = [
     "pretty-print",
 ] }
@@ -70,7 +70,7 @@ walkdir = "2"
 regex = "1.11.1"
 
 [dev-dependencies]
-http-body-util = "0.1.2"
+http-body-util = "0.1.3"
 serde_json = "1.0.140"
 test-log = { version = "0.2.17", features = [
     "trace",
