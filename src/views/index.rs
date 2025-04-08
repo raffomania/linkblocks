@@ -8,7 +8,8 @@ pub fn view(layout: &layout::Template) -> Element {
                 class("mx-4 mt-3 mb-4"),
                 [h1(class("text-xl font-bold"), "Welcome to linkblocks!")],
             ),
-            // TODO add intro text: what can you do with linkblocks? How to get started?  Where to get help?
+            // TODO add intro text: what can you do with linkblocks? How to get started?  Where to
+            // get help?
             ul(
                 class("flex flex-col max-w-sm gap-2 px-4 pb-4"),
                 [li(

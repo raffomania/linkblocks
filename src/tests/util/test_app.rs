@@ -41,7 +41,8 @@ impl TestApp {
         req
     }
 
-    /// Since there's no route for creating users yet, we're doing this via the DB for now.
+    /// Since there's no route for creating users yet, we're doing this via the
+    /// DB for now.
     pub async fn create_user(&self, username: &str, password: &str) {
         let mut tx = self
             .pool
