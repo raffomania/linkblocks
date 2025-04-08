@@ -42,7 +42,7 @@ sqlx = { version = "0.8.3", features = [
 thiserror = "2.0.12"
 openidconnect = "4.0.0"
 time = { version = "0.3.41", default-features = false, features = ["serde"] }
-tokio = { version = "1.44.1", features = [
+tokio = { version = "1.44.2", features = [
     "macros",
     "rt-multi-thread",
     "signal",
