@@ -189,7 +189,7 @@ pub async fn run() -> Result<()> {
             let pool = db::pool(&cli.config.database_url).await?;
             insert_demo_data(&pool, Option::<CreateUser>::from(dev_user_credentials)).await?;
         }
-    };
+    }
 
     Ok(())
 }

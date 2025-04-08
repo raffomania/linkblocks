@@ -56,7 +56,7 @@ async fn post_create(
             }))
             .into_response(),
         );
-    };
+    }
 
     let search_term = match (input.src, input.dest) {
         (None, _) => input.search_term_src.as_ref(),

@@ -45,7 +45,7 @@ async fn post_login(
             state.oidc_state,
         )))
         .into_response());
-    };
+    }
 
     let logged_in = authentication::login(&mut tx, session, &input.credentials).await;
     if logged_in.is_err() {
@@ -138,7 +138,7 @@ async fn post_login_oidc_redirect(
             },
         ))
         .into_response());
-    };
+    }
 
     let authed_oidc_info = oidc::AuthenticatedOidcUserInfo::from_session(&session).await?;
 

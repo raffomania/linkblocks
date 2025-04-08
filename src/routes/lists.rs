@@ -79,7 +79,7 @@ async fn post_create(
         })
         .to_html()
         .into_response());
-    };
+    }
 
     let list = db::lists::insert(&mut tx, user_id, input).await?;
 

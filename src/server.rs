@@ -99,7 +99,7 @@ pub async fn start(
             .handle(handle)
             .serve(app.into_make_service())
             .await?;
-    };
+    }
 
     Ok(())
 }
