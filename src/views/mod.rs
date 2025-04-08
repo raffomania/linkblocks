@@ -11,6 +11,7 @@ pub mod links;
 pub mod list;
 pub mod lists;
 pub mod login;
+pub mod login_demo;
 pub mod oidc_select_username;
 pub mod unsorted_bookmarks;
 pub mod users;

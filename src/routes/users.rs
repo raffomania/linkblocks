@@ -173,7 +173,7 @@ async fn get_login(
     State(state): State<AppState>,
 ) -> ResponseResult<Response> {
     if state.demo_mode {
-        Ok(login::DemoTemplate {}.into_response())
+        Ok(HtmfResponse(views::login_demo::view()).into_response())
     } else {
         Ok(HtmfResponse(login::login(&login::Template::new(
             Report::new(),

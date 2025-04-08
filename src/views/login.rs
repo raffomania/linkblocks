@@ -155,7 +155,3 @@ fn oidc_button(oidc_info: &OidcInfo) -> Element {
         nothing()
     }
 }
-
-#[derive(askama::Template, Default)]
-#[template(path = "login_demo.html")]
-pub struct DemoTemplate {}
