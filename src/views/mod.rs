@@ -3,12 +3,12 @@
 pub mod base_document;
 pub mod content;
 pub mod create_bookmark;
+pub mod create_link;
 pub mod create_list;
 pub mod edit_list_title;
 pub mod form;
 pub mod index;
 pub mod layout;
-pub mod links;
 pub mod list;
 pub mod list_unpinned_lists;
 pub mod login;

@@ -16,9 +16,10 @@ use crate::{
     extract::{self, qs_form::QsForm},
     form_errors::FormErrors,
     forms::links::{CreateLink, PartialCreateLink},
+    htmf_response::HtmfResponse,
     response_error::ResponseResult,
     server::AppState,
-    views::{self, layout, links::CreateLinkTemplate},
+    views::{self, layout},
 };
 
 pub fn router() -> Router<AppState> {
@@ -44,15 +45,17 @@ async fn post_create(
     };
 
     if let Err(errors) = input.validate() {
-        return Ok(views::links::CreateLinkTemplate {
-            layout,
-            errors: errors.into(),
-            input,
-            search_results: Vec::new(),
-            src_from_db,
-            dest_from_db,
-        }
-        .into_response());
+        return Ok(
+            HtmfResponse(views::create_link::view(views::create_link::Data {
+                layout,
+                errors: errors.into(),
+                form_input: input,
+                search_results: Vec::new(),
+                src_from_db,
+                dest_from_db,
+            }))
+            .into_response(),
+        );
     };
 
     let search_term = match (input.src, input.dest) {
@@ -83,15 +86,17 @@ async fn post_create(
         return Ok(Redirect::to(&src.path()).into_response());
     }
 
-    Ok(CreateLinkTemplate {
-        layout,
-        errors: FormErrors::default(),
-        input,
-        search_results,
-        src_from_db,
-        dest_from_db,
-    }
-    .into_response())
+    Ok(
+        HtmfResponse(views::create_link::view(views::create_link::Data {
+            layout,
+            errors: FormErrors::default(),
+            form_input: input,
+            search_results,
+            src_from_db,
+            dest_from_db,
+        }))
+        .into_response(),
+    )
 }
 
 #[derive(Deserialize)]
@@ -104,7 +109,7 @@ async fn get_create(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
     Query(query): Query<CreateLinkQueryString>,
-) -> ResponseResult<CreateLinkTemplate> {
+) -> ResponseResult<HtmfResponse> {
     let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
 
     let src = match query.src_id {
@@ -124,10 +129,10 @@ async fn get_create(
         _ => Vec::new(),
     };
 
-    Ok(CreateLinkTemplate {
+    Ok(views::create_link::view(views::create_link::Data {
         layout,
         errors: FormErrors::default(),
-        input: PartialCreateLink {
+        form_input: PartialCreateLink {
             src: src.as_ref().map(LinkDestination::id),
             dest: dest.as_ref().map(LinkDestination::id),
             ..PartialCreateLink::default()
@@ -136,6 +141,7 @@ async fn get_create(
         src_from_db: src,
         dest_from_db: dest,
     })
+    .into())
 }
 
 async fn delete_by_id(
