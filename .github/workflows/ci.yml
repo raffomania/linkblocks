@@ -89,16 +89,6 @@ jobs:
           # For cargo-run-bin
           cache-directories: ".bin"
 
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          cache: npm
-          cache-dependency-path: "package-lock.json"
-
-      # this is needed because `npx` won't install prettier plugins
-      - name: Install node dependencies
-        run: npm install
-
       - name: Install cargo-run-bin
         run: cargo install cargo-run-bin
 

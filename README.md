@@ -29,7 +29,6 @@ Install the dependencies:
 - [mkcert](https://github.com/FiloSottile/mkcert#installation)
   - Don't forget to run `mkcert -install`
 - Optional: [podman](http://podman.io/docs/installation), for conveniently running postgres for development and tests
-- Optional: [npm](https://nodejs.org/en/download/package-manager) or a compatible package manager, to format template files
 
 Install dependencies available via cargo:
 

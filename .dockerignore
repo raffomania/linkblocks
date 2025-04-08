@@ -10,8 +10,5 @@ target
 # cargo-run-bin
 **/.bin
 
-# nodejs tooling
-**/node_modules
-
 # deployment stuff
 fly.toml
