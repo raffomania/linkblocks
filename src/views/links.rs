@@ -1,12 +1,11 @@
 use askama::Template;
 
+use super::layout;
 use crate::{
     db::{self, LinkDestination},
     form_errors::FormErrors,
     forms::links::PartialCreateLink,
 };
-
-use super::layout;
 
 #[derive(Template)]
 #[template(path = "create_link.html")]

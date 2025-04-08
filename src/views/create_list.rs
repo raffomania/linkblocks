@@ -1,8 +1,7 @@
 use htmf::{into_attrs::IntoAttrs, prelude::*};
 
-use crate::{form_errors::FormErrors, forms::lists::CreateList};
-
 use super::layout;
+use crate::{form_errors::FormErrors, forms::lists::CreateList};
 
 pub struct Data {
     pub layout: layout::Template,

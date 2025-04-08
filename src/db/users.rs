@@ -1,11 +1,12 @@
 use sqlx::{FromRow, query_as};
 use uuid::Uuid;
 
-use crate::authentication::hash_password;
-use crate::forms::users::{CreateOidcUser, CreateUser};
-use crate::response_error::{ResponseError, ResponseResult};
-
 use super::AppTx;
+use crate::{
+    authentication::hash_password,
+    forms::users::{CreateOidcUser, CreateUser},
+    response_error::{ResponseError, ResponseResult},
+};
 
 #[derive(FromRow, Debug)]
 pub struct User {

@@ -1,5 +1,6 @@
-use super::layout;
 use htmf::prelude_inline::*;
+
+use super::layout;
 
 pub fn view(layout: &layout::Template) -> Element {
     super::layout::layout(

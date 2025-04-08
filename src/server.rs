@@ -1,8 +1,11 @@
 use std::{path::PathBuf, time::Duration};
 
 use anyhow::{Context, anyhow};
+use axum::Router;
 use axum_server::tls_rustls::RustlsConfig;
+use listenfd::ListenFd;
 use sqlx::PgPool;
+use tower_http::trace::TraceLayer;
 use tower_sessions::ExpiredDeletion;
 
 use crate::{
@@ -10,10 +13,6 @@ use crate::{
     db::{self},
     oidc, routes,
 };
-
-use axum::Router;
-use listenfd::ListenFd;
-use tower_http::trace::TraceLayer;
 
 #[derive(Clone)]
 pub struct AppState {

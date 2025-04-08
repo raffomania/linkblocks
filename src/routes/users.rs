@@ -6,6 +6,7 @@ use axum::{
     routing::{get, post},
 };
 use garde::{Report, Validate};
+use serde::Deserialize;
 use tower_sessions::Session;
 
 use crate::{
@@ -19,7 +20,6 @@ use crate::{
     server::AppState,
     views::{self, layout, login, users::ProfileTemplate},
 };
-use serde::Deserialize;
 
 pub fn router() -> Router<AppState> {
     Router::new()

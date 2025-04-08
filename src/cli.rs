@@ -1,9 +1,9 @@
-use anyhow::{Result, anyhow};
-use garde::Validate;
 use std::{net::SocketAddr, path::PathBuf};
-use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
+use anyhow::{Result, anyhow};
 use clap::{Args, Parser, Subcommand};
+use garde::Validate;
+use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
 #[cfg(debug_assertions)]
 use crate::insert_demo_data::insert_demo_data;

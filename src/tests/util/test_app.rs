@@ -1,12 +1,11 @@
 use axum::{Router, http::StatusCode};
 use sqlx::{Pool, Postgres};
 
+use super::request_builder::RequestBuilder;
 use crate::{
     forms::users::CreateUser,
     server::{AppState, app},
 };
-
-use super::request_builder::RequestBuilder;
 
 const TEST_USER_USERNAME: &str = "testuser";
 const TEST_USER_PASSWORD: &str = "testpassword";

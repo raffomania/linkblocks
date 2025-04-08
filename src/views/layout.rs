@@ -1,12 +1,11 @@
 use htmf::prelude::*;
 
+use super::base_document::base_document;
 use crate::{
     authentication::AuthUser,
     db::{self, AppTx, List, layout::AuthedInfo},
     response_error::ResponseResult,
 };
-
-use super::base_document::base_document;
 
 pub struct Template {
     pub authed_info: Option<AuthedInfo>,

@@ -1,23 +1,28 @@
-use crate::form_errors::FormErrors;
-use crate::forms::lists::{CreateList, EditListPinned, EditListPrivate};
-use crate::htmf_response::HtmfResponse;
-use crate::response_error::ResponseError;
-use crate::server::AppState;
-use crate::views::lists::{EditListTitleTemplate, UnpinnedListsTemplate};
-use crate::{authentication::AuthUser, response_error::ResponseResult};
-use crate::{
-    db::{self},
-    views::layout,
+use axum::{
+    Form, Router,
+    extract::Path,
+    response::{IntoResponse, Redirect, Response},
+    routing::{get, post},
 };
-use crate::{extract, forms, views};
-use axum::Form;
-use axum::extract::Path;
-use axum::response::Response;
-use axum::response::{IntoResponse, Redirect};
-use axum::routing::post;
-use axum::{Router, routing::get};
 use garde::Validate;
 use uuid::Uuid;
+
+use crate::{
+    authentication::AuthUser,
+    db::{self},
+    extract,
+    form_errors::FormErrors,
+    forms,
+    forms::lists::{CreateList, EditListPinned, EditListPrivate},
+    htmf_response::HtmfResponse,
+    response_error::{ResponseError, ResponseResult},
+    server::AppState,
+    views,
+    views::{
+        layout,
+        lists::{EditListTitleTemplate, UnpinnedListsTemplate},
+    },
+};
 
 pub fn router() -> Router<AppState> {
     let router: Router<AppState> = Router::new();

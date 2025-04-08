@@ -1,13 +1,12 @@
 use askama::Template;
 use uuid::Uuid;
 
+use super::layout;
 use crate::{
     db::{self},
     form_errors::FormErrors,
     forms::{self},
 };
-
-use super::layout;
 
 #[derive(Template)]
 #[template(path = "edit_list_title.html")]

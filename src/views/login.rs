@@ -2,13 +2,12 @@ use garde::Report;
 #[allow(clippy::wildcard_imports)]
 use htmf::prelude::*;
 
+use super::base_document::base_document;
 use crate::{
     form_errors::FormErrors,
     forms::users::{Credentials, Login},
     oidc,
 };
-
-use super::base_document::base_document;
 
 pub enum OidcInfo {
     NotConfigured,

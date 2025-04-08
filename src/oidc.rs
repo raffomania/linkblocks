@@ -1,19 +1,15 @@
 use anyhow::{Context, anyhow};
-use openidconnect::url::Url;
-use serde::{Deserialize, Serialize};
-
-use openidconnect::core::{
-    CoreClient, CoreIdTokenVerifier, CoreProviderMetadata, CoreResponseType,
-};
 use openidconnect::{
     AccessTokenHash, AuthenticationFlow, AuthorizationCode, ClientId, ClientSecret, CsrfToken,
     IssuerUrl, Nonce, OAuth2TokenResponse, PkceCodeChallenge, PkceCodeVerifier, RedirectUrl, Scope,
+    core::{CoreClient, CoreIdTokenVerifier, CoreProviderMetadata, CoreResponseType},
     reqwest,
+    url::Url,
 };
+use serde::{Deserialize, Serialize};
 use tower_sessions::Session;
 
-use crate::cli::OidcArgs;
-use crate::response_error::ResponseResult;
+use crate::{cli::OidcArgs, response_error::ResponseResult};
 
 #[derive(Serialize, Deserialize)]
 pub struct AuthenticatedOidcUserInfo {

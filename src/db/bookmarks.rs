@@ -3,9 +3,8 @@ use sqlx::{FromRow, query_as};
 use time::OffsetDateTime;
 use uuid::Uuid;
 
-use crate::response_error::ResponseResult;
-
 use super::AppTx;
+use crate::response_error::ResponseResult;
 
 #[derive(FromRow, Debug, Deserialize, Clone)]
 pub struct Bookmark {

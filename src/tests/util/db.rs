@@ -1,8 +1,7 @@
-use sqlx::ConnectOptions;
-use sqlx::Connection;
-use sqlx::Pool;
-use sqlx::Postgres;
-use sqlx::testing::{TestArgs, TestSupport};
+use sqlx::{
+    ConnectOptions, Connection, Pool, Postgres,
+    testing::{TestArgs, TestSupport},
+};
 
 pub static MIGRATOR: sqlx::migrate::Migrator = sqlx::migrate!();
 

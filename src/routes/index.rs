@@ -1,3 +1,5 @@
+use axum::{Router, routing::get};
+
 use crate::{
     authentication::AuthUser,
     extract,
@@ -6,7 +8,6 @@ use crate::{
     server::AppState,
     views::{self, layout},
 };
-use axum::{Router, routing::get};
 
 pub fn router() -> Router<AppState> {
     Router::new().route("/", get(index))

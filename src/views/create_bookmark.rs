@@ -1,8 +1,7 @@
 use htmf::prelude::*;
 
-use crate::{db, form_errors::FormErrors, forms};
-
 use super::layout;
+use crate::{db, form_errors::FormErrors, forms};
 
 pub struct Data {
     pub layout: layout::Template,

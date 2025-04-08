@@ -1,15 +1,10 @@
 use serde::Deserialize;
-use sqlx::FromRow;
-use sqlx::query;
-use sqlx::query_as;
+use sqlx::{FromRow, query, query_as};
 use time::OffsetDateTime;
 use uuid::Uuid;
 
-use crate::forms::lists::CreateList;
-use crate::response_error::ResponseResult;
-
-use super::AppTx;
-use super::LinkDestination;
+use super::{AppTx, LinkDestination};
+use crate::{forms::lists::CreateList, response_error::ResponseResult};
 
 #[derive(FromRow, Debug, Deserialize, Clone)]
 pub struct List {

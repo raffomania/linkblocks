@@ -1,8 +1,7 @@
 use htmf::prelude::*;
 
-use crate::db::{self, Bookmark};
-
 use super::{content, layout};
+use crate::db::{self, Bookmark};
 
 pub struct Data {
     pub layout: layout::Template,

@@ -5,9 +5,8 @@ use anyhow::Context;
 use sqlx::query;
 use uuid::Uuid;
 
-use crate::response_error::ResponseResult;
-
 use super::{AppTx, LinkDestination};
+use crate::response_error::ResponseResult;
 
 // We'll use this for global search later
 #[expect(dead_code)]

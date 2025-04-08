@@ -2,10 +2,8 @@ use anyhow::Context;
 use sqlx::query;
 use uuid::Uuid;
 
-use crate::db;
-use crate::response_error::ResponseResult;
-
 use super::AppTx;
+use crate::{db, response_error::ResponseResult};
 
 pub struct AuthedInfo {
     pub user_description: String,

@@ -6,7 +6,6 @@ use axum::{
     response::{IntoResponse, Redirect, Response},
     routing::{delete, get},
 };
-
 use serde::Deserialize;
 use uuid::Uuid;
 

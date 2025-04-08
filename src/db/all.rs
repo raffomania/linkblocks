@@ -1,8 +1,7 @@
 use sqlx::query;
 
-use crate::response_error::ResponseResult;
-
 use super::AppTx;
+use crate::response_error::ResponseResult;
 
 pub async fn wipe_all_data(tx: &mut AppTx) -> ResponseResult<()> {
     query!("truncate table links cascade;")

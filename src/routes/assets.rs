@@ -1,6 +1,5 @@
 use std::path::PathBuf;
 
-use crate::response_error::{ResponseError, ResponseResult};
 use anyhow::{Context, anyhow};
 use axum::{
     Router,
@@ -10,6 +9,8 @@ use axum::{
 };
 use include_dir::{Dir, include_dir};
 use mime_guess::Mime;
+
+use crate::response_error::{ResponseError, ResponseResult};
 
 pub fn router() -> Router {
     Router::new()
@@ -78,8 +79,7 @@ fn get_mime(path: &std::path::Path) -> ResponseResult<Mime> {
 mod tests {
     use include_dir::Dir;
 
-    use super::ResponseResult;
-    use super::{ASSETS_DIR, get_mime};
+    use super::{ASSETS_DIR, ResponseResult, get_mime};
 
     #[test]
     fn all_assets_have_a_mime_type() -> ResponseResult<()> {

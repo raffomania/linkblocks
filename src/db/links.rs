@@ -3,9 +3,8 @@ use sqlx::{FromRow, query, query_as};
 use time::OffsetDateTime;
 use uuid::Uuid;
 
-use crate::{db, forms::links::CreateLink, response_error::ResponseResult};
-
 use super::AppTx;
+use crate::{db, forms::links::CreateLink, response_error::ResponseResult};
 
 #[derive(FromRow, Debug)]
 #[expect(dead_code)]

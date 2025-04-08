@@ -1,9 +1,3 @@
-use crate::{
-    db::{self, AppTx, User},
-    forms::users::{CreateOidcUser, CreateUser, Credentials},
-    response_error::{ResponseError, ResponseResult},
-    server::AppState,
-};
 use anyhow::{Context, anyhow};
 use argon2::PasswordVerifier;
 use askama::filters::urlencode;
@@ -14,6 +8,13 @@ use axum::{
 };
 use tower_sessions::Session;
 use uuid::Uuid;
+
+use crate::{
+    db::{self, AppTx, User},
+    forms::users::{CreateOidcUser, CreateUser, Credentials},
+    response_error::{ResponseError, ResponseResult},
+    server::AppState,
+};
 
 pub fn hash_password(password: &String) -> ResponseResult<String> {
     let salt =

@@ -1,6 +1,7 @@
+use std::{env, path::Path};
+
 use railwind::{Source, SourceOptions};
 use regex::Regex;
-use std::{env, path::Path};
 
 fn main() {
     // Without this, adding only a migration will not trigger a re-build
