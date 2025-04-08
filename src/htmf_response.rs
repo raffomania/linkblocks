@@ -5,6 +5,12 @@ use crate::response_error::ResponseError;
 
 pub struct HtmfResponse(pub htmf::element::Element);
 
+impl From<htmf::element::Element> for HtmfResponse {
+    fn from(value: htmf::element::Element) -> Self {
+        HtmfResponse(value)
+    }
+}
+
 impl IntoResponse for HtmfResponse {
     fn into_response(self) -> axum::response::Response {
         if cfg!(not(debug_assertions)) {
