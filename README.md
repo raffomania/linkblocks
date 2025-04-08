@@ -75,7 +75,7 @@ This web app is implemented using technologies hand-picked for a smooth developm
 - Type-safe and fast, implemented in [Rust](https://www.rust-lang.org/) using the [axum framework](https://github.com/tokio-rs/axum)
 - Snappy interactivity using [htmx](https://htmx.org/) with almost zero client-side code
 - [Tailwind styles without NodeJS](https://github.com/pintariching/railwind), integrated into the cargo build process using [build scripts](https://doc.rust-lang.org/cargo/reference/build-scripts.html)
-- Compile-time verified HTML templates using [Askama](https://github.com/djc/askama)
+- Compile-time verified HTML templates using [htmf](https://github.com/raffomania/htmf)
 - Compile-time verified database queries using [SQLx](https://github.com/launchbadge/sqlx)
 - Concurrent, isolated integration tests with per-test in-memory postgres databases
 - Single-binary deployment; all assets baked in

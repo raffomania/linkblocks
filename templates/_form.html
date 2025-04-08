@@ -1,5 +1,0 @@
-{% macro errors(errors, path) %}
-  {% for message in errors.filter(path) %}
-    <p class="text-red-700">{{ message }}</p>
-  {% endfor %}
-{% endmacro %}

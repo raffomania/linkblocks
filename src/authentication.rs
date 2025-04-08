@@ -1,11 +1,11 @@
 use anyhow::{Context, anyhow};
 use argon2::PasswordVerifier;
-use askama::filters::urlencode;
 use axum::{
     extract::{FromRequestParts, OptionalFromRequestParts, OriginalUri},
     http::request::Parts,
     response::Redirect,
 };
+use percent_encoding::utf8_percent_encode;
 use tower_sessions::Session;
 use uuid::Uuid;
 
@@ -137,9 +137,9 @@ impl FromRequestParts<AppState> for AuthUser {
             .path_and_query()
             .map(|pq| pq.as_str())
             .unwrap_or_default();
-        let redirect_after_login = urlencode(redirect_after_login)
-            .map(|d| d.to_string())
-            .unwrap_or_default();
+        let redirect_after_login =
+            utf8_percent_encode(redirect_after_login, percent_encoding::NON_ALPHANUMERIC)
+                .to_string();
 
         let redirect_to = format!("/login?previous_uri={redirect_after_login}",);
         let error_redirect = Redirect::to(&redirect_to);

@@ -133,11 +133,8 @@ lint-fix *args: reuse-lint
 reuse-lint:
     reuse --root . lint
 
-format: format-templates
+format:
     cargo +nightly fmt --all
-
-format-templates:
-    npx prettier --write '**/*.html'
 
 generate-sbom:
     cargo bin cargo-cyclonedx --format json --describe binaries

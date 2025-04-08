@@ -277,250 +277,6 @@
       "version": "0.5.3"
     },
     {
-      "bom-ref": "git+https://github.com/bikesheddev/askama.git?rev=baa0aef8e3307f9a8575f8e36a59db221b18eaff#askama@0.13.0",
-      "description": "Type-safe, compiled Jinja-like templates for Rust",
-      "externalReferences": [
-        {
-          "type": "documentation",
-          "url": "https://docs.rs/askama"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/djc/askama"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/djc/askama"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "MIT OR Apache-2.0"
-        }
-      ],
-      "name": "askama",
-      "purl": "pkg:cargo/askama@0.13.0?vcs_url=git%2Bhttps://github.com/bikesheddev/askama.git%3Frev=baa0aef8e3307f9a8575f8e36a59db221b18eaff%40baa0aef8e3307f9a8575f8e36a59db221b18eaff",
-      "scope": "required",
-      "type": "library",
-      "version": "0.13.0"
-    },
-    {
-      "bom-ref": "git+https://github.com/rinja-rs/askama.git#askama@0.13.0",
-      "description": "Type-safe, compiled Jinja-like templates for Rust",
-      "externalReferences": [
-        {
-          "type": "documentation",
-          "url": "https://docs.rs/askama"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/djc/askama"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/djc/askama"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "MIT OR Apache-2.0"
-        }
-      ],
-      "name": "askama",
-      "purl": "pkg:cargo/askama@0.13.0?vcs_url=git%2Bhttps://github.com/rinja-rs/askama.git%40704f8f14678c0ce62920f2c8f1374fef56d21e7f",
-      "scope": "required",
-      "type": "library",
-      "version": "0.13.0"
-    },
-    {
-      "bom-ref": "git+https://github.com/bikesheddev/askama.git?rev=baa0aef8e3307f9a8575f8e36a59db221b18eaff#askama_axum@0.6.0",
-      "description": "Axum integration for Askama templates",
-      "externalReferences": [
-        {
-          "type": "documentation",
-          "url": "https://docs.rs/askama"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/djc/askama"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/djc/askama"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "MIT OR Apache-2.0"
-        }
-      ],
-      "name": "askama_axum",
-      "purl": "pkg:cargo/askama_axum@0.6.0?vcs_url=git%2Bhttps://github.com/bikesheddev/askama.git%3Frev=baa0aef8e3307f9a8575f8e36a59db221b18eaff%40baa0aef8e3307f9a8575f8e36a59db221b18eaff",
-      "scope": "required",
-      "type": "library",
-      "version": "0.6.0"
-    },
-    {
-      "bom-ref": "git+https://github.com/bikesheddev/askama.git?rev=baa0aef8e3307f9a8575f8e36a59db221b18eaff#askama_derive@0.13.0",
-      "description": "Procedural macro package for Askama",
-      "externalReferences": [
-        {
-          "type": "website",
-          "url": "https://github.com/djc/askama"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/djc/askama"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "MIT OR Apache-2.0"
-        }
-      ],
-      "name": "askama_derive",
-      "purl": "pkg:cargo/askama_derive@0.13.0?vcs_url=git%2Bhttps://github.com/bikesheddev/askama.git%3Frev=baa0aef8e3307f9a8575f8e36a59db221b18eaff%40baa0aef8e3307f9a8575f8e36a59db221b18eaff",
-      "scope": "required",
-      "type": "library",
-      "version": "0.13.0"
-    },
-    {
-      "bom-ref": "git+https://github.com/rinja-rs/askama.git#askama_derive@0.13.0",
-      "description": "Procedural macro package for Askama",
-      "externalReferences": [
-        {
-          "type": "website",
-          "url": "https://github.com/djc/askama"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/djc/askama"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "MIT OR Apache-2.0"
-        }
-      ],
-      "name": "askama_derive",
-      "purl": "pkg:cargo/askama_derive@0.13.0?vcs_url=git%2Bhttps://github.com/rinja-rs/askama.git%40704f8f14678c0ce62920f2c8f1374fef56d21e7f",
-      "scope": "required",
-      "type": "library",
-      "version": "0.13.0"
-    },
-    {
-      "bom-ref": "git+https://github.com/bikesheddev/askama.git?rev=baa0aef8e3307f9a8575f8e36a59db221b18eaff#askama_escape@0.11.0",
-      "description": "Optimized HTML escaping code, extracted from Askama",
-      "externalReferences": [
-        {
-          "type": "documentation",
-          "url": "https://docs.rs/askama_escape"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/djc/askama"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/djc/askama"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "MIT OR Apache-2.0"
-        }
-      ],
-      "name": "askama_escape",
-      "purl": "pkg:cargo/askama_escape@0.11.0?vcs_url=git%2Bhttps://github.com/bikesheddev/askama.git%3Frev=baa0aef8e3307f9a8575f8e36a59db221b18eaff%40baa0aef8e3307f9a8575f8e36a59db221b18eaff",
-      "scope": "required",
-      "type": "library",
-      "version": "0.11.0"
-    },
-    {
-      "bom-ref": "git+https://github.com/rinja-rs/askama.git#askama_escape@0.11.0",
-      "description": "Optimized HTML escaping code, extracted from Askama",
-      "externalReferences": [
-        {
-          "type": "documentation",
-          "url": "https://docs.rs/askama_escape"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/djc/askama"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/djc/askama"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "MIT OR Apache-2.0"
-        }
-      ],
-      "name": "askama_escape",
-      "purl": "pkg:cargo/askama_escape@0.11.0?vcs_url=git%2Bhttps://github.com/rinja-rs/askama.git%40704f8f14678c0ce62920f2c8f1374fef56d21e7f",
-      "scope": "required",
-      "type": "library",
-      "version": "0.11.0"
-    },
-    {
-      "bom-ref": "git+https://github.com/bikesheddev/askama.git?rev=baa0aef8e3307f9a8575f8e36a59db221b18eaff#askama_parser@0.3.1",
-      "description": "Parser for Askama templates",
-      "externalReferences": [
-        {
-          "type": "documentation",
-          "url": "https://docs.rs/askama"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/djc/askama"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/djc/askama"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "MIT OR Apache-2.0"
-        }
-      ],
-      "name": "askama_parser",
-      "purl": "pkg:cargo/askama_parser@0.3.1?vcs_url=git%2Bhttps://github.com/bikesheddev/askama.git%3Frev=baa0aef8e3307f9a8575f8e36a59db221b18eaff%40baa0aef8e3307f9a8575f8e36a59db221b18eaff",
-      "scope": "required",
-      "type": "library",
-      "version": "0.3.1"
-    },
-    {
-      "bom-ref": "git+https://github.com/rinja-rs/askama.git#askama_parser@0.3.1",
-      "description": "Parser for Askama templates",
-      "externalReferences": [
-        {
-          "type": "documentation",
-          "url": "https://docs.rs/askama"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/djc/askama"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/djc/askama"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "MIT OR Apache-2.0"
-        }
-      ],
-      "name": "askama_parser",
-      "purl": "pkg:cargo/askama_parser@0.3.1?vcs_url=git%2Bhttps://github.com/rinja-rs/askama.git%40704f8f14678c0ce62920f2c8f1374fef56d21e7f",
-      "scope": "required",
-      "type": "library",
-      "version": "0.3.1"
-    },
-    {
       "author": "David Tolnay <dtolnay@gmail.com>",
       "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#async-trait@0.1.85",
       "description": "Type erasure for async trait methods",
@@ -884,37 +640,6 @@
       "scope": "required",
       "type": "library",
       "version": "1.6.0"
-    },
-    {
-      "author": "Alex Crichton <alex@alexcrichton.com>, David Tolnay <dtolnay@gmail.com>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#basic-toml@0.1.9",
-      "description": "Minimal TOML library with few dependencies",
-      "externalReferences": [
-        {
-          "type": "documentation",
-          "url": "https://docs.rs/basic-toml"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/dtolnay/basic-toml"
-        }
-      ],
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "823388e228f614e9558c6804262db37960ec8821856535f5c3f59913140558f8"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "MIT OR Apache-2.0"
-        }
-      ],
-      "name": "basic-toml",
-      "purl": "pkg:cargo/basic-toml@0.1.9",
-      "scope": "required",
-      "type": "library",
-      "version": "0.1.9"
     },
     {
       "author": "The Rust Project Developers",
@@ -3553,41 +3278,6 @@
       "version": "1.0.3"
     },
     {
-      "author": "Leopold Arkham <leopold.arkham@gmail.com>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#humansize@2.1.3",
-      "description": "A configurable crate to easily represent sizes in a human-readable format.",
-      "externalReferences": [
-        {
-          "type": "documentation",
-          "url": "https://docs.rs/humansize"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/LeopoldArkham/humansize"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/LeopoldArkham/humansize"
-        }
-      ],
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "6cb51c9a029ddc91b07a787f1d86b53ccfa49b0e86688c946ebe8d3555685dd7"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "MIT OR Apache-2.0"
-        }
-      ],
-      "name": "humansize",
-      "purl": "pkg:cargo/humansize@2.1.3",
-      "scope": "required",
-      "type": "library",
-      "version": "2.1.3"
-    },
-    {
       "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#hyper-rustls@0.27.5",
       "description": "Rustls+hyper integration for pure rust HTTPS",
       "externalReferences": [
@@ -4905,37 +4595,6 @@
       "version": "2.0.5"
     },
     {
-      "author": "Alex Huszagh <ahuszagh@gmail.com>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#minimal-lexical@0.2.1",
-      "description": "Fast float parsing conversion routines.",
-      "externalReferences": [
-        {
-          "type": "documentation",
-          "url": "https://docs.rs/minimal-lexical"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/Alexhuszagh/minimal-lexical"
-        }
-      ],
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "68354c5c6bd36d73ff3feceb05efa59b6acb7626617f4962be322a825e61f79a"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "MIT OR Apache-2.0"
-        }
-      ],
-      "name": "minimal-lexical",
-      "purl": "pkg:cargo/minimal-lexical@0.2.1",
-      "scope": "required",
-      "type": "library",
-      "version": "0.2.1"
-    },
-    {
       "author": "Carl Lerche <me@carllerche.com>, Thomas de Zeeuw <thomasdezeeuw@gmail.com>, Tokio Contributors <team@tokio.rs>",
       "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#mio@1.0.3",
       "description": "Lightweight non-blocking I/O.",
@@ -4965,37 +4624,6 @@
       "scope": "required",
       "type": "library",
       "version": "1.0.3"
-    },
-    {
-      "author": "contact@geoffroycouprie.com",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#nom@7.1.3",
-      "description": "A byte-oriented, zero-copy, parser combinators library",
-      "externalReferences": [
-        {
-          "type": "documentation",
-          "url": "https://docs.rs/nom"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/Geal/nom"
-        }
-      ],
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "d273983c5a657a70a3e8f2a01329822f3b8c8172b73826411a55751e404a0a4a"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "MIT"
-        }
-      ],
-      "name": "nom",
-      "purl": "pkg:cargo/nom@7.1.3",
-      "scope": "required",
-      "type": "library",
-      "version": "7.1.3"
     },
     {
       "author": "ogham@bsago.me, Ryan Scheel (Havvy) <ryan.havvy@gmail.com>, Josh Triplett <josh@joshtriplett.org>, The Nushell Project Developers",
@@ -10194,90 +9822,14 @@
   "dependencies": [
     {
       "dependsOn": [
-        "git+https://github.com/bikesheddev/askama.git?rev=baa0aef8e3307f9a8575f8e36a59db221b18eaff#askama_derive@0.13.0",
-        "git+https://github.com/bikesheddev/askama.git?rev=baa0aef8e3307f9a8575f8e36a59db221b18eaff#askama_escape@0.11.0",
-        "registry+https://github.com/rust-lang/crates.io-index#humansize@2.1.3",
-        "registry+https://github.com/rust-lang/crates.io-index#num-traits@0.2.19",
-        "registry+https://github.com/rust-lang/crates.io-index#percent-encoding@2.3.1"
-      ],
-      "ref": "git+https://github.com/bikesheddev/askama.git?rev=baa0aef8e3307f9a8575f8e36a59db221b18eaff#askama@0.13.0"
-    },
-    {
-      "dependsOn": [
-        "git+https://github.com/bikesheddev/askama.git?rev=baa0aef8e3307f9a8575f8e36a59db221b18eaff#askama@0.13.0",
-        "registry+https://github.com/rust-lang/crates.io-index#axum-core@0.5.2",
-        "registry+https://github.com/rust-lang/crates.io-index#http@1.2.0"
-      ],
-      "ref": "git+https://github.com/bikesheddev/askama.git?rev=baa0aef8e3307f9a8575f8e36a59db221b18eaff#askama_axum@0.6.0"
-    },
-    {
-      "dependsOn": [
-        "git+https://github.com/bikesheddev/askama.git?rev=baa0aef8e3307f9a8575f8e36a59db221b18eaff#askama_parser@0.3.1",
-        "registry+https://github.com/rust-lang/crates.io-index#basic-toml@0.1.9",
-        "registry+https://github.com/rust-lang/crates.io-index#mime@0.3.17",
-        "registry+https://github.com/rust-lang/crates.io-index#mime_guess@2.0.5",
-        "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.92",
-        "registry+https://github.com/rust-lang/crates.io-index#quote@1.0.38",
-        "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.219",
-        "registry+https://github.com/rust-lang/crates.io-index#syn@2.0.96"
-      ],
-      "ref": "git+https://github.com/bikesheddev/askama.git?rev=baa0aef8e3307f9a8575f8e36a59db221b18eaff#askama_derive@0.13.0"
-    },
-    {
-      "dependsOn": [],
-      "ref": "git+https://github.com/bikesheddev/askama.git?rev=baa0aef8e3307f9a8575f8e36a59db221b18eaff#askama_escape@0.11.0"
-    },
-    {
-      "dependsOn": [
-        "registry+https://github.com/rust-lang/crates.io-index#nom@7.1.3"
-      ],
-      "ref": "git+https://github.com/bikesheddev/askama.git?rev=baa0aef8e3307f9a8575f8e36a59db221b18eaff#askama_parser@0.3.1"
-    },
-    {
-      "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#markup_fmt@0.19.0"
       ],
       "ref": "git+https://github.com/raffomania/htmf#0.3.0"
     },
     {
       "dependsOn": [
-        "git+https://github.com/rinja-rs/askama.git#askama_derive@0.13.0",
-        "git+https://github.com/rinja-rs/askama.git#askama_escape@0.11.0",
-        "registry+https://github.com/rust-lang/crates.io-index#humansize@2.1.3",
-        "registry+https://github.com/rust-lang/crates.io-index#num-traits@0.2.19",
-        "registry+https://github.com/rust-lang/crates.io-index#percent-encoding@2.3.1"
-      ],
-      "ref": "git+https://github.com/rinja-rs/askama.git#askama@0.13.0"
-    },
-    {
-      "dependsOn": [
-        "git+https://github.com/rinja-rs/askama.git#askama_parser@0.3.1",
-        "registry+https://github.com/rust-lang/crates.io-index#basic-toml@0.1.9",
-        "registry+https://github.com/rust-lang/crates.io-index#mime@0.3.17",
-        "registry+https://github.com/rust-lang/crates.io-index#mime_guess@2.0.5",
-        "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.92",
-        "registry+https://github.com/rust-lang/crates.io-index#quote@1.0.38",
-        "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.219",
-        "registry+https://github.com/rust-lang/crates.io-index#syn@2.0.96"
-      ],
-      "ref": "git+https://github.com/rinja-rs/askama.git#askama_derive@0.13.0"
-    },
-    {
-      "dependsOn": [],
-      "ref": "git+https://github.com/rinja-rs/askama.git#askama_escape@0.11.0"
-    },
-    {
-      "dependsOn": [
-        "registry+https://github.com/rust-lang/crates.io-index#nom@7.1.3"
-      ],
-      "ref": "git+https://github.com/rinja-rs/askama.git#askama_parser@0.3.1"
-    },
-    {
-      "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#anyhow@1.0.97",
         "registry+https://github.com/rust-lang/crates.io-index#argon2@0.5.3",
-        "git+https://github.com/rinja-rs/askama.git#askama@0.13.0",
-        "git+https://github.com/bikesheddev/askama.git?rev=baa0aef8e3307f9a8575f8e36a59db221b18eaff#askama_axum@0.6.0",
         "registry+https://github.com/rust-lang/crates.io-index#axum@0.8.3",
         "registry+https://github.com/rust-lang/crates.io-index#axum-server@0.7.2",
         "registry+https://github.com/rust-lang/crates.io-index#clap@4.5.34",
@@ -10289,6 +9841,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#listenfd@1.0.2",
         "registry+https://github.com/rust-lang/crates.io-index#mime_guess@2.0.5",
         "registry+https://github.com/rust-lang/crates.io-index#openidconnect@4.0.0",
+        "registry+https://github.com/rust-lang/crates.io-index#percent-encoding@2.3.1",
         "registry+https://github.com/rust-lang/crates.io-index#railwind@0.1.5",
         "registry+https://github.com/rust-lang/crates.io-index#rand@0.9.0",
         "registry+https://github.com/rust-lang/crates.io-index#regex@1.11.1",
@@ -10477,12 +10030,6 @@
     {
       "dependsOn": [],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#base64ct@1.6.0"
-    },
-    {
-      "dependsOn": [
-        "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.219"
-      ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#basic-toml@0.1.9"
     },
     {
       "dependsOn": [
@@ -11078,12 +10625,6 @@
     },
     {
       "dependsOn": [
-        "registry+https://github.com/rust-lang/crates.io-index#libm@0.2.11"
-      ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#humansize@2.1.3"
-    },
-    {
-      "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#futures-util@0.3.31",
         "registry+https://github.com/rust-lang/crates.io-index#http@1.2.0",
         "registry+https://github.com/rust-lang/crates.io-index#hyper@1.5.2",
@@ -11392,21 +10933,10 @@
       "ref": "registry+https://github.com/rust-lang/crates.io-index#mime_guess@2.0.5"
     },
     {
-      "dependsOn": [],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#minimal-lexical@0.2.1"
-    },
-    {
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.169"
       ],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#mio@1.0.3"
-    },
-    {
-      "dependsOn": [
-        "registry+https://github.com/rust-lang/crates.io-index#memchr@2.7.4",
-        "registry+https://github.com/rust-lang/crates.io-index#minimal-lexical@0.2.1"
-      ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#nom@7.1.3"
     },
     {
       "dependsOn": [

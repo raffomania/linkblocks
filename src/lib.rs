@@ -17,6 +17,7 @@ pub mod server;
 mod views;
 
 mod htmf_response;
+#[cfg(debug_assertions)]
 mod insert_demo_data;
 #[cfg(test)]
 mod tests;

@@ -8,7 +8,6 @@ SPDX-PackageDownloadLocation = "https://github.com/raffomania/linkblocks"
 path = [
     "**.rs",
     "migrations/*.sql",
-    "templates/*.html",
     "Justfile",
     ".github/**.yml",
     "pre-commit.sh",
