@@ -2,3 +2,4 @@ wrap_comments = true
 format_strings = true
 imports_granularity = "Crate"
 group_imports = "StdExternalCrate"
+use_field_init_shorthand = true
