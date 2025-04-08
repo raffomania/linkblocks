@@ -1,9 +1,9 @@
-use axum::{http::StatusCode, Router};
+use axum::{Router, http::StatusCode};
 use sqlx::{Pool, Postgres};
 
 use crate::{
     forms::users::CreateUser,
-    server::{app, AppState},
+    server::{AppState, app},
 };
 
 use super::request_builder::RequestBuilder;

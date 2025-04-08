@@ -1,4 +1,4 @@
-use sqlx::{query_as, FromRow};
+use sqlx::{FromRow, query_as};
 use uuid::Uuid;
 
 use crate::authentication::hash_password;

@@ -1,14 +1,14 @@
 use std::path::PathBuf;
 
 use crate::response_error::{ResponseError, ResponseResult};
-use anyhow::{anyhow, Context};
+use anyhow::{Context, anyhow};
 use axum::{
-    extract::Path,
-    http::{header, HeaderMap},
-    routing::get,
     Router,
+    extract::Path,
+    http::{HeaderMap, header},
+    routing::get,
 };
-use include_dir::{include_dir, Dir};
+use include_dir::{Dir, include_dir};
 use mime_guess::Mime;
 
 pub fn router() -> Router {
@@ -79,7 +79,7 @@ mod tests {
     use include_dir::Dir;
 
     use super::ResponseResult;
-    use super::{get_mime, ASSETS_DIR};
+    use super::{ASSETS_DIR, get_mime};
 
     #[test]
     fn all_assets_have_a_mime_type() -> ResponseResult<()> {

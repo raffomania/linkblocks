@@ -10,12 +10,12 @@ use crate::{
     views::layout,
 };
 use crate::{extract, forms, views};
+use axum::Form;
 use axum::extract::Path;
 use axum::response::Response;
 use axum::response::{IntoResponse, Redirect};
 use axum::routing::post;
-use axum::Form;
-use axum::{routing::get, Router};
+use axum::{Router, routing::get};
 use garde::Validate;
 use uuid::Uuid;
 

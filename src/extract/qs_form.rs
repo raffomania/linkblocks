@@ -1,7 +1,7 @@
 use anyhow::Context;
 use axum::{
-    extract::{FromRequest, RawForm, Request},
     RequestExt,
+    extract::{FromRequest, RawForm, Request},
 };
 
 use crate::response_error::ResponseError;

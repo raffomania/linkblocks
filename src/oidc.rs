@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Context};
+use anyhow::{Context, anyhow};
 use openidconnect::url::Url;
 use serde::{Deserialize, Serialize};
 
@@ -6,9 +6,9 @@ use openidconnect::core::{
     CoreClient, CoreIdTokenVerifier, CoreProviderMetadata, CoreResponseType,
 };
 use openidconnect::{
-    reqwest, AccessTokenHash, AuthenticationFlow, AuthorizationCode, ClientId, ClientSecret,
-    CsrfToken, IssuerUrl, Nonce, OAuth2TokenResponse, PkceCodeChallenge, PkceCodeVerifier,
-    RedirectUrl, Scope,
+    AccessTokenHash, AuthenticationFlow, AuthorizationCode, ClientId, ClientSecret, CsrfToken,
+    IssuerUrl, Nonce, OAuth2TokenResponse, PkceCodeChallenge, PkceCodeVerifier, RedirectUrl, Scope,
+    reqwest,
 };
 use tower_sessions::Session;
 

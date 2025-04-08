@@ -1,7 +1,7 @@
 use serde::Deserialize;
+use sqlx::FromRow;
 use sqlx::query;
 use sqlx::query_as;
-use sqlx::FromRow;
 use time::OffsetDateTime;
 use uuid::Uuid;
 

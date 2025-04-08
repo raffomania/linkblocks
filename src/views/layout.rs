@@ -2,7 +2,7 @@ use htmf::prelude::*;
 
 use crate::{
     authentication::AuthUser,
-    db::{self, layout::AuthedInfo, AppTx, List},
+    db::{self, AppTx, List, layout::AuthedInfo},
     response_error::ResponseResult,
 };
 

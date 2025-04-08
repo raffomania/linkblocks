@@ -1,5 +1,5 @@
 use serde::Deserialize;
-use sqlx::{query_as, FromRow};
+use sqlx::{FromRow, query_as};
 use time::OffsetDateTime;
 use uuid::Uuid;
 

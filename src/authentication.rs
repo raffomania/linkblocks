@@ -4,7 +4,7 @@ use crate::{
     response_error::{ResponseError, ResponseResult},
     server::AppState,
 };
-use anyhow::{anyhow, Context};
+use anyhow::{Context, anyhow};
 use argon2::PasswordVerifier;
 use askama::filters::urlencode;
 use axum::{

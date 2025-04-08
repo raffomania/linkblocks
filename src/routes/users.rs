@@ -1,9 +1,9 @@
-use anyhow::{anyhow, Context};
+use anyhow::{Context, anyhow};
 use axum::{
+    Router,
     extract::{Query, State},
     response::{IntoResponse, Redirect, Response},
     routing::{get, post},
-    Router,
 };
 use garde::{Report, Validate};
 use tower_sessions::Session;

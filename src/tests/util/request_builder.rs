@@ -1,7 +1,7 @@
 use axum::{
-    body::Body,
-    http::{self, request, HeaderMap, HeaderName, HeaderValue, Request, Response, StatusCode},
     Router,
+    body::Body,
+    http::{self, HeaderMap, HeaderName, HeaderValue, Request, Response, StatusCode, request},
 };
 use http_body_util::BodyExt;
 use mime_guess::mime;

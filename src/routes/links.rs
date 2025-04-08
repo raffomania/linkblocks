@@ -1,10 +1,10 @@
 use anyhow::Context;
 use axum::{
+    Router,
     extract::{Path, Query},
     http::HeaderMap,
     response::{IntoResponse, Redirect, Response},
     routing::{delete, get},
-    Router,
 };
 use garde::Validate;
 use serde::Deserialize;
