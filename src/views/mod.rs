@@ -10,7 +10,7 @@ pub mod index;
 pub mod layout;
 pub mod links;
 pub mod list;
-pub mod lists;
+pub mod list_unpinned_lists;
 pub mod login;
 pub mod login_demo;
 pub mod oidc_select_username;

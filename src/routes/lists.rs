@@ -18,7 +18,7 @@ use crate::{
     response_error::{ResponseError, ResponseResult},
     server::AppState,
     views,
-    views::{layout, lists::UnpinnedListsTemplate},
+    views::layout,
 };
 
 pub fn router() -> Router<AppState> {
@@ -186,11 +186,14 @@ async fn edit_pinned(
 async fn list_unpinned(
     auth_user: AuthUser,
     extract::Tx(mut tx): extract::Tx,
-) -> ResponseResult<UnpinnedListsTemplate> {
+) -> ResponseResult<HtmfResponse> {
     let lists = db::lists::list_unpinned(&mut tx, auth_user.user_id).await?;
 
-    Ok(UnpinnedListsTemplate {
-        layout: layout::Template::from_db(&mut tx, Some(&auth_user)).await?,
-        lists,
-    })
+    Ok(
+        views::list_unpinned_lists::view(views::list_unpinned_lists::Data {
+            layout: layout::Template::from_db(&mut tx, Some(&auth_user)).await?,
+            lists,
+        })
+        .into(),
+    )
 }
