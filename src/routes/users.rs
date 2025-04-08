@@ -18,7 +18,7 @@ use crate::{
     oidc::{self},
     response_error::{ResponseError, ResponseResult},
     server::AppState,
-    views::{self, layout, login, users::ProfileTemplate},
+    views::{self, layout, login, oidc_select_username, users::ProfileTemplate},
 };
 
 pub fn router() -> Router<AppState> {
@@ -116,7 +116,10 @@ async fn get_login_oidc_redirect(
         // Show new users a form to choose a username
         Err(ResponseError::NotFound) => {
             authed_oidc_info.save_in_session(&session).await?;
-            Ok(views::oidc_select_username::Template::default().into_response())
+            Ok(HtmfResponse(oidc_select_username::view(
+                views::oidc_select_username::Data::default(),
+            ))
+            .into_response())
         }
         Err(e) => Err(e),
     }
@@ -128,10 +131,12 @@ async fn post_login_oidc_redirect(
     QsForm(input): QsForm<OidcSelectUsername>,
 ) -> ResponseResult<Response> {
     if let Err(errors) = input.validate() {
-        return Ok(views::oidc_select_username::Template {
-            errors: errors.into(),
-            input,
-        }
+        return Ok(HtmfResponse(views::oidc_select_username::view(
+            views::oidc_select_username::Data {
+                errors: errors.into(),
+                form_input: input,
+            },
+        ))
         .into_response());
     };
 

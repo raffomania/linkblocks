@@ -16,7 +16,7 @@ mod routes;
 pub mod server;
 mod views;
 
-pub mod htmf_response;
-pub mod insert_demo_data;
+mod htmf_response;
+mod insert_demo_data;
 #[cfg(test)]
 mod tests;
