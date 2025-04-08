@@ -18,10 +18,7 @@ use crate::{
     response_error::{ResponseError, ResponseResult},
     server::AppState,
     views,
-    views::{
-        layout,
-        lists::{EditListTitleTemplate, UnpinnedListsTemplate},
-    },
+    views::{layout, lists::UnpinnedListsTemplate},
 };
 
 pub fn router() -> Router<AppState> {
@@ -110,7 +107,7 @@ async fn get_edit_title(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
     Path(list_id): Path<Uuid>,
-) -> ResponseResult<EditListTitleTemplate> {
+) -> ResponseResult<HtmfResponse> {
     let list = db::lists::by_id(&mut tx, list_id).await?;
 
     if list.user_id != auth_user.user_id {
@@ -119,12 +116,13 @@ async fn get_edit_title(
 
     let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
 
-    Ok(EditListTitleTemplate {
+    Ok(views::edit_list_title::view(views::edit_list_title::Data {
         layout,
         errors: FormErrors::default(),
-        input: forms::lists::EditTitle::default(),
+        form_input: forms::lists::EditTitle::default(),
         list_id,
     })
+    .into())
 }
 
 async fn post_edit_title(

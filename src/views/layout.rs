@@ -1,4 +1,4 @@
-use htmf::prelude::*;
+use htmf::{into_elements::IntoElements, prelude::*};
 
 use super::base_document::base_document;
 use crate::{
@@ -24,7 +24,7 @@ impl Template {
     }
 }
 
-pub fn layout(children: Element, layout: &Template) -> Element {
+pub fn layout<Children: IntoElements>(children: Children, layout: &Template) -> Element {
     base_document(div(class("flex-row-reverse h-full sm:flex")).with([
         main_(class("sm:overflow-y-auto sm:grow")).with(children),
         match &layout.authed_info {

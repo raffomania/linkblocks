@@ -1,21 +1,7 @@
 use askama::Template;
-use uuid::Uuid;
 
 use super::layout;
-use crate::{
-    db::{self},
-    form_errors::FormErrors,
-    forms::{self},
-};
-
-#[derive(Template)]
-#[template(path = "edit_list_title.html")]
-pub struct EditListTitleTemplate {
-    pub layout: layout::Template,
-    pub input: forms::lists::EditTitle,
-    pub errors: FormErrors,
-    pub list_id: Uuid,
-}
+use crate::db::{self};
 
 #[derive(Template)]
 #[template(path = "list_unpinned_lists.html")]
