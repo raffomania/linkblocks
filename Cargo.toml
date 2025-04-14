@@ -58,6 +58,10 @@ htmf = { git = "https://github.com/raffomania/htmf", features = [
     "pretty-print",
 ] }
 percent-encoding = "2.3.1"
+url = "2.5.4"
+
+[patch.crates-io]
+garde = { git = "https://github.com/raffomania/garde", branch = "url-length" }
 
 [build-dependencies]
 railwind = "0.1.5"

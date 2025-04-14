@@ -7,6 +7,7 @@ use listenfd::ListenFd;
 use sqlx::PgPool;
 use tower_http::trace::TraceLayer;
 use tower_sessions::ExpiredDeletion;
+use url::Url;
 
 use crate::{
     cli::ListenArgs,
@@ -17,7 +18,7 @@ use crate::{
 #[derive(Clone)]
 pub struct AppState {
     pub pool: sqlx::PgPool,
-    pub base_url: String,
+    pub base_url: Url,
     pub demo_mode: bool,
     pub oidc_state: oidc::State,
 }

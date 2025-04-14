@@ -960,8 +960,7 @@ dependencies = [
 [[package]]
 name = "garde"
 version = "0.22.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a989bd2fd12136080f7825ff410d9239ce84a2a639487fc9d924ee42e2fb84f"
+source = "git+https://github.com/raffomania/garde?branch=url-length#898c5d298a04a35cdd3029a3d7ea3108c8d6656e"
 dependencies = [
  "compact_str",
  "garde_derive",
@@ -972,8 +971,7 @@ dependencies = [
 [[package]]
 name = "garde_derive"
 version = "0.22.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1f7f0545bbbba0a37d4d445890fa5759814e0716f02417b39f6fab292193df68"
+source = "git+https://github.com/raffomania/garde?branch=url-length#898c5d298a04a35cdd3029a3d7ea3108c8d6656e"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1120,7 +1118,7 @@ dependencies = [
 [[package]]
 name = "htmf"
 version = "0.3.0"
-source = "git+https://github.com/raffomania/htmf#04dc4272f62a8337f95eb0b096c890e8e93f9498"
+source = "git+https://github.com/raffomania/htmf#f16a8fc29f4f2bb0b42fc97586f123d4b9506f03"
 dependencies = [
  "markup_fmt",
 ]
@@ -1594,6 +1592,7 @@ dependencies = [
  "tower-sessions-sqlx-store",
  "tracing",
  "tracing-subscriber",
+ "url",
  "uuid",
  "visdom",
  "walkdir",

@@ -1,5 +1,6 @@
 use axum::{Router, http::StatusCode};
 use sqlx::{Pool, Postgres};
+use url::Url;
 
 use super::request_builder::RequestBuilder;
 use crate::{
@@ -21,7 +22,7 @@ impl TestApp {
         TestApp {
             router: app(AppState {
                 pool: pool.clone(),
-                base_url: String::new(),
+                base_url: Url::parse("http://linkblocks.localhost").unwrap(),
                 demo_mode: false,
                 oidc_state: crate::oidc::State::NotConfigured,
             })

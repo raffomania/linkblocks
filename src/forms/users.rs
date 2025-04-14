@@ -1,6 +1,7 @@
 use garde::Validate;
 use openidconnect::{AuthorizationCode, CsrfToken};
 use serde::{Deserialize, Serialize};
+use url::Url;
 
 #[derive(Validate)]
 pub struct CreateUser {
@@ -18,8 +19,8 @@ pub struct OidcSelectUsername {
 
 #[derive(Serialize, Deserialize, Validate, Debug, Default)]
 pub struct Login {
-    #[garde(skip)]
-    pub previous_uri: Option<String>,
+    #[garde(length(max = 1000))]
+    pub previous_uri: Option<Url>,
     #[garde(dive)]
     pub credentials: Credentials,
 }

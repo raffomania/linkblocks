@@ -4,6 +4,7 @@ use anyhow::{Result, anyhow};
 use clap::{Args, Parser, Subcommand};
 use garde::Validate;
 use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
+use url::Url;
 
 #[cfg(debug_assertions)]
 use crate::insert_demo_data::insert_demo_data;
@@ -69,7 +70,7 @@ enum Command {
         #[clap(flatten)]
         admin_credentials: AdminCredentials,
         #[clap(long, env)]
-        base_url: String,
+        base_url: Url,
         #[clap(long, env, default_value = "false")]
         demo_mode: bool,
         #[clap(flatten)]

@@ -1,11 +1,12 @@
 #[allow(clippy::wildcard_imports)]
 use htmf::prelude::*;
+use url::Url;
 
 use super::layout::{self, layout};
 
 pub struct ProfileTemplate {
     pub layout: layout::Template,
-    pub base_url: String,
+    pub base_url: Url,
 }
 
 pub fn profile(template: &ProfileTemplate) -> Element {
@@ -29,7 +30,7 @@ fn bookmarklet_help() -> Element {
     ])
 }
 
-fn bookmarklet(base_url: &str) -> Element {
+fn bookmarklet(base_url: &Url) -> Element {
     // window.open(
     //   "{ base_url }/bookmarks/create?url="
     //   +encodeURIComponent(window.location.href)

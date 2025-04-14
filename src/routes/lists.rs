@@ -50,7 +50,7 @@ async fn list(
         }
         None => {
             if list.private {
-                return Err(ResponseError::NotFound);
+                return Err(ResponseError::NotAuthenticated);
             }
         }
     }

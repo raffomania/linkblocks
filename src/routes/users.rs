@@ -62,9 +62,9 @@ async fn post_login(
         .into_response());
     }
 
-    let redirect_to = input.previous_uri.unwrap_or("/".to_string());
+    let redirect_to = input.previous_uri.unwrap_or(state.base_url);
 
-    Ok(Redirect::to(&redirect_to).into_response())
+    Ok(Redirect::to(redirect_to.as_str()).into_response())
 }
 
 async fn get_login_oidc(
@@ -181,10 +181,15 @@ async fn get_login(
     if state.demo_mode {
         Ok(HtmfResponse(views::login_demo::view()).into_response())
     } else {
+        let previous_uri = query
+            .previous_uri
+            .map(|u| state.base_url.join(&u))
+            .transpose()?;
+
         Ok(HtmfResponse(login::login(&login::Template::new(
             Report::new(),
             Login {
-                previous_uri: query.previous_uri,
+                previous_uri,
                 ..Default::default()
             },
             state.oidc_state,

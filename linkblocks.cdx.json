@@ -2625,18 +2625,12 @@
       "version": "0.3.31"
     },
     {
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#garde@0.22.0",
+      "bom-ref": "git+https://github.com/raffomania/garde?branch=url-length#0.22.0",
       "description": "Validation library",
       "externalReferences": [
         {
           "type": "vcs",
           "url": "https://github.com/jprochazk/garde"
-        }
-      ],
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "6a989bd2fd12136080f7825ff410d9239ce84a2a639487fc9d924ee42e2fb84f"
         }
       ],
       "licenses": [
@@ -2645,24 +2639,18 @@
         }
       ],
       "name": "garde",
-      "purl": "pkg:cargo/garde@0.22.0",
+      "purl": "pkg:cargo/garde@0.22.0?vcs_url=git%2Bhttps://github.com/raffomania/garde%3Fbranch=url-length%40898c5d298a04a35cdd3029a3d7ea3108c8d6656e",
       "scope": "required",
       "type": "library",
       "version": "0.22.0"
     },
     {
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#garde_derive@0.22.0",
+      "bom-ref": "git+https://github.com/raffomania/garde?branch=url-length#garde_derive@0.22.0",
       "description": "Derive macros for garde",
       "externalReferences": [
         {
           "type": "vcs",
           "url": "https://github.com/jprochazk/garde"
-        }
-      ],
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "1f7f0545bbbba0a37d4d445890fa5759814e0716f02417b39f6fab292193df68"
         }
       ],
       "licenses": [
@@ -2671,7 +2659,7 @@
         }
       ],
       "name": "garde_derive",
-      "purl": "pkg:cargo/garde_derive@0.22.0",
+      "purl": "pkg:cargo/garde_derive@0.22.0?vcs_url=git%2Bhttps://github.com/raffomania/garde%3Fbranch=url-length%40898c5d298a04a35cdd3029a3d7ea3108c8d6656e",
       "scope": "required",
       "type": "library",
       "version": "0.22.0"
@@ -3090,7 +3078,7 @@
         }
       ],
       "name": "htmf",
-      "purl": "pkg:cargo/htmf@0.3.0?vcs_url=git%2Bhttps://github.com/raffomania/htmf%4004dc4272f62a8337f95eb0b096c890e8e93f9498",
+      "purl": "pkg:cargo/htmf@0.3.0?vcs_url=git%2Bhttps://github.com/raffomania/htmf%40f16a8fc29f4f2bb0b42fc97586f123d4b9506f03",
       "scope": "required",
       "type": "library",
       "version": "0.3.0"
@@ -9822,6 +9810,23 @@
   "dependencies": [
     {
       "dependsOn": [
+        "registry+https://github.com/rust-lang/crates.io-index#compact_str@0.8.1",
+        "git+https://github.com/raffomania/garde?branch=url-length#garde_derive@0.22.0",
+        "registry+https://github.com/rust-lang/crates.io-index#smallvec@1.13.2",
+        "registry+https://github.com/rust-lang/crates.io-index#url@2.5.4"
+      ],
+      "ref": "git+https://github.com/raffomania/garde?branch=url-length#0.22.0"
+    },
+    {
+      "dependsOn": [
+        "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.92",
+        "registry+https://github.com/rust-lang/crates.io-index#quote@1.0.38",
+        "registry+https://github.com/rust-lang/crates.io-index#syn@2.0.96"
+      ],
+      "ref": "git+https://github.com/raffomania/garde?branch=url-length#garde_derive@0.22.0"
+    },
+    {
+      "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#markup_fmt@0.19.0"
       ],
       "ref": "git+https://github.com/raffomania/htmf#0.3.0"
@@ -9835,7 +9840,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#clap@4.5.34",
         "registry+https://github.com/rust-lang/crates.io-index#fake@4.2.0",
         "registry+https://github.com/rust-lang/crates.io-index#friendly-zoo@1.1.0",
-        "registry+https://github.com/rust-lang/crates.io-index#garde@0.22.0",
+        "git+https://github.com/raffomania/garde?branch=url-length#0.22.0",
         "git+https://github.com/raffomania/htmf#0.3.0",
         "registry+https://github.com/rust-lang/crates.io-index#include_dir@0.7.4",
         "registry+https://github.com/rust-lang/crates.io-index#listenfd@1.0.2",
@@ -9860,6 +9865,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#tower-sessions-sqlx-store@0.15.0",
         "registry+https://github.com/rust-lang/crates.io-index#tracing@0.1.41",
         "registry+https://github.com/rust-lang/crates.io-index#tracing-subscriber@0.3.19",
+        "registry+https://github.com/rust-lang/crates.io-index#url@2.5.4",
         "registry+https://github.com/rust-lang/crates.io-index#uuid@1.16.0",
         "registry+https://github.com/rust-lang/crates.io-index#visdom@1.0.3",
         "registry+https://github.com/rust-lang/crates.io-index#walkdir@2.5.0"
@@ -10476,23 +10482,6 @@
         "registry+https://github.com/rust-lang/crates.io-index#futures-util@0.3.31"
       ],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#futures@0.3.31"
-    },
-    {
-      "dependsOn": [
-        "registry+https://github.com/rust-lang/crates.io-index#compact_str@0.8.1",
-        "registry+https://github.com/rust-lang/crates.io-index#garde_derive@0.22.0",
-        "registry+https://github.com/rust-lang/crates.io-index#smallvec@1.13.2",
-        "registry+https://github.com/rust-lang/crates.io-index#url@2.5.4"
-      ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#garde@0.22.0"
-    },
-    {
-      "dependsOn": [
-        "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.92",
-        "registry+https://github.com/rust-lang/crates.io-index#quote@1.0.38",
-        "registry+https://github.com/rust-lang/crates.io-index#syn@2.0.96"
-      ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#garde_derive@0.22.0"
     },
     {
       "dependsOn": [
