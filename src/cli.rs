@@ -119,14 +119,13 @@ enum DbCommand {
 }
 
 #[derive(Args)]
-#[group(required = true, multiple = false)]
+#[group(required = true, multiple = true)]
 pub struct ListenArgs {
-    /// Format: `ip:port`. If omitted, try to obtain a port via the listenfd
-    /// interface.
+    /// Format: `ip:port`.
     #[clap(long, env, value_name = "SOCKET_ADDRESS")]
     pub listen: Option<SocketAddr>,
     /// Take a socket using the systemd socket passing protocol and listen on
-    /// it.
+    /// it. If set, will override the `listen` argument.
     #[clap(long, env)]
     pub listenfd: bool,
 }

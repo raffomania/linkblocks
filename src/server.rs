@@ -79,10 +79,7 @@ pub async fn start(
 ) -> anyhow::Result<()> {
     let handle = axum_server::Handle::new();
 
-    let listener = if let Some(listen_address) = listen.listen {
-        tokio::spawn(shutdown_signal(handle.clone(), true));
-        tokio::net::TcpListener::bind(format!("{listen_address}")).await?
-    } else {
+    let listener = if listen.listenfd {
         // Graceful shutdown is somehow broken with listenfd at the moment
         tokio::spawn(shutdown_signal(handle.clone(), false));
         let mut listenfd = ListenFd::from_env();
@@ -91,6 +88,13 @@ pub async fn start(
             .ok_or(anyhow!("No systemfd TCP socket found"))?;
         listener.set_nonblocking(true)?;
         tokio::net::TcpListener::from_std(listener)?
+    } else if let Some(listen_address) = listen.listen {
+        tokio::spawn(shutdown_signal(handle.clone(), true));
+        tokio::net::TcpListener::bind(format!("{listen_address}")).await?
+    } else {
+        anyhow::bail!(
+            "Please specify either an address and port to listen on, or use the --listenfd flag."
+        );
     };
 
     let listening_on = listener.local_addr()?;

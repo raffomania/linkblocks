@@ -2,7 +2,7 @@ set dotenv-load := true
 set export := true
 
 watch *args: development-cert start-database
-    cargo bin systemfd --no-pid -s http::4040 -- cargo bin cargo-watch -- cargo run start --listenfd {{args}}
+    cargo bin systemfd --no-pid -s http::443 -- cargo bin cargo-watch -- cargo run start --listenfd {{args}}
 
 run *args: development-cert
     cargo run -- {{args}}
@@ -110,7 +110,7 @@ test *args: start-test-database
 
 development-cert:
     mkdir -p development_cert
-    test -f development_cert/localhost.crt || mkcert -cert-file development_cert/localhost.crt -key-file development_cert/localhost.key localhost 127.0.0.1 ::1
+    test -f development_cert/localhost.crt || mkcert -cert-file development_cert/localhost.crt -key-file development_cert/localhost.key localhost linkblocks.localhost 127.0.0.1 ::1
 
 ci-dev : migrate-database start-test-database && generate-sbom
     #!/usr/bin/env bash
