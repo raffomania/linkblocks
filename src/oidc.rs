@@ -183,6 +183,7 @@ pub struct Config {
 }
 
 #[derive(Clone)]
+#[expect(clippy::large_enum_variant)]
 pub enum State {
     NotConfigured,
     Configured(Config),

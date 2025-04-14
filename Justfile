@@ -47,13 +47,16 @@ start-rauthy:
     if ! podman inspect linkblocks_rauthy &> /dev/null; then
         podman create \
             --replace --name linkblocks_rauthy \
+            --pull=missing \
             -e COOKIE_MODE=danger-insecure \
             -e PUB_URL=localhost:${RAUTHY_PORT} \
             -e LOG_LEVEL=info \
-            -e BOOTSTRAP_ADMIN_PASSWORD_PLAIN="test" \
+            -e LOCAL_TEST=true \
+            -e BOOTSTRAP_ADMIN_EMAIL=admin@rauthy.localhost \
+            -e BOOTSTRAP_ADMIN_PASSWORD_PLAIN=test \
             -e DATABASE_URL=sqlite:data/rauthy.db \
             -p ${RAUTHY_PORT}:8080 \
-            ghcr.io/sebadob/rauthy:0.25.0-lite
+            ghcr.io/sebadob/rauthy:0.29.4
     fi
 
     podman start linkblocks_rauthy

@@ -15,7 +15,7 @@ use crate::{
     server::{self, AppState},
 };
 
-#[derive(Parser)]
+#[derive(Parser, Debug)]
 #[clap(version)]
 struct Cli {
     #[command(subcommand)]
@@ -25,7 +25,7 @@ struct Cli {
     config: SharedConfig,
 }
 
-#[derive(Args)]
+#[derive(Args, Debug)]
 struct SharedConfig {
     #[clap(env, long, hide_env_values = true)]
     database_url: String,
@@ -52,8 +52,8 @@ pub struct OidcArgs {
 
 // Since this enum is only ever constructed once,
 // we only waste very little memory due to large enum variants.
-#[allow(clippy::large_enum_variant)]
-#[derive(Parser)]
+#[expect(clippy::large_enum_variant)]
+#[derive(Parser, Debug)]
 enum Command {
     /// Migrate the database, then start the server
     Start {
@@ -88,7 +88,7 @@ enum Command {
     },
 }
 
-#[derive(Args)]
+#[derive(Args, Debug)]
 #[group(multiple = true, requires_all = ["username", "password"])]
 struct AdminCredentials {
     #[clap(env = "ADMIN_USERNAME", long = "admin_username")]
@@ -113,12 +113,12 @@ impl From<AdminCredentials> for Option<CreateUser> {
     }
 }
 
-#[derive(Subcommand)]
+#[derive(Subcommand, Debug)]
 enum DbCommand {
     Migrate,
 }
 
-#[derive(Args)]
+#[derive(Args, Debug)]
 #[group(required = true, multiple = true)]
 pub struct ListenArgs {
     /// Format: `ip:port`.
@@ -142,8 +142,9 @@ pub async fn run() -> Result<()> {
 
     let cli = Cli::parse();
 
-    let base_url = cli.config.base_url;
+    tracing::debug!("{cli:#?}");
 
+    let base_url = cli.config.base_url;
     match cli.command {
         Command::Start {
             listen: listen_address,
