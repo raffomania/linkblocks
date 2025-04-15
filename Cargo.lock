@@ -1111,6 +1111,8 @@ source = "git+https://github.com/raffomania/garde?branch=url-length#898c5d298a04
 dependencies = [
  "compact_str",
  "garde_derive",
+ "once_cell",
+ "regex",
  "smallvec",
  "url",
 ]
@@ -1122,6 +1124,7 @@ source = "git+https://github.com/raffomania/garde?branch=url-length#898c5d298a04
 dependencies = [
  "proc-macro2",
  "quote",
+ "regex",
  "syn 2.0.100",
 ]
 

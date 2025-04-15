@@ -15,7 +15,7 @@ use crate::{
 const TEST_USER_USERNAME: &str = "testuser";
 const TEST_USER_PASSWORD: &str = "testpassword";
 
-static NEXT_TEST_APP_PORT: AtomicUsize = AtomicUsize::new(4040);
+static NEXT_TEST_APP_PORT: AtomicUsize = AtomicUsize::new(4041);
 
 pub struct TestApp {
     pub logged_in_cookie: Option<String>,

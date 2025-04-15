@@ -5,6 +5,7 @@ use axum::{
     http::request::Parts,
     response::Redirect,
 };
+use garde::Validate;
 use percent_encoding::utf8_percent_encode;
 use tower_sessions::Session;
 use url::Url;
@@ -61,9 +62,11 @@ pub async fn create_and_login_temp_user(
     base_url: &Url,
 ) -> ResponseResult<()> {
     let username =
-        friendly_zoo::Zoo::new(friendly_zoo::Species::CustomDelimiter(' '), 1).generate();
+        friendly_zoo::Zoo::new(friendly_zoo::Species::CustomDelimiter('_'), 1).generate();
     let password = Uuid::new_v4().to_string();
-    let user = db::users::insert(tx, CreateUser { username, password }, base_url).await?;
+    let create = CreateUser { username, password };
+    create.validate().context("Invalid demo user generated")?;
+    let user = db::users::insert(tx, create, base_url).await?;
 
     AuthUser::save_in_session(&session, user.id).await?;
 

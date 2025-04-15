@@ -5,7 +5,7 @@ use url::Url;
 
 #[derive(Validate)]
 pub struct CreateUser {
-    #[garde(alphanumeric, ascii, length(min = 3, max = 50))]
+    #[garde(pattern("^[a-zA-Z0-9_]+$"), length(min = 3, max = 50))]
     pub username: String,
     #[garde(length(min = 10, max = 100))]
     pub password: String,
@@ -13,7 +13,7 @@ pub struct CreateUser {
 
 #[derive(Validate, Default, Deserialize, Debug)]
 pub struct OidcSelectUsername {
-    #[garde(alphanumeric, ascii, length(min = 3, max = 50))]
+    #[garde(pattern("^[a-zA-Z0-9_]+$"), ascii, length(min = 3, max = 50))]
     pub username: String,
 }
 
@@ -27,7 +27,7 @@ pub struct Login {
 
 #[derive(Serialize, Deserialize, Validate, Debug, Default)]
 pub struct Credentials {
-    #[garde(alphanumeric, ascii, length(min = 3, max = 50))]
+    #[garde(pattern("^[a-zA-Z0-9_]+$"), length(min = 3, max = 50))]
     pub username: String,
     #[garde(length(min = 10, max = 100))]
     pub password: String,
@@ -45,6 +45,6 @@ pub struct CreateOidcUser {
     pub oidc_id: String,
     #[garde(length(max = 500))]
     pub email: String,
-    #[garde(alphanumeric, ascii, length(min = 3, max = 50))]
+    #[garde(pattern("^[a-zA-Z0-9_]+$"), length(min = 3, max = 50))]
     pub username: String,
 }
