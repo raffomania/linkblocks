@@ -12,10 +12,12 @@ pub enum ResponseError {
     NotFound,
     #[error("Authentication Failed")]
     NotAuthenticated,
-    #[error("Unknown Error")]
+    #[error("Internal Error")]
     Anyhow(#[from] anyhow::Error),
     #[error("Internal Error")]
     UrlParseError(#[from] url::ParseError),
+    #[error("Internal Error")]
+    FederationError(#[from] activitypub_federation::error::Error),
 }
 
 impl IntoResponse for ResponseError {
@@ -25,9 +27,9 @@ impl IntoResponse for ResponseError {
             ResponseError::NotFound => StatusCode::NOT_FOUND,
             // TODO redirect to login instead of returning an error
             ResponseError::NotAuthenticated => StatusCode::UNAUTHORIZED,
-            ResponseError::Anyhow(_) | ResponseError::UrlParseError(_) => {
-                StatusCode::INTERNAL_SERVER_ERROR
-            }
+            ResponseError::Anyhow(_)
+            | ResponseError::UrlParseError(_)
+            | ResponseError::FederationError(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };
         (status, self.to_string()).into_response()
     }

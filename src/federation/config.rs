@@ -11,12 +11,12 @@ pub async fn new_config(
         db_pool,
         base_url: base_url.clone(),
     };
+    let domain = base_url
+        .domain()
+        .context("Base URL must contain a domain name")?;
+    let port = base_url.port().map_or(String::new(), |p| format!(":{p}"));
     FederationConfig::builder()
-        .domain(
-            base_url
-                .domain()
-                .context("Base URL must contain a domain name")?,
-        )
+        .domain(format!("{domain}{port}"))
         .app_data(context)
         .http_fetch_limit(1000)
         .debug(cfg!(debug_assertions))
