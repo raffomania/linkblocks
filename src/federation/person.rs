@@ -18,6 +18,7 @@ use crate::{
     date_time::time_to_chrono, db, forms::ap_users::CreateApUser, response_error::into_option,
 };
 
+/// Users as we receive from and send to other instances.
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Person {
@@ -98,6 +99,7 @@ impl Object for db::ApUser {
         let create_user = json.try_into()?;
         let mut tx = data.db_pool.begin().await?;
         let new_user = db::ap_users::upsert(&mut tx, create_user).await?;
+        tx.commit().await?;
         Ok(new_user)
     }
 }

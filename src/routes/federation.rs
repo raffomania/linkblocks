@@ -1,25 +1,30 @@
 use activitypub_federation::{
-    axum::json::FederationJson, protocol::context::WithContext, traits::Object,
+    axum::json::FederationJson,
+    fetch::webfinger::{Webfinger, build_webfinger_response, extract_webfinger_name},
+    protocol::context::WithContext,
+    traits::Object,
 };
 use axum::{
-    Router, debug_handler,
-    extract::{Path, State},
+    Json, Router,
+    extract::{Path, Query, State},
     routing::get,
 };
+use serde::Deserialize;
 
 use crate::{
     db::{self},
     extract,
-    federation::person::Person,
+    federation::{self, person::Person},
     response_error::ResponseResult,
     server::AppState,
 };
 
 pub fn router() -> Router<AppState> {
-    Router::new().route("/ap/user/{name}", get(get_person))
+    Router::new()
+        .route("/ap/user/{name}", get(get_person))
+        .route("/.well-known/webfinger", get(webfinger))
 }
 
-#[debug_handler]
 async fn get_person(
     extract::Tx(mut tx): extract::Tx,
     State(state): State<AppState>,
@@ -30,4 +35,24 @@ async fn get_person(
         .into_json(&state.federation_config.to_request_data())
         .await?;
     Ok(FederationJson(WithContext::new_default(json_person)))
+}
+
+#[derive(Deserialize)]
+pub struct WebfingerQuery {
+    resource: String,
+}
+
+async fn webfinger(
+    extract::Tx(mut tx): extract::Tx,
+    Query(query): Query<WebfingerQuery>,
+    data: federation::Data,
+) -> ResponseResult<Json<Webfinger>> {
+    let username = extract_webfinger_name(&query.resource, &data)?;
+    let ap_id = db::ap_users::read_by_username(&mut tx, username)
+        .await?
+        .ap_id;
+    Ok(Json(build_webfinger_response(
+        query.resource,
+        ap_id.into_inner(),
+    )))
 }

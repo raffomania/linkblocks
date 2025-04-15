@@ -1,3 +1,5 @@
+use std::sync::atomic::AtomicUsize;
+
 use axum::{Router, http::StatusCode};
 use sqlx::{Pool, Postgres};
 use tokio::net::TcpListener;
@@ -13,19 +15,23 @@ use crate::{
 const TEST_USER_USERNAME: &str = "testuser";
 const TEST_USER_PASSWORD: &str = "testpassword";
 
+static NEXT_TEST_APP_PORT: AtomicUsize = AtomicUsize::new(4040);
+
 pub struct TestApp {
     pub logged_in_cookie: Option<String>,
     pub router: Router,
     pub pool: Pool<Postgres>,
     pub base_url: Url,
     pub state: AppState,
+    pub port: usize,
 }
 
 impl TestApp {
     pub async fn new() -> Self {
         let pool = super::db::new_pool().await;
-        let base_url =
-            Url::parse("http://localhost:4040").expect("Failed to parse URL for test instance");
+        let port = NEXT_TEST_APP_PORT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let base_url = Url::parse(&format!("http://localhost:{port}",))
+            .expect("Failed to parse URL for test instance");
         let state = AppState {
             pool: pool.clone(),
             base_url: base_url.clone(),
@@ -42,6 +48,7 @@ impl TestApp {
             logged_in_cookie: None,
             base_url,
             state,
+            port,
         }
     }
 
@@ -110,7 +117,9 @@ impl TestApp {
     }
 
     pub async fn serve(&self) {
-        let listener = TcpListener::bind("localhost:4040").await.unwrap();
+        let listener = TcpListener::bind(format!("localhost:{}", self.port))
+            .await
+            .unwrap();
         let router = self.router.clone();
 
         tokio::spawn(async move {
