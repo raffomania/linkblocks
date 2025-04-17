@@ -1,6 +1,8 @@
-# Federation
+# Plan for Implementing Federation
 
 This document serves as a technical plan for implementing federation in linkblocks, including a survey of how other platforms federate.
+
+This is *not* a standard [FEDERATION.md](https://codeberg.org/fediverse/fep/src/branch/main/fep/67ff/fep-67ff.md) document, as it does not represent linkblocks' current implementation.
 
 ## Compatibility
 
@@ -21,6 +23,14 @@ Lemmy's posts are `Page` objects. It seems like mastodon can ingest both `Note` 
 ## Comments
 
 ## Knowledge Graph
+
+- [FEP-e232: Object Links](https://github.com/julianlam/feps/blob/main/fep/e232/fep-e232.md)
+    - Suggests using `tag` instead of `attachments` for linked URLs
+    - deals only with links to activitystreams objects
+- [FEP-171b: Conversation Containers](https://codeberg.org/fediverse/fep/src/branch/main/fep/171b/fep-171b.md)
+    - Has backfilling
+    - Seems nice, not clear if compatible with lemmy / mastodon
+- [FEP-dd4b: Quote Posts](https://codeberg.org/fediverse/fep/src/branch/main/fep/dd4b/fep-dd4b.md)
 
 ### Lemmy
 
