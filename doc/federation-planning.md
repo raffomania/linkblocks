@@ -1,6 +1,8 @@
-# Federation
+# Plan for Implementing Federation
 
 This document serves as a technical plan for implementing federation in linkblocks, including a survey of how other platforms federate.
+
+This is *not* a standard [FEDERATION.md](https://codeberg.org/fediverse/fep/src/branch/main/fep/67ff/fep-67ff.md) document, as it does not represent linkblocks' current implementation.
 
 ## Compatibility
 
@@ -21,6 +23,32 @@ Lemmy's posts are `Page` objects. It seems like mastodon can ingest both `Note` 
 ## Comments
 
 ## Knowledge Graph
+
+In linkblocks' context, a "knowledge graph" means that connections (also called links or graph edges) can exist between any two of the following objects:
+
+- bookmarks
+- notes
+
+On top of this data model, linkblocks can implement lots of functionality:
+
+- note -> note links: Tree of threaded comments
+- note -> bookmark links: A list of bookmarks related to a comment / headline
+- bookmark -> note links: Comments on a bookmark
+- bookmark -> bookmark links: A list of bookmarks related to another bookmark
+
+Users can link objects they didn't author, e.g. Bob can add their own note to Alice's bookmark, or Bob can add Alice's bookmark to their own list. By default, users only see links they created themself, or links of users they follow. This means that there is no single, global view of the whole knowledge graph, but instead each user chooses which part of the knowledge graph they want to view and edit.
+
+Links are directional, and many-to-many: E.g. a comment can have multiple parent and children comments. The knowledge graph is directed and possibly cyclic.
+
+(Tangentially) related FEPs:
+
+- [FEP-e232: Object Links](https://github.com/julianlam/feps/blob/main/fep/e232/fep-e232.md)
+    - Uses `tag` to link to other objects
+    - deals only with links to activitystreams objects
+- [FEP-171b: Conversation Containers](https://codeberg.org/fediverse/fep/src/branch/main/fep/171b/fep-171b.md)
+    - Has backfilling
+    - not clear if compatible with lemmy / mastodon
+- [FEP-dd4b: Quote Posts](https://codeberg.org/fediverse/fep/src/branch/main/fep/dd4b/fep-dd4b.md), [FEP-044f: Consent-respecting quote posts](https://codeberg.org/fediverse/fep/src/branch/main/fep/044f/fep-044f.md)
 
 ### Lemmy
 
