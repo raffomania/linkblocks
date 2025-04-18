@@ -3,6 +3,7 @@ use sqlx::PgPool;
 
 pub mod all;
 pub mod ap_users;
+pub mod run_migrations;
 pub use ap_users::ApUser;
 pub mod items;
 pub mod layout;
@@ -17,7 +18,9 @@ pub use bookmarks::Bookmark;
 
 pub async fn migrate(pool: &PgPool) -> Result<()> {
     tracing::info!("Migrating the database...");
-    sqlx::migrate!("./migrations").run(pool).await?;
+    let migrator = sqlx::migrate!("./migrations");
+    let mut conn = pool.acquire().await?;
+    run_migrations::run_migrations(&migrator, &mut conn).await?;
     tracing::info!("Database migrated.");
 
     Ok(())
