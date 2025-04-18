@@ -73,7 +73,7 @@ wipe-database: stop-database && migrate-database
     podman rm --ignore linkblocks_postgres
 
 migrate-database: start-database
-    cargo bin sqlx-cli migrate run
+    SQLX_OFFLINE=true cargo run -- db migrate
 
 generate-database-info: start-database migrate-database
     cargo bin sqlx-cli prepare

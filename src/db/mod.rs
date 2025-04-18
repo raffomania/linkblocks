@@ -3,6 +3,7 @@ use sqlx::PgPool;
 
 pub mod all;
 pub mod ap_users;
+pub mod run_migrations;
 pub use ap_users::ApUser;
 pub mod items;
 pub mod layout;
@@ -11,13 +12,17 @@ pub use links::{LinkDestination, LinkDestinationWithChildren, LinkWithContent};
 pub mod lists;
 pub use lists::{List, ListWithLinks};
 pub mod users;
+use url::Url;
 pub use users::User;
 pub mod bookmarks;
+pub mod migrations;
 pub use bookmarks::Bookmark;
 
-pub async fn migrate(pool: &PgPool) -> Result<()> {
+pub async fn migrate(pool: &PgPool, base_url: &Url, up_to_version: Option<i64>) -> Result<()> {
     tracing::info!("Migrating the database...");
-    sqlx::migrate!("./migrations").run(pool).await?;
+    let migrator = sqlx::migrate!("./migrations");
+    let mut conn = pool.acquire().await?;
+    run_migrations::run_migrations(&migrator, &mut conn, base_url, up_to_version).await?;
     tracing::info!("Database migrated.");
 
     Ok(())

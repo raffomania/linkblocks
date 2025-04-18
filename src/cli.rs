@@ -157,7 +157,7 @@ pub async fn run() -> Result<()> {
         } => {
             let pool = db::pool(&cli.config.database_url).await?;
 
-            db::migrate(&pool).await?;
+            db::migrate(&pool, &base_url, None).await?;
 
             if let Some(create) = Option::<CreateUser>::from(admin_credentials) {
                 if let Err(e) = create.validate() {
@@ -184,7 +184,7 @@ pub async fn run() -> Result<()> {
             command: DbCommand::Migrate,
         } => {
             let pool = db::pool(&cli.config.database_url).await?;
-            db::migrate(&pool).await?;
+            db::migrate(&pool, &base_url, None).await?;
         }
         #[cfg(debug_assertions)]
         Command::InsertDemoData {
