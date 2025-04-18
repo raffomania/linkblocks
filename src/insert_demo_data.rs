@@ -118,7 +118,7 @@ async fn create_bookmarks(
         };
 
         let bookmark =
-            db::bookmarks::insert(tx, user.ap_user_id, insert_bookmark, base_url).await?;
+            db::bookmarks::insert_local(tx, user.ap_user_id, insert_bookmark, base_url).await?;
         bookmarks.push(bookmark);
     }
 

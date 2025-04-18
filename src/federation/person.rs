@@ -5,7 +5,10 @@ use activitypub_federation::{
     config::Data,
     fetch::object_id::ObjectId,
     kinds::actor::PersonType,
-    protocol::{public_key::PublicKey, verification::verify_domains_match},
+    protocol::{
+        public_key::PublicKey,
+        verification::{verify_domains_match, verify_is_remote_object},
+    },
     traits::{Actor, Object},
 };
 use anyhow::{Context, Result};
@@ -14,7 +17,10 @@ use serde::{Deserialize, Serialize};
 use url::Url;
 
 use crate::{
-    date_time::time_to_chrono, db, forms::ap_users::CreateApUser, response_error::into_option,
+    date_time::time_to_chrono,
+    db,
+    forms::ap_users::CreateApUser,
+    response_error::{ResponseError, into_option},
 };
 
 /// Users as we receive from and send to other instances.
@@ -31,19 +37,11 @@ pub struct Person {
     pub public_key: PublicKey,
 }
 
-impl TryFrom<Person> for CreateApUser {
-    type Error = anyhow::Error;
-
-    fn try_from(json: Person) -> std::result::Result<Self, Self::Error> {
-        CreateApUser::new_public(json)
-    }
-}
-
 #[async_trait::async_trait]
 impl Object for db::ApUser {
     type DataType = super::Context;
     type Kind = Person;
-    type Error = anyhow::Error;
+    type Error = ResponseError;
 
     fn last_refreshed_at(&self) -> Option<chrono::DateTime<chrono::Utc>> {
         Some(time_to_chrono(self.last_refreshed_at))
@@ -55,7 +53,7 @@ impl Object for db::ApUser {
     ) -> Result<Option<Self>, Self::Error> {
         let mut tx = data.db_pool.begin().await?;
         let user = db::ap_users::read_by_ap_id(&mut tx, &object_id).await;
-        into_option(user).context("Failed to read ActivityPub user")
+        into_option(user)
     }
 
     async fn into_json(self, _context: &Data<Self::DataType>) -> Result<Self::Kind, Self::Error> {
@@ -74,15 +72,18 @@ impl Object for db::ApUser {
     async fn verify(
         json: &Self::Kind,
         expected_domain: &Url,
-        _data: &Data<Self::DataType>,
+        data: &Data<Self::DataType>,
     ) -> Result<(), Self::Error> {
         verify_domains_match(json.id.inner(), expected_domain)?;
-        CreateApUser::try_from(json.clone())?.validate()?;
+        verify_is_remote_object(&json.id, data)?;
+        CreateApUser::new_remote(json.clone())?
+            .validate()
+            .context("Invalid input")?;
         Ok(())
     }
 
     async fn from_json(json: Self::Kind, data: &Data<Self::DataType>) -> Result<Self, Self::Error> {
-        let create_user = json.try_into()?;
+        let create_user = CreateApUser::new_remote(json)?;
         let mut tx = data.db_pool.begin().await?;
         let new_user = db::ap_users::upsert(&mut tx, create_user).await?;
         tx.commit().await?;

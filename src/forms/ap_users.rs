@@ -56,7 +56,7 @@ impl CreateApUser {
 
     /// Create a new activitypub user from a different instance - without a
     /// private key
-    pub fn new_public(json: Person) -> Result<Self> {
+    pub fn new_remote(json: Person) -> Result<Self> {
         let create_user = CreateApUser {
             id: Uuid::new_v4(),
             ap_id: json.id.into_inner(),

@@ -23,6 +23,7 @@ use crate::{
 pub fn router() -> Router<AppState> {
     Router::new()
         .route("/ap/user/{id}", get(get_person))
+        .route("/ap/bookmark/{id}", get(get_bookmark))
         .route("/.well-known/webfinger", get(webfinger))
 }
 
@@ -37,6 +38,19 @@ async fn get_person(
         .into_json(&state.federation_config.to_request_data())
         .await?;
     Ok(FederationJson(WithContext::new_default(json_person)))
+}
+
+/// Read a local bookmark by requesting the URL that is it's `ap_id`.
+async fn get_bookmark(
+    extract::Tx(mut tx): extract::Tx,
+    State(state): State<AppState>,
+    Path(id): Path<Uuid>,
+) -> ResponseResult<FederationJson<WithContext<federation::bookmark::BookmarkJson>>> {
+    let bookmark = db::bookmarks::by_id(&mut tx, id).await?;
+    let json_bookmark = bookmark
+        .into_json(&state.federation_config.to_request_data())
+        .await?;
+    Ok(FederationJson(WithContext::new_default(json_bookmark)))
 }
 
 #[derive(Deserialize)]

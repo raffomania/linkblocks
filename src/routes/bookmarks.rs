@@ -60,7 +60,7 @@ async fn post_create(
         Ok(i) => i,
     };
 
-    let bookmark = db::bookmarks::insert(
+    let bookmark = db::bookmarks::insert_local(
         &mut tx,
         auth_user.ap_user_id,
         insert_bookmark,

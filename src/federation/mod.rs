@@ -1,3 +1,4 @@
+pub mod bookmark;
 pub mod config;
 pub mod context;
 pub mod webfinger;
