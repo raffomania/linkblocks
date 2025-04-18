@@ -34,7 +34,7 @@ pub struct User {
 
     // ActivityPub data
     #[expect(dead_code)]
-    pub ap_user_id: Option<Uuid>,
+    pub ap_user_id: Uuid,
 }
 
 pub async fn user_by_oidc_id(tx: &mut AppTx, oidc_id: &str) -> ResponseResult<User> {
