@@ -3,7 +3,7 @@ use anyhow::Result;
 use axum::http::StatusCode;
 
 use crate::{
-    db,
+    db::{self, bookmarks::InsertBookmark},
     federation::webfinger,
     forms::users::{Credentials, Login},
     tests::util::test_app::TestApp,
@@ -70,6 +70,40 @@ async fn can_resolve_user() -> Result<()> {
     assert_eq!(app_b_ap_user.username, app_a_ap_user.username);
     assert_eq!(app_b_ap_user.inbox_url, app_a_ap_user.inbox_url);
     assert_eq!(app_b_ap_user.ap_id, app_a_ap_user.ap_id);
+
+    Ok(())
+}
+
+#[test_log::test(tokio::test)]
+async fn can_resolve_bookmark() -> Result<()> {
+    let app_a = TestApp::new().await;
+    let app_b = TestApp::new().await;
+
+    let user = app_a.create_test_user().await;
+    let mut tx = app_a.pool.begin().await?;
+    let bookmark = db::bookmarks::insert_local(
+        &mut tx,
+        user.ap_user_id,
+        InsertBookmark {
+            url: "https://www.rafa.ee".to_string(),
+            title: "Test Bookmark".to_string(),
+        },
+        &app_a.base_url,
+    )
+    .await?;
+    tx.commit().await?;
+
+    app_a.serve().await;
+    let ap_cx_b = app_b.state.federation_config.to_request_data();
+    // Check that instance B can resolve user on instance A
+    let app_b_bookmark = bookmark.ap_id.dereference(&ap_cx_b).await?;
+    // Check that bookmark is now in the DB of app b
+    let mut tx = app_b.pool.begin().await?;
+    db::bookmarks::by_ap_id(&mut tx, bookmark.ap_id).await?;
+
+    assert_ne!(app_b_bookmark.id, bookmark.id);
+    assert_eq!(app_b_bookmark.url, bookmark.url);
+    assert_eq!(app_b_bookmark.title, bookmark.title);
 
     Ok(())
 }

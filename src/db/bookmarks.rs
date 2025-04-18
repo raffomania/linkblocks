@@ -1,3 +1,4 @@
+use activitypub_federation::fetch::object_id::ObjectId;
 use serde::Deserialize;
 use sqlx::{FromRow, query_as};
 use time::OffsetDateTime;
@@ -5,7 +6,10 @@ use url::Url;
 use uuid::Uuid;
 
 use super::AppTx;
-use crate::response_error::{ResponseError, ResponseResult};
+use crate::{
+    db,
+    response_error::{ResponseError, ResponseResult},
+};
 
 #[derive(FromRow, Debug, Deserialize, Clone)]
 pub struct Bookmark {
@@ -13,15 +17,11 @@ pub struct Bookmark {
     #[serde(with = "time::serde::iso8601")]
     #[expect(dead_code)]
     pub created_at: OffsetDateTime,
-    #[expect(dead_code)]
     pub ap_user_id: Uuid,
 
     pub url: String,
     pub title: String,
-    // TODO change this once we implement ap::Object
-    // pub ap_id: ObjectId<Bookmark>,
-    #[expect(dead_code)]
-    pub ap_id: String,
+    pub ap_id: ObjectId<Bookmark>,
 }
 
 #[derive(FromRow, Debug)]
@@ -45,8 +45,7 @@ impl TryFrom<BookmarkRow> for Bookmark {
             ap_user_id: value.ap_user_id,
             url: value.url,
             title: value.title,
-            // ap_id: value.ap_id.parse()?,
-            ap_id: value.ap_id,
+            ap_id: value.ap_id.parse()?,
         })
     }
 }
@@ -63,7 +62,7 @@ pub struct InsertBookmark {
     pub title: String,
 }
 
-pub async fn insert(
+pub async fn insert_local(
     tx: &mut AppTx,
     ap_user_id: Uuid,
     create_bookmark: InsertBookmark,
@@ -88,6 +87,38 @@ pub async fn insert(
     .await?;
 
     bookmark.try_into()
+}
+
+pub async fn by_id(tx: &mut AppTx, id: Uuid) -> ResponseResult<Bookmark> {
+    let row = query_as!(
+        BookmarkRow,
+        r#"
+        select *
+        from bookmarks
+        where id = $1;
+        "#,
+        id
+    )
+    .fetch_one(&mut **tx)
+    .await?;
+
+    Bookmark::try_from(row)
+}
+
+pub async fn by_ap_id(tx: &mut AppTx, ap_id: ObjectId<db::Bookmark>) -> ResponseResult<Bookmark> {
+    let row = query_as!(
+        BookmarkRow,
+        r#"
+        select *
+        from bookmarks
+        where ap_id = $1;
+        "#,
+        ap_id.inner().as_str(),
+    )
+    .fetch_one(&mut **tx)
+    .await?;
+
+    Bookmark::try_from(row)
 }
 
 pub async fn list_unsorted(tx: &mut AppTx, ap_user_id: Uuid) -> ResponseResult<Vec<Bookmark>> {
@@ -127,4 +158,39 @@ pub async fn delete_by_id(tx: &mut AppTx, id: Uuid) -> ResponseResult<Bookmark> 
     .await?;
 
     bookmark.try_into()
+}
+
+/// Create a new UUID as primary key.
+/// Do not use this for local bookmarks as their AP ID needs to correlate with
+/// the primary key's UUID.
+pub async fn upsert_remote(
+    tx: &mut AppTx,
+    ap_user_id: Uuid,
+    ap_id: &ObjectId<db::Bookmark>,
+    insert: InsertBookmark,
+) -> ResponseResult<Bookmark> {
+    let id = Uuid::new_v4();
+    let user = query_as!(
+        BookmarkRow,
+        r#"
+        insert into bookmarks
+        (ap_id, id, ap_user_id, url, title)
+        values ($1, $2, $3, $4, $5)
+        on conflict(ap_id) do update set
+            ap_user_id = $2,
+            url = $3,
+            title = $4
+        returning *
+        "#,
+        ap_id.inner().as_str(),
+        id,
+        ap_user_id,
+        insert.url,
+        insert.title,
+    )
+    .fetch_one(&mut **tx)
+    .await?
+    .try_into()?;
+
+    Ok(user)
 }
