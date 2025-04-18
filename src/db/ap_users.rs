@@ -188,3 +188,20 @@ pub async fn read_by_username(tx: &mut AppTx, username: &str) -> ResponseResult<
 
     Ok(user)
 }
+
+pub async fn read_by_local_user_id(tx: &mut AppTx, id: Uuid) -> ResponseResult<ApUser> {
+    let user = query_as!(
+        ApUserRow,
+        r#"
+        select ap_users.* from ap_users
+        join users on users.ap_user_id = ap_users.id
+        where users.id = $1
+        "#,
+        id
+    )
+    .fetch_one(&mut **tx)
+    .await?
+    .try_into()?;
+
+    Ok(user)
+}

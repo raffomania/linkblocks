@@ -5,7 +5,10 @@ use activitypub_federation::{
     config::Data,
     fetch::object_id::ObjectId,
     kinds::actor::PersonType,
-    protocol::{public_key::PublicKey, verification::verify_domains_match},
+    protocol::{
+        public_key::PublicKey,
+        verification::{verify_domains_match, verify_is_remote_object},
+    },
     traits::{Actor, Object},
 };
 use anyhow::{Context, Result};
@@ -74,9 +77,10 @@ impl Object for db::ApUser {
     async fn verify(
         json: &Self::Kind,
         expected_domain: &Url,
-        _data: &Data<Self::DataType>,
+        data: &Data<Self::DataType>,
     ) -> Result<(), Self::Error> {
         verify_domains_match(json.id.inner(), expected_domain)?;
+        verify_is_remote_object(&json.id, data)?;
         CreateApUser::try_from(json.clone())?.validate()?;
         Ok(())
     }
