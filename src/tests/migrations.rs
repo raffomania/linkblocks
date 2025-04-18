@@ -1,11 +1,14 @@
+#![expect(clippy::inconsistent_digit_grouping)]
+
+use anyhow::Result;
 use sqlx::Row;
 use url::Url;
 use uuid::Uuid;
 
-use crate::db;
+use crate::{db, forms::users::CreateUser};
 
 #[test_log::test(tokio::test)]
-async fn test_generate_missing_ap_users_migration() -> anyhow::Result<()> {
+async fn test_generate_missing_ap_users_migration() -> Result<()> {
     // Create a test database pool without running migrations
     let pool = super::util::db::new_test_pool().await;
     let base_url = Url::parse("http://localhost:3000")?;
@@ -13,7 +16,6 @@ async fn test_generate_missing_ap_users_migration() -> anyhow::Result<()> {
     // First, run up to and including the migration that creates the ap_users table
     // and adds the ap_user_id column, but don't run the Rust
     // migration that generates AP users yet
-    #[allow(clippy::inconsistent_digit_grouping)]
     let sql_migration_version = Some(2025_01_27_102308);
     db::migrate(&pool, &base_url, sql_migration_version).await?;
 
@@ -78,6 +80,68 @@ async fn test_generate_missing_ap_users_migration() -> anyhow::Result<()> {
         base_url.join("/ap/inbox")?.to_string(),
         "Inbox URL should be correctly formatted"
     );
+
+    Ok(())
+}
+
+#[test_log::test(tokio::test)]
+async fn test_generate_missing_bookmark_ap_ids_migration() -> Result<()> {
+    // Create a test database pool without running migrations
+    let pool = super::util::db::new_test_pool().await;
+    let base_url = Url::parse("http://localhost:3000")?;
+
+    // First, run up to and including the migration that creates the ap_users table
+    // and adds the ap_user_id column, but don't run the Rust
+    // migration that generates AP users yet
+    let sql_migration_version = Some(2025_11_05_100411);
+    db::migrate(&pool, &base_url, sql_migration_version).await?;
+
+    // Create bookmark without an ap id
+    let mut tx = pool.begin().await?;
+
+    let create_user = CreateUser {
+        username: "testuser".to_string(),
+        password: "testpassword".to_string(),
+    };
+
+    let user = db::users::insert(&mut tx, create_user, &base_url).await?;
+    let id = Uuid::new_v4();
+    let title = "test title";
+    let url = "https://linkblocks.rafa.ee";
+
+    let bookmark_id: Uuid = sqlx::query(
+        r"
+        insert into bookmarks
+        (id, user_id, url, title)
+        values ($1, $2, $3, $4)
+        returning id
+        ",
+    )
+    .bind(id)
+    .bind(user.id)
+    .bind(url)
+    .bind(title)
+    .fetch_one(&mut *tx)
+    .await?
+    .get(0);
+
+    tx.commit().await?;
+
+    // Run up to the newest migration
+    db::migrate(&pool, &base_url, None).await?;
+
+    let mut tx = pool.begin().await?;
+
+    let bookmark = sqlx::query!(r"select ap_id from bookmarks where id = $1", id)
+        .fetch_one(&mut *tx)
+        .await?;
+
+    assert_eq!(
+        bookmark.ap_id,
+        format!("{base_url}ap/bookmark/{bookmark_id}")
+    );
+
+    tx.commit().await?;
 
     Ok(())
 }

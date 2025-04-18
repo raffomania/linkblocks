@@ -27,6 +27,11 @@
         "ordinal": 4,
         "name": "title",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "ap_id",
+        "type_info": "Varchar"
       }
     ],
     "parameters": {
@@ -35,6 +40,7 @@
       ]
     },
     "nullable": [
+      false,
       false,
       false,
       false,

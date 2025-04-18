@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select ap_id from bookmarks where id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "ap_id",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "e4078688fb7ea5b01a1dd179303603b1a8131395b0272ae28c220ca1ffa2e84c"
+}

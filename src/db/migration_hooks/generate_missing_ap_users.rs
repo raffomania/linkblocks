@@ -17,7 +17,6 @@ pub async fn migrate(tx: &mut PgTransaction<'_>, base_url: &Url) -> Result<()> {
             .fetch_all(&mut **tx)
             .await?;
 
-    // dropme
     for user in users_without_ap_user {
         new_ap_user(base_url, User::from_row(&user)?, tx).await?;
     }

@@ -35,7 +35,7 @@ pub async fn insert_demo_data(
     tracing::debug!("Creating bookmarks and lists...");
     for user in &users {
         let mut private_lists = Vec::new();
-        bookmarks.append(&mut create_bookmarks(&mut tx, user).await?);
+        bookmarks.append(&mut create_bookmarks(&mut tx, user, base_url).await?);
 
         for _ in 0..100 {
             let content: Option<Vec<_>> = fake::faker::lorem::en::Paragraphs(1..3).fake();
@@ -99,7 +99,11 @@ pub async fn insert_demo_data(
     Ok(())
 }
 
-async fn create_bookmarks(tx: &mut AppTx, user: &db::User) -> Result<Vec<db::Bookmark>> {
+async fn create_bookmarks(
+    tx: &mut AppTx,
+    user: &db::User,
+    base_url: &Url,
+) -> Result<Vec<db::Bookmark>> {
     let mut bookmarks = Vec::new();
 
     for _ in 0..500 {
@@ -113,7 +117,7 @@ async fn create_bookmarks(tx: &mut AppTx, user: &db::User) -> Result<Vec<db::Boo
             title,
         };
 
-        let bookmark = db::bookmarks::insert(tx, user.id, insert_bookmark).await?;
+        let bookmark = db::bookmarks::insert(tx, user.id, insert_bookmark, base_url).await?;
         bookmarks.push(bookmark);
     }
 

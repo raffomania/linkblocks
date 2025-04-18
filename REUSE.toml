@@ -21,6 +21,7 @@ path = [
     ".editorconfig",
     ".vscode/settings.json",
     "tailwind.config.js",
+    ".config/*.toml",
 ]
 SPDX-FileCopyrightText = "linkblocks Contributors"
 SPDX-License-Identifier = "AGPL-3.0-only"

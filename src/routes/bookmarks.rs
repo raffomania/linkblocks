@@ -1,7 +1,7 @@
 use anyhow::Context;
 use axum::{
     Router,
-    extract::{Path, Query},
+    extract::{Path, Query, State},
     http::HeaderMap,
     response::{IntoResponse, Redirect, Response},
     routing::{delete, get},
@@ -31,6 +31,7 @@ pub fn router() -> Router<AppState> {
 async fn post_create(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
+    State(state): State<AppState>,
     QsForm(input): QsForm<CreateBookmark>,
 ) -> ResponseResult<Response> {
     let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
@@ -59,7 +60,8 @@ async fn post_create(
         Ok(i) => i,
     };
 
-    let bookmark = db::bookmarks::insert(&mut tx, auth_user.user_id, insert_bookmark).await?;
+    let bookmark =
+        db::bookmarks::insert(&mut tx, auth_user.user_id, insert_bookmark, &state.base_url).await?;
 
     let mut first_created_parent = Option::None;
     for parent_title in input.create_parents {

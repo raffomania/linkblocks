@@ -14,6 +14,7 @@ use anyhow::Result;
 use sqlx::PgTransaction;
 use url::Url;
 
+mod generate_bookmark_ap_ids;
 mod generate_missing_ap_users;
 
 #[allow(clippy::inconsistent_digit_grouping)]
@@ -26,6 +27,8 @@ pub async fn run_before(
     // Feel free to refactor this if it becomes unwieldly in the future.
     if previous_migration.version == 2025_10_14_160454 {
         generate_missing_ap_users::migrate(tx, base_url).await?;
+    } else if previous_migration.version == 2025_11_05_102754 {
+        generate_bookmark_ap_ids::migrate(tx, base_url).await?;
     }
     Ok(())
 }
