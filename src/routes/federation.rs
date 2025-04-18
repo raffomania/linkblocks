@@ -14,7 +14,7 @@ use serde::Deserialize;
 use crate::{
     db::{self},
     extract,
-    federation::{self, person::Person},
+    federation::{self, user::UserJson},
     response_error::ResponseResult,
     server::AppState,
 };
@@ -29,7 +29,7 @@ async fn get_person(
     extract::Tx(mut tx): extract::Tx,
     State(state): State<AppState>,
     Path(name): Path<String>,
-) -> ResponseResult<FederationJson<WithContext<Person>>> {
+) -> ResponseResult<FederationJson<WithContext<UserJson>>> {
     let ap_user = db::ap_users::read_by_username(&mut tx, &name).await?;
     let json_person = ap_user
         .into_json(&state.federation_config.to_request_data())

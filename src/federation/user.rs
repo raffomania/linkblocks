@@ -5,7 +5,10 @@ use activitypub_federation::{
     config::Data,
     fetch::object_id::ObjectId,
     kinds::actor::PersonType,
-    protocol::{public_key::PublicKey, verification::verify_domains_match},
+    protocol::{
+        public_key::PublicKey,
+        verification::{verify_domains_match, verify_is_remote_object},
+    },
     traits::{Actor, Object},
 };
 use anyhow::{Context, Result};
@@ -21,7 +24,7 @@ use crate::{
 /// Users as we receive from and send to other instances.
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct Person {
+pub struct UserJson {
     id: ObjectId<db::ApUser>,
     #[serde(rename = "type")]
     kind: PersonType,
@@ -32,10 +35,10 @@ pub struct Person {
     public_key: PublicKey,
 }
 
-impl TryFrom<Person> for CreateApUser {
+impl TryFrom<UserJson> for CreateApUser {
     type Error = anyhow::Error;
 
-    fn try_from(json: Person) -> std::result::Result<Self, Self::Error> {
+    fn try_from(json: UserJson) -> std::result::Result<Self, Self::Error> {
         let create_user = CreateApUser {
             ap_id: json.id.into_inner(),
             username: json.preferred_username,
@@ -56,7 +59,7 @@ impl TryFrom<Person> for CreateApUser {
 #[async_trait::async_trait]
 impl Object for db::ApUser {
     type DataType = super::Context;
-    type Kind = Person;
+    type Kind = UserJson;
     type Error = anyhow::Error;
 
     fn last_refreshed_at(&self) -> Option<chrono::DateTime<chrono::Utc>> {
@@ -74,7 +77,7 @@ impl Object for db::ApUser {
 
     async fn into_json(self, _context: &Data<Self::DataType>) -> Result<Self::Kind, Self::Error> {
         let public_key = self.public_key();
-        Ok(Person {
+        Ok(UserJson {
             id: self.ap_id,
             name: self.display_name,
             preferred_username: self.username,
@@ -88,9 +91,10 @@ impl Object for db::ApUser {
     async fn verify(
         json: &Self::Kind,
         expected_domain: &Url,
-        _data: &Data<Self::DataType>,
+        data: &Data<Self::DataType>,
     ) -> Result<(), Self::Error> {
         verify_domains_match(json.id.inner(), expected_domain)?;
+        verify_is_remote_object(&json.id, data)?;
         CreateApUser::try_from(json.clone())?.validate()?;
         Ok(())
     }
