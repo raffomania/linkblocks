@@ -12,9 +12,9 @@ doctest = false
 [dependencies]
 anyhow = { version = "1.0.97" }
 argon2 = "0.5.3"
-axum = { version = "0.8.3", features = ["macros", "tracing"] }
+axum = { version = "0.8.4", features = ["macros", "tracing"] }
 axum-server = { version = "0.7.2", features = ["tls-rustls-no-provider"] }
-clap = { version = "4.5.34", features = ["derive", "env"] }
+clap = { version = "4.5.37", features = ["derive", "env"] }
 fake = { version = "4.2.0", default-features = false }
 friendly-zoo = "1.1.0"
 garde = { version = "0.22.0", default-features = false, features = [
@@ -25,12 +25,12 @@ garde = { version = "0.22.0", default-features = false, features = [
 include_dir = "0.7.4"
 listenfd = "1.0.2"
 mime_guess = "2.0.5"
-rand = { version = "0.9.0", default-features = false }
+rand = { version = "0.9.1", default-features = false }
 serde = "1.0.219"
-serde-aux = { version = "4.6.0", default-features = false }
+serde-aux = { version = "4.7.0", default-features = false }
 serde_json = "1.0.140"
-serde_qs = "0.14.0"
-sqlx = { version = "0.8.3", features = [
+serde_qs = "0.15.0"
+sqlx = { version = "0.8.5", features = [
     "runtime-tokio",
     "postgres",
     "migrate",
@@ -64,7 +64,7 @@ activitypub_federation = { version = "0.6.5", default-features = false, features
 ] }
 url = { version = "2.5.4", features = ["serde"] }
 async-trait = "0.1.85"
-chrono = "0.4.39"
+chrono = "0.4.41"
 
 [patch.crates-io]
 garde = { git = "https://github.com/raffomania/garde", branch = "url-length" }
@@ -82,7 +82,7 @@ test-log = { version = "0.2.17", features = [
     "trace",
 ], default-features = false }
 itertools = "0.14.0"
-insta = "1.42.2"
+insta = "1.43.1"
 
 [package.metadata.bin]
 just = { version = "1.38.0", locked = true }
