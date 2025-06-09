@@ -166,7 +166,7 @@ generate-sbom:
     rm linkblocks_bin.cdx.json
 
 install-git-hooks:
-    ln -srf pre-commit.sh .git/hooks/pre-commit
+    ln -srf bin/pre-commit.sh .git/hooks/pre-commit
 
 # Run extended checks that are not part of the normal CI pipeline.
 check-extended: verify-msrv build-podman-container check-example-docker-compose
@@ -211,3 +211,6 @@ ensure-command +command:
             exit 1
         fi
     done
+
+benchmark-hot-compilation:
+    bin/benchmark-hot-compilation.sh
