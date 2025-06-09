@@ -117,6 +117,8 @@ development-cert:
 
 ci-dev : migrate-database start-test-database && generate-sbom
     #!/usr/bin/env bash
+    set -euxo pipefail
+
     export RUSTFLAGS="-D warnings"
     # Prevent full recompilations in the normal dev setup which has different rustflags
     export CARGO_TARGET_DIR="target_ci"
