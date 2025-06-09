@@ -570,7 +570,7 @@
       "version": "0.7.2"
     },
     {
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#axum@0.8.3",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#axum@0.8.4",
       "description": "Web framework that focuses on ergonomics and modularity",
       "externalReferences": [
         {
@@ -585,7 +585,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "de45108900e1f9b9242f7f2e254aa3e2c029c921c258fe9e6b4217eeebd54288"
+          "content": "021e862c184ae977658b36c4500f7feac3221ca5da43e3f25bd04ab6c79a29b5"
         }
       ],
       "licenses": [
@@ -594,10 +594,10 @@
         }
       ],
       "name": "axum",
-      "purl": "pkg:cargo/axum@0.8.3",
+      "purl": "pkg:cargo/axum@0.8.4",
       "scope": "required",
       "type": "library",
-      "version": "0.8.3"
+      "version": "0.8.4"
     },
     {
       "author": "RustCrypto Developers",
@@ -1019,7 +1019,7 @@
       "version": "0.2.1"
     },
     {
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.40",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.41",
       "description": "Date and time library for Rust",
       "externalReferences": [
         {
@@ -1038,7 +1038,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "1a7964611d71df112cb1730f2ee67324fcf4d0fc6606acbbe9bfe06df124637c"
+          "content": "c469d952047f47f91b68d1cba3f10d63c11d73e4636f24f08daf0278abf01c4d"
         }
       ],
       "licenses": [
@@ -1047,13 +1047,13 @@
         }
       ],
       "name": "chrono",
-      "purl": "pkg:cargo/chrono@0.4.40",
+      "purl": "pkg:cargo/chrono@0.4.41",
       "scope": "required",
       "type": "library",
-      "version": "0.4.40"
+      "version": "0.4.41"
     },
     {
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#clap@4.5.36",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#clap@4.5.39",
       "description": "A simple to use, efficient, and full-featured Command Line Argument Parser",
       "externalReferences": [
         {
@@ -1064,7 +1064,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "2df961d8c8a0d08aa9945718ccf584145eee3f3aa06cddbeac12933781102e04"
+          "content": "fd60e63e9be68e5fb56422e397cf9baddded06dae1d2e523401542383bc72a9f"
         }
       ],
       "licenses": [
@@ -1073,13 +1073,13 @@
         }
       ],
       "name": "clap",
-      "purl": "pkg:cargo/clap@4.5.36",
+      "purl": "pkg:cargo/clap@4.5.39",
       "scope": "required",
       "type": "library",
-      "version": "4.5.36"
+      "version": "4.5.39"
     },
     {
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#clap_builder@4.5.36",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#clap_builder@4.5.39",
       "description": "A simple to use, efficient, and full-featured Command Line Argument Parser",
       "externalReferences": [
         {
@@ -1090,7 +1090,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "132dbda40fb6753878316a489d5a1242a8ef2f0d9e47ba01c951ea8aa7d013a5"
+          "content": "89cc6392a1f72bbeb820d71f32108f61fdaf18bc526e1d23954168a67759ef51"
         }
       ],
       "licenses": [
@@ -1099,10 +1099,10 @@
         }
       ],
       "name": "clap_builder",
-      "purl": "pkg:cargo/clap_builder@4.5.36",
+      "purl": "pkg:cargo/clap_builder@4.5.39",
       "scope": "required",
       "type": "library",
-      "version": "4.5.36"
+      "version": "4.5.39"
     },
     {
       "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#clap_derive@4.5.32",
@@ -2292,37 +2292,6 @@
       "version": "1.0.2"
     },
     {
-      "author": "Chris Wong <lambda.fairy@gmail.com>, Dan Gohman <dev@sunfishcode.online>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#errno@0.3.11",
-      "description": "Cross-platform interface to the `errno` variable.",
-      "externalReferences": [
-        {
-          "type": "documentation",
-          "url": "https://docs.rs/errno"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/lambda-fairy/rust-errno"
-        }
-      ],
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "976dd42dc7e85965fe702eb8164f21f450704bdde31faefd6471dba214cb594e"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "MIT OR Apache-2.0"
-        }
-      ],
-      "name": "errno",
-      "purl": "pkg:cargo/errno@0.3.11",
-      "scope": "required",
-      "type": "library",
-      "version": "0.3.11"
-    },
-    {
       "author": "John Nunley <dev@notgull.net>",
       "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#event-listener-strategy@0.5.4",
       "description": "Block or poll on event_listener easily",
@@ -2406,33 +2375,6 @@
       "scope": "required",
       "type": "library",
       "version": "4.3.0"
-    },
-    {
-      "author": "Stjepan Glavina <stjepang@gmail.com>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#fastrand@2.3.0",
-      "description": "A simple and fast random number generator",
-      "externalReferences": [
-        {
-          "type": "vcs",
-          "url": "https://github.com/smol-rs/fastrand"
-        }
-      ],
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "Apache-2.0 OR MIT"
-        }
-      ],
-      "name": "fastrand",
-      "purl": "pkg:cargo/fastrand@2.3.0",
-      "scope": "required",
-      "type": "library",
-      "version": "2.3.0"
     },
     {
       "author": "Sean Bowe <ewillbefull@gmail.com>, Jack Grigg <thestr4d@gmail.com>",
@@ -4593,37 +4535,6 @@
       "version": "0.2.1"
     },
     {
-      "author": "Dan Gohman <dev@sunfishcode.online>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#linux-raw-sys@0.9.4",
-      "description": "Generated bindings for Linux's userspace API",
-      "externalReferences": [
-        {
-          "type": "documentation",
-          "url": "https://docs.rs/linux-raw-sys"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/sunfishcode/linux-raw-sys"
-        }
-      ],
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "cd945864f07fe9f5371a27ad7b52a172b4b499999f1d97574c9fa68373937e12"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT"
-        }
-      ],
-      "name": "linux-raw-sys",
-      "purl": "pkg:cargo/linux-raw-sys@0.9.4",
-      "scope": "required",
-      "type": "library",
-      "version": "0.9.4"
-    },
-    {
       "author": "Armin Ronacher <armin.ronacher@active-4.com>",
       "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#listenfd@1.0.2",
       "description": "A simple library to work with listenfds passed from the outside (systemd/catflap socket activation)",
@@ -6078,7 +5989,7 @@
     },
     {
       "author": "The Rand Project Developers, The Rust Project Developers",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#rand@0.9.0",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#rand@0.9.1",
       "description": "Random number generators and other randomness functionality. ",
       "externalReferences": [
         {
@@ -6097,7 +6008,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "3779b94aeb87e8bd4e834cee3650289ee9e0d5677f976ecdb6d219e5f4f6cd94"
+          "content": "9fbfd9d094a40bf3ae768db9361049ace4c0e04a4fd6b359518bd7b73a73dd97"
         }
       ],
       "licenses": [
@@ -6106,10 +6017,10 @@
         }
       ],
       "name": "rand",
-      "purl": "pkg:cargo/rand@0.9.0",
+      "purl": "pkg:cargo/rand@0.9.1",
       "scope": "required",
       "type": "library",
-      "version": "0.9.0"
+      "version": "0.9.1"
     },
     {
       "author": "The Rand Project Developers, The Rust Project Developers, The CryptoCorrosion Contributors",
@@ -6746,37 +6657,6 @@
       "version": "0.4.1"
     },
     {
-      "author": "Dan Gohman <dev@sunfishcode.online>, Jakub Konka <kubkon@jakubkonka.com>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#rustix@1.0.5",
-      "description": "Safe Rust bindings to POSIX/Unix/Linux/Winsock-like syscalls",
-      "externalReferences": [
-        {
-          "type": "documentation",
-          "url": "https://docs.rs/rustix"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/bytecodealliance/rustix"
-        }
-      ],
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "d97817398dd4bb2e6da002002db259209759911da105da92bec29ccb12cf58bf"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT"
-        }
-      ],
-      "name": "rustix",
-      "purl": "pkg:cargo/rustix@1.0.5",
-      "scope": "required",
-      "type": "library",
-      "version": "1.0.5"
-    },
-    {
       "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#rustls-pemfile@2.2.0",
       "description": "Basic .pem file parser for keys and certificates",
       "externalReferences": [
@@ -6841,7 +6721,7 @@
       "version": "1.11.0"
     },
     {
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#rustls-webpki@0.103.1",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#rustls-webpki@0.103.3",
       "description": "Web PKI X.509 Certificate Verification.",
       "externalReferences": [
         {
@@ -6852,7 +6732,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "fef8b8769aaccf73098557a87cd1816b4f9c7c16811c9c77142aa695c16f2c03"
+          "content": "e4a72fe2bcf7a6ac6fd7d0b9e5cb68aeb7d4c0a0271730218b3e92d43b4eb435"
         }
       ],
       "licenses": [
@@ -6861,13 +6741,13 @@
         }
       ],
       "name": "rustls-webpki",
-      "purl": "pkg:cargo/rustls-webpki@0.103.1",
+      "purl": "pkg:cargo/rustls-webpki@0.103.3",
       "scope": "required",
       "type": "library",
-      "version": "0.103.1"
+      "version": "0.103.3"
     },
     {
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.26",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.27",
       "description": "Rustls is a modern TLS library written in Rust.",
       "externalReferences": [
         {
@@ -6882,7 +6762,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "df51b5869f3a441595eac5e8ff14d486ff285f7b8c0df8770e49c3b56351f0f0"
+          "content": "730944ca083c1c233a75c09f199e973ca499344a2b7ba9e755c457e86fb4a321"
         }
       ],
       "licenses": [
@@ -6891,10 +6771,10 @@
         }
       ],
       "name": "rustls",
-      "purl": "pkg:cargo/rustls@0.23.26",
+      "purl": "pkg:cargo/rustls@0.23.27",
       "scope": "required",
       "type": "library",
-      "version": "0.23.26"
+      "version": "0.23.27"
     },
     {
       "author": "David Tolnay <dtolnay@gmail.com>",
@@ -7084,7 +6964,7 @@
     },
     {
       "author": "Victor Polevoy <maintainer@vpolevoy.com>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#serde-aux@4.6.0",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#serde-aux@4.7.0",
       "description": "A serde crate's auxiliary library",
       "externalReferences": [
         {
@@ -7099,7 +6979,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5290c39c5f6992b9dddbda28541d965dba46468294e6018a408fa297e6c602de"
+          "content": "207f67b28fe90fb596503a9bf0bf1ea5e831e21307658e177c5dfcdfc3ab8a0a"
         }
       ],
       "licenses": [
@@ -7108,10 +6988,10 @@
         }
       ],
       "name": "serde-aux",
-      "purl": "pkg:cargo/serde-aux@4.6.0",
+      "purl": "pkg:cargo/serde-aux@4.7.0",
       "scope": "required",
       "type": "library",
-      "version": "4.6.0"
+      "version": "4.7.0"
     },
     {
       "author": "arcnmx",
@@ -7313,7 +7193,7 @@
     },
     {
       "author": "Sam Scott <sam@osohq.com>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#serde_qs@0.14.0",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#serde_qs@0.15.0",
       "description": "Querystrings for Serde",
       "externalReferences": [
         {
@@ -7328,7 +7208,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "8b417bedc008acbdf6d6b4bc482d29859924114bbe2650b7921fb68a261d0aa6"
+          "content": "f3faaf9e727533a19351a43cc5a8de957372163c7d35cc48c90b75cdda13c352"
         }
       ],
       "licenses": [
@@ -7337,10 +7217,10 @@
         }
       ],
       "name": "serde_qs",
-      "purl": "pkg:cargo/serde_qs@0.14.0",
+      "purl": "pkg:cargo/serde_qs@0.15.0",
       "scope": "required",
       "type": "library",
-      "version": "0.14.0"
+      "version": "0.15.0"
     },
     {
       "author": "paul@colomiets.name",
@@ -7801,7 +7681,7 @@
     },
     {
       "author": "Ryan Leckey <leckey.ryan@gmail.com>, Austin Bonander <austin.bonander@gmail.com>, Chloe Ross <orangesnowfox@gmail.com>, Daniel Akhterov <akhterovd@gmail.com>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-core@0.8.4",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-core@0.8.6",
       "description": "Core of SQLx, the rust SQL toolkit. Not intended to be used directly.",
       "externalReferences": [
         {
@@ -7812,7 +7692,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "55c4720d7d4cd3d5b00f61d03751c685ad09c33ae8290c8a2c11335e0604300b"
+          "content": "ee6798b1838b6a0f69c007c133b8df5866302197e404e8b6ee8ed3e3a5e68dc6"
         }
       ],
       "licenses": [
@@ -7821,14 +7701,14 @@
         }
       ],
       "name": "sqlx-core",
-      "purl": "pkg:cargo/sqlx-core@0.8.4",
+      "purl": "pkg:cargo/sqlx-core@0.8.6",
       "scope": "required",
       "type": "library",
-      "version": "0.8.4"
+      "version": "0.8.6"
     },
     {
       "author": "Ryan Leckey <leckey.ryan@gmail.com>, Austin Bonander <austin.bonander@gmail.com>, Chloe Ross <orangesnowfox@gmail.com>, Daniel Akhterov <akhterovd@gmail.com>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-macros-core@0.8.4",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-macros-core@0.8.6",
       "description": "Macro support core for SQLx, the Rust SQL toolkit. Not intended to be used directly.",
       "externalReferences": [
         {
@@ -7839,7 +7719,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "1cde983058e53bfa75998e1982086c5efe3c370f3250bf0357e344fa3352e32b"
+          "content": "19a9c1841124ac5a61741f96e1d9e2ec77424bf323962dd894bdb93f37d5219b"
         }
       ],
       "licenses": [
@@ -7848,14 +7728,14 @@
         }
       ],
       "name": "sqlx-macros-core",
-      "purl": "pkg:cargo/sqlx-macros-core@0.8.4",
+      "purl": "pkg:cargo/sqlx-macros-core@0.8.6",
       "scope": "required",
       "type": "library",
-      "version": "0.8.4"
+      "version": "0.8.6"
     },
     {
       "author": "Ryan Leckey <leckey.ryan@gmail.com>, Austin Bonander <austin.bonander@gmail.com>, Chloe Ross <orangesnowfox@gmail.com>, Daniel Akhterov <akhterovd@gmail.com>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-macros@0.8.4",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-macros@0.8.6",
       "description": "Macros for SQLx, the rust SQL toolkit. Not intended to be used directly.",
       "externalReferences": [
         {
@@ -7866,7 +7746,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "175147fcb75f353ac7675509bc58abb2cb291caf0fd24a3623b8f7e3eb0a754b"
+          "content": "a2d452988ccaacfbf5e0bdbc348fb91d7c8af5bee192173ac3636b5fb6e6715d"
         }
       ],
       "licenses": [
@@ -7875,14 +7755,14 @@
         }
       ],
       "name": "sqlx-macros",
-      "purl": "pkg:cargo/sqlx-macros@0.8.4",
+      "purl": "pkg:cargo/sqlx-macros@0.8.6",
       "scope": "required",
       "type": "library",
-      "version": "0.8.4"
+      "version": "0.8.6"
     },
     {
       "author": "Ryan Leckey <leckey.ryan@gmail.com>, Austin Bonander <austin.bonander@gmail.com>, Chloe Ross <orangesnowfox@gmail.com>, Daniel Akhterov <akhterovd@gmail.com>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-mysql@0.8.4",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-mysql@0.8.6",
       "description": "MySQL driver implementation for SQLx. Not for direct use; see the `sqlx` crate for details.",
       "externalReferences": [
         {
@@ -7897,7 +7777,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "847d2e5393a4f39e47e4f36cab419709bc2b83cbe4223c60e86e1471655be333"
+          "content": "aa003f0038df784eb8fecbbac13affe3da23b45194bd57dba231c8f48199c526"
         }
       ],
       "licenses": [
@@ -7906,14 +7786,14 @@
         }
       ],
       "name": "sqlx-mysql",
-      "purl": "pkg:cargo/sqlx-mysql@0.8.4",
+      "purl": "pkg:cargo/sqlx-mysql@0.8.6",
       "scope": "required",
       "type": "library",
-      "version": "0.8.4"
+      "version": "0.8.6"
     },
     {
       "author": "Ryan Leckey <leckey.ryan@gmail.com>, Austin Bonander <austin.bonander@gmail.com>, Chloe Ross <orangesnowfox@gmail.com>, Daniel Akhterov <akhterovd@gmail.com>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-postgres@0.8.4",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-postgres@0.8.6",
       "description": "PostgreSQL driver implementation for SQLx. Not for direct use; see the `sqlx` crate for details.",
       "externalReferences": [
         {
@@ -7928,7 +7808,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "cc35947a541b9e0a2e3d85da444f1c4137c13040267141b208395a0d0ca4659f"
+          "content": "db58fcd5a53cf07c184b154801ff91347e4c30d17a3562a635ff028ad5deda46"
         }
       ],
       "licenses": [
@@ -7937,14 +7817,14 @@
         }
       ],
       "name": "sqlx-postgres",
-      "purl": "pkg:cargo/sqlx-postgres@0.8.4",
+      "purl": "pkg:cargo/sqlx-postgres@0.8.6",
       "scope": "required",
       "type": "library",
-      "version": "0.8.4"
+      "version": "0.8.6"
     },
     {
       "author": "Ryan Leckey <leckey.ryan@gmail.com>, Austin Bonander <austin.bonander@gmail.com>, Chloe Ross <orangesnowfox@gmail.com>, Daniel Akhterov <akhterovd@gmail.com>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-sqlite@0.8.4",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-sqlite@0.8.6",
       "description": "SQLite driver implementation for SQLx. Not for direct use; see the `sqlx` crate for details.",
       "externalReferences": [
         {
@@ -7959,7 +7839,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "6c48291dac4e5ed32da0927a0b981788be65674aeb62666d19873ab4289febde"
+          "content": "c2d12fe70b2c1b4401038055f90f151b78208de1f9f89a7dbfd41587a10c3eea"
         }
       ],
       "licenses": [
@@ -7968,14 +7848,14 @@
         }
       ],
       "name": "sqlx-sqlite",
-      "purl": "pkg:cargo/sqlx-sqlite@0.8.4",
+      "purl": "pkg:cargo/sqlx-sqlite@0.8.6",
       "scope": "required",
       "type": "library",
-      "version": "0.8.4"
+      "version": "0.8.6"
     },
     {
       "author": "Ryan Leckey <leckey.ryan@gmail.com>, Austin Bonander <austin.bonander@gmail.com>, Chloe Ross <orangesnowfox@gmail.com>, Daniel Akhterov <akhterovd@gmail.com>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx@0.8.4",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx@0.8.6",
       "description": "🧰 The Rust SQL Toolkit. An async, pure Rust SQL crate featuring compile-time checked queries without a DSL. Supports PostgreSQL, MySQL, and SQLite.",
       "externalReferences": [
         {
@@ -7990,7 +7870,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "14e22987355fbf8cfb813a0cf8cd97b1b4ec834b94dbd759a9e8679d41fabe83"
+          "content": "1fefb893899429669dcdd979aff487bd78f4064e5e7907e4269081e0ef7d97dc"
         }
       ],
       "licenses": [
@@ -7999,10 +7879,10 @@
         }
       ],
       "name": "sqlx",
-      "purl": "pkg:cargo/sqlx@0.8.4",
+      "purl": "pkg:cargo/sqlx@0.8.6",
       "scope": "required",
       "type": "library",
-      "version": "0.8.4"
+      "version": "0.8.6"
     },
     {
       "author": "Robert Grosse <n210241048576@gmail.com>",
@@ -8325,41 +8205,6 @@
       "scope": "required",
       "type": "library",
       "version": "0.2.0"
-    },
-    {
-      "author": "Steven Allen <steven@stebalien.com>, The Rust Project Developers, Ashley Mannix <ashleymannix@live.com.au>, Jason White <me@jasonwhite.io>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#tempfile@3.19.1",
-      "description": "A library for managing temporary files and directories.",
-      "externalReferences": [
-        {
-          "type": "documentation",
-          "url": "https://docs.rs/tempfile"
-        },
-        {
-          "type": "website",
-          "url": "https://stebalien.com/projects/tempfile-rs/"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/Stebalien/tempfile"
-        }
-      ],
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "7437ac7763b9b123ccf33c338a5cc1bac6f69b45a136c19bdd8a65e3916435bf"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "MIT OR Apache-2.0"
-        }
-      ],
-      "name": "tempfile",
-      "purl": "pkg:cargo/tempfile@3.19.1",
-      "scope": "required",
-      "type": "library",
-      "version": "3.19.1"
     },
     {
       "author": "David Tolnay <dtolnay@gmail.com>",
@@ -8830,7 +8675,7 @@
     },
     {
       "author": "Tokio Contributors <team@tokio.rs>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
       "description": "An event-driven, non-blocking I/O platform for writing asynchronous I/O backed applications. ",
       "externalReferences": [
         {
@@ -8845,7 +8690,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "e6b88822cbe49de4185e3a4cbf8321dd487cf5fe0c5c65695fef6346371e9c48"
+          "content": "75ef51a33ef1da925cea3e4eb122833cb377c61439ca401b770f54902b806779"
         }
       ],
       "licenses": [
@@ -8854,10 +8699,10 @@
         }
       ],
       "name": "tokio",
-      "purl": "pkg:cargo/tokio@1.44.2",
+      "purl": "pkg:cargo/tokio@1.45.1",
       "scope": "required",
       "type": "library",
-      "version": "1.44.2"
+      "version": "1.45.1"
     },
     {
       "author": "imbolc",
@@ -8892,7 +8737,7 @@
     },
     {
       "author": "Tower Maintainers <team@tower-rs.com>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#tower-http@0.6.2",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#tower-http@0.6.6",
       "description": "Tower middleware and utilities for HTTP clients and servers",
       "externalReferences": [
         {
@@ -8907,7 +8752,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "403fa3b783d4b626a8ad51d766ab03cb6d2dbfc46b1c5d4448395e6628dc9697"
+          "content": "adc82fd73de2a9722ac5da747f12383d2bfdb93591ee6c58486e0097890f05f2"
         }
       ],
       "licenses": [
@@ -8916,10 +8761,10 @@
         }
       ],
       "name": "tower-http",
-      "purl": "pkg:cargo/tower-http@0.6.2",
+      "purl": "pkg:cargo/tower-http@0.6.6",
       "scope": "required",
       "type": "library",
-      "version": "0.6.2"
+      "version": "0.6.6"
     },
     {
       "author": "Tower Maintainers <team@tower-rs.com>",
@@ -9769,7 +9614,7 @@
     },
     {
       "author": "Ashley Mannix<ashleymannix@live.com.au>, Dylan DPC<dylan.dpc@gmail.com>, Hunar Roop Kahlon<hunar.roop@gmail.com>",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#uuid@1.16.0",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#uuid@1.17.0",
       "description": "A library to generate and parse UUIDs.",
       "externalReferences": [
         {
@@ -9788,7 +9633,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "458f7a779bf54acc9f347480ac654f68407d3aab21269a6e3c9f922acd9e2da9"
+          "content": "3cf4199d1e5d15ddd86a694e4d0dffa9c323ce759fea589f00fef9d81cc1931d"
         }
       ],
       "licenses": [
@@ -9797,10 +9642,10 @@
         }
       ],
       "name": "uuid",
-      "purl": "pkg:cargo/uuid@1.16.0",
+      "purl": "pkg:cargo/uuid@1.17.0",
       "scope": "required",
       "type": "library",
-      "version": "1.16.0"
+      "version": "1.17.0"
     },
     {
       "author": "Jim McGrath <jimmc2@gmail.com>",
@@ -10312,10 +10157,10 @@
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#activitystreams-kinds@0.3.0",
         "registry+https://github.com/rust-lang/crates.io-index#async-trait@0.1.88",
-        "registry+https://github.com/rust-lang/crates.io-index#axum@0.8.3",
+        "registry+https://github.com/rust-lang/crates.io-index#axum@0.8.4",
         "registry+https://github.com/rust-lang/crates.io-index#base64@0.22.1",
         "registry+https://github.com/rust-lang/crates.io-index#bytes@1.10.1",
-        "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.40",
+        "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.41",
         "registry+https://github.com/rust-lang/crates.io-index#derive_builder@0.20.2",
         "registry+https://github.com/rust-lang/crates.io-index#dyn-clone@1.0.19",
         "registry+https://github.com/rust-lang/crates.io-index#either@1.15.0",
@@ -10339,7 +10184,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.140",
         "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.8",
         "registry+https://github.com/rust-lang/crates.io-index#thiserror@1.0.69",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
         "registry+https://github.com/rust-lang/crates.io-index#tower@0.4.13",
         "registry+https://github.com/rust-lang/crates.io-index#tracing@0.1.41",
         "registry+https://github.com/rust-lang/crates.io-index#url@2.5.4"
@@ -10378,10 +10223,10 @@
         "registry+https://github.com/rust-lang/crates.io-index#anyhow@1.0.98",
         "registry+https://github.com/rust-lang/crates.io-index#argon2@0.5.3",
         "registry+https://github.com/rust-lang/crates.io-index#async-trait@0.1.88",
-        "registry+https://github.com/rust-lang/crates.io-index#axum@0.8.3",
+        "registry+https://github.com/rust-lang/crates.io-index#axum@0.8.4",
         "registry+https://github.com/rust-lang/crates.io-index#axum-server@0.7.2",
-        "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.40",
-        "registry+https://github.com/rust-lang/crates.io-index#clap@4.5.36",
+        "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.41",
+        "registry+https://github.com/rust-lang/crates.io-index#clap@4.5.39",
         "registry+https://github.com/rust-lang/crates.io-index#fake@4.3.0",
         "registry+https://github.com/rust-lang/crates.io-index#friendly-zoo@1.1.0",
         "git+https://github.com/raffomania/garde?branch=url-length#0.22.0",
@@ -10392,25 +10237,25 @@
         "registry+https://github.com/rust-lang/crates.io-index#openidconnect@4.0.0",
         "registry+https://github.com/rust-lang/crates.io-index#percent-encoding@2.3.1",
         "registry+https://github.com/rust-lang/crates.io-index#railwind@0.1.5",
-        "registry+https://github.com/rust-lang/crates.io-index#rand@0.9.0",
+        "registry+https://github.com/rust-lang/crates.io-index#rand@0.9.1",
         "registry+https://github.com/rust-lang/crates.io-index#regex@1.11.1",
-        "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.26",
+        "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.27",
         "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.219",
-        "registry+https://github.com/rust-lang/crates.io-index#serde-aux@4.6.0",
+        "registry+https://github.com/rust-lang/crates.io-index#serde-aux@4.7.0",
         "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.140",
-        "registry+https://github.com/rust-lang/crates.io-index#serde_qs@0.14.0",
-        "registry+https://github.com/rust-lang/crates.io-index#sqlx@0.8.4",
+        "registry+https://github.com/rust-lang/crates.io-index#serde_qs@0.15.0",
+        "registry+https://github.com/rust-lang/crates.io-index#sqlx@0.8.6",
         "registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.12",
         "registry+https://github.com/rust-lang/crates.io-index#time@0.3.41",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
         "registry+https://github.com/rust-lang/crates.io-index#tower@0.5.2",
-        "registry+https://github.com/rust-lang/crates.io-index#tower-http@0.6.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tower-http@0.6.6",
         "registry+https://github.com/rust-lang/crates.io-index#tower-sessions@0.14.0",
         "registry+https://github.com/rust-lang/crates.io-index#tower-sessions-sqlx-store@0.15.0",
         "registry+https://github.com/rust-lang/crates.io-index#tracing@0.1.41",
         "registry+https://github.com/rust-lang/crates.io-index#tracing-subscriber@0.3.19",
         "registry+https://github.com/rust-lang/crates.io-index#url@2.5.4",
-        "registry+https://github.com/rust-lang/crates.io-index#uuid@1.16.0",
+        "registry+https://github.com/rust-lang/crates.io-index#uuid@1.17.0",
         "registry+https://github.com/rust-lang/crates.io-index#visdom@1.0.3",
         "registry+https://github.com/rust-lang/crates.io-index#walkdir@2.5.0"
       ]
@@ -10539,10 +10384,10 @@
         "registry+https://github.com/rust-lang/crates.io-index#hyper@1.6.0",
         "registry+https://github.com/rust-lang/crates.io-index#hyper-util@0.1.11",
         "registry+https://github.com/rust-lang/crates.io-index#pin-project-lite@0.2.16",
-        "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.26",
+        "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.27",
         "registry+https://github.com/rust-lang/crates.io-index#rustls-pemfile@2.2.0",
         "registry+https://github.com/rust-lang/crates.io-index#rustls-pki-types@1.11.0",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
         "registry+https://github.com/rust-lang/crates.io-index#tokio-rustls@0.26.2",
         "registry+https://github.com/rust-lang/crates.io-index#tower-service@0.3.3"
       ],
@@ -10572,13 +10417,13 @@
         "registry+https://github.com/rust-lang/crates.io-index#serde_path_to_error@0.1.17",
         "registry+https://github.com/rust-lang/crates.io-index#serde_urlencoded@0.7.1",
         "registry+https://github.com/rust-lang/crates.io-index#sync_wrapper@1.0.2",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
         "registry+https://github.com/rust-lang/crates.io-index#tower@0.5.2",
         "registry+https://github.com/rust-lang/crates.io-index#tower-layer@0.3.3",
         "registry+https://github.com/rust-lang/crates.io-index#tower-service@0.3.3",
         "registry+https://github.com/rust-lang/crates.io-index#tracing@0.1.41"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#axum@0.8.3"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#axum@0.8.4"
     },
     {
       "dependsOn": [],
@@ -10648,14 +10493,14 @@
         "registry+https://github.com/rust-lang/crates.io-index#num-traits@0.2.19",
         "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.219"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.40"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.41"
     },
     {
       "dependsOn": [
-        "registry+https://github.com/rust-lang/crates.io-index#clap_builder@4.5.36",
+        "registry+https://github.com/rust-lang/crates.io-index#clap_builder@4.5.39",
         "registry+https://github.com/rust-lang/crates.io-index#clap_derive@4.5.32"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#clap@4.5.36"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#clap@4.5.39"
     },
     {
       "dependsOn": [
@@ -10664,7 +10509,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#clap_lex@0.7.4",
         "registry+https://github.com/rust-lang/crates.io-index#strsim@0.11.1"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#clap_builder@4.5.36"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#clap_builder@4.5.39"
     },
     {
       "dependsOn": [
@@ -10957,12 +10802,6 @@
     },
     {
       "dependsOn": [
-        "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.172"
-      ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#errno@0.3.11"
-    },
-    {
-      "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#event-listener@5.4.0",
         "registry+https://github.com/rust-lang/crates.io-index#pin-project-lite@0.2.16"
       ],
@@ -10979,13 +10818,9 @@
     {
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#deunicode@1.6.1",
-        "registry+https://github.com/rust-lang/crates.io-index#rand@0.9.0"
+        "registry+https://github.com/rust-lang/crates.io-index#rand@0.9.1"
       ],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#fake@4.3.0"
-    },
-    {
-      "dependsOn": [],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#fastrand@2.3.0"
     },
     {
       "dependsOn": [
@@ -11025,7 +10860,7 @@
     {
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#autocfg@1.4.0",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2"
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1"
       ],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#fs-err@3.1.0"
     },
@@ -11143,7 +10978,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#http@1.3.1",
         "registry+https://github.com/rust-lang/crates.io-index#indexmap@2.9.0",
         "registry+https://github.com/rust-lang/crates.io-index#slab@0.4.9",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
         "registry+https://github.com/rust-lang/crates.io-index#tokio-util@0.7.14",
         "registry+https://github.com/rust-lang/crates.io-index#tracing@0.1.41"
       ],
@@ -11226,7 +11061,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#reqwest-middleware@0.3.3",
         "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.8",
         "registry+https://github.com/rust-lang/crates.io-index#thiserror@1.0.69",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2"
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1"
       ],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#http-signature-normalization-reqwest@0.12.0"
     },
@@ -11258,9 +11093,9 @@
         "registry+https://github.com/rust-lang/crates.io-index#http@1.3.1",
         "registry+https://github.com/rust-lang/crates.io-index#hyper@1.6.0",
         "registry+https://github.com/rust-lang/crates.io-index#hyper-util@0.1.11",
-        "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.26",
+        "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.27",
         "registry+https://github.com/rust-lang/crates.io-index#rustls-pki-types@1.11.0",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
         "registry+https://github.com/rust-lang/crates.io-index#tokio-rustls@0.26.2",
         "registry+https://github.com/rust-lang/crates.io-index#tower-service@0.3.3",
         "registry+https://github.com/rust-lang/crates.io-index#webpki-roots@0.26.8"
@@ -11278,7 +11113,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.172",
         "registry+https://github.com/rust-lang/crates.io-index#pin-project-lite@0.2.16",
         "registry+https://github.com/rust-lang/crates.io-index#socket2@0.5.9",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
         "registry+https://github.com/rust-lang/crates.io-index#tower-service@0.3.3",
         "registry+https://github.com/rust-lang/crates.io-index#tracing@0.1.41"
       ],
@@ -11297,7 +11132,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#itoa@1.0.15",
         "registry+https://github.com/rust-lang/crates.io-index#pin-project-lite@0.2.16",
         "registry+https://github.com/rust-lang/crates.io-index#smallvec@1.15.0",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
         "registry+https://github.com/rust-lang/crates.io-index#want@0.3.1"
       ],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#hyper@1.6.0"
@@ -11495,10 +11330,6 @@
       "ref": "registry+https://github.com/rust-lang/crates.io-index#line-col@0.2.1"
     },
     {
-      "dependsOn": [],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#linux-raw-sys@0.9.4"
-    },
-    {
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.172"
       ],
@@ -11581,7 +11412,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#smallvec@1.15.0",
         "registry+https://github.com/rust-lang/crates.io-index#tagptr@0.2.0",
         "registry+https://github.com/rust-lang/crates.io-index#thiserror@1.0.69",
-        "registry+https://github.com/rust-lang/crates.io-index#uuid@1.16.0"
+        "registry+https://github.com/rust-lang/crates.io-index#uuid@1.17.0"
       ],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#moka@0.12.10"
     },
@@ -11633,7 +11464,7 @@
     {
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#base64@0.22.1",
-        "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.40",
+        "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.41",
         "registry+https://github.com/rust-lang/crates.io-index#http@1.3.1",
         "registry+https://github.com/rust-lang/crates.io-index#rand@0.8.5",
         "registry+https://github.com/rust-lang/crates.io-index#reqwest@0.12.15",
@@ -11653,7 +11484,7 @@
     {
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#base64@0.21.7",
-        "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.40",
+        "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.41",
         "registry+https://github.com/rust-lang/crates.io-index#dyn-clone@1.0.19",
         "registry+https://github.com/rust-lang/crates.io-index#ed25519-dalek@2.1.1",
         "registry+https://github.com/rust-lang/crates.io-index#hmac@0.12.1",
@@ -11803,10 +11634,10 @@
     {
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#bytes@1.10.1",
-        "registry+https://github.com/rust-lang/crates.io-index#rand@0.9.0",
+        "registry+https://github.com/rust-lang/crates.io-index#rand@0.9.1",
         "registry+https://github.com/rust-lang/crates.io-index#ring@0.17.14",
         "registry+https://github.com/rust-lang/crates.io-index#rustc-hash@2.1.1",
-        "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.26",
+        "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.27",
         "registry+https://github.com/rust-lang/crates.io-index#slab@0.4.9",
         "registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.12",
         "registry+https://github.com/rust-lang/crates.io-index#tinyvec@1.9.0",
@@ -11831,10 +11662,10 @@
         "registry+https://github.com/rust-lang/crates.io-index#quinn-proto@0.11.10",
         "registry+https://github.com/rust-lang/crates.io-index#quinn-udp@0.5.11",
         "registry+https://github.com/rust-lang/crates.io-index#rustc-hash@2.1.1",
-        "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.26",
+        "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.27",
         "registry+https://github.com/rust-lang/crates.io-index#socket2@0.5.9",
         "registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.12",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
         "registry+https://github.com/rust-lang/crates.io-index#tracing@0.1.41"
       ],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#quinn@0.11.7"
@@ -11869,10 +11700,9 @@
     {
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#rand_chacha@0.9.0",
-        "registry+https://github.com/rust-lang/crates.io-index#rand_core@0.9.3",
-        "registry+https://github.com/rust-lang/crates.io-index#zerocopy@0.8.24"
+        "registry+https://github.com/rust-lang/crates.io-index#rand_core@0.9.3"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#rand@0.9.0"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#rand@0.9.1"
     },
     {
       "dependsOn": [
@@ -11962,14 +11792,14 @@
         "registry+https://github.com/rust-lang/crates.io-index#percent-encoding@2.3.1",
         "registry+https://github.com/rust-lang/crates.io-index#pin-project-lite@0.2.16",
         "registry+https://github.com/rust-lang/crates.io-index#quinn@0.11.7",
-        "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.26",
+        "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.27",
         "registry+https://github.com/rust-lang/crates.io-index#rustls-pemfile@2.2.0",
         "registry+https://github.com/rust-lang/crates.io-index#rustls-pki-types@1.11.0",
         "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.219",
         "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.140",
         "registry+https://github.com/rust-lang/crates.io-index#serde_urlencoded@0.7.1",
         "registry+https://github.com/rust-lang/crates.io-index#sync_wrapper@1.0.2",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
         "registry+https://github.com/rust-lang/crates.io-index#tokio-rustls@0.26.2",
         "registry+https://github.com/rust-lang/crates.io-index#tokio-util@0.7.14",
         "registry+https://github.com/rust-lang/crates.io-index#tower@0.5.2",
@@ -12058,15 +11888,6 @@
     },
     {
       "dependsOn": [
-        "registry+https://github.com/rust-lang/crates.io-index#bitflags@2.9.0",
-        "registry+https://github.com/rust-lang/crates.io-index#errno@0.3.11",
-        "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.172",
-        "registry+https://github.com/rust-lang/crates.io-index#linux-raw-sys@0.9.4"
-      ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#rustix@1.0.5"
-    },
-    {
-      "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#rustls-pki-types@1.11.0"
       ],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#rustls-pemfile@2.2.0"
@@ -12081,18 +11902,18 @@
         "registry+https://github.com/rust-lang/crates.io-index#rustls-pki-types@1.11.0",
         "registry+https://github.com/rust-lang/crates.io-index#untrusted@0.9.0"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#rustls-webpki@0.103.1"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#rustls-webpki@0.103.3"
     },
     {
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#once_cell@1.21.3",
         "registry+https://github.com/rust-lang/crates.io-index#ring@0.17.14",
         "registry+https://github.com/rust-lang/crates.io-index#rustls-pki-types@1.11.0",
-        "registry+https://github.com/rust-lang/crates.io-index#rustls-webpki@0.103.1",
+        "registry+https://github.com/rust-lang/crates.io-index#rustls-webpki@0.103.3",
         "registry+https://github.com/rust-lang/crates.io-index#subtle@2.6.1",
         "registry+https://github.com/rust-lang/crates.io-index#zeroize@1.8.1"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.26"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.27"
     },
     {
       "dependsOn": [],
@@ -12131,7 +11952,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#serde-value@0.7.0",
         "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.140"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#serde-aux@4.6.0"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#serde-aux@4.7.0"
     },
     {
       "dependsOn": [
@@ -12183,7 +12004,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.219",
         "registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.12"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#serde_qs@0.14.0"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#serde_qs@0.15.0"
     },
     {
       "dependsOn": [
@@ -12204,7 +12025,7 @@
     {
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#base64@0.22.1",
-        "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.40",
+        "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.41",
         "registry+https://github.com/rust-lang/crates.io-index#hex@0.4.3",
         "registry+https://github.com/rust-lang/crates.io-index#indexmap@1.9.3",
         "registry+https://github.com/rust-lang/crates.io-index#indexmap@2.9.0",
@@ -12320,13 +12141,13 @@
         "registry+https://github.com/rust-lang/crates.io-index#smallvec@1.15.0",
         "registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.12",
         "registry+https://github.com/rust-lang/crates.io-index#time@0.3.41",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
         "registry+https://github.com/rust-lang/crates.io-index#tokio-stream@0.1.17",
         "registry+https://github.com/rust-lang/crates.io-index#tracing@0.1.41",
         "registry+https://github.com/rust-lang/crates.io-index#url@2.5.4",
-        "registry+https://github.com/rust-lang/crates.io-index#uuid@1.16.0"
+        "registry+https://github.com/rust-lang/crates.io-index#uuid@1.17.0"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-core@0.8.4"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-core@0.8.6"
     },
     {
       "dependsOn": [
@@ -12340,26 +12161,25 @@
         "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.219",
         "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.140",
         "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.8",
-        "registry+https://github.com/rust-lang/crates.io-index#sqlx-core@0.8.4",
-        "registry+https://github.com/rust-lang/crates.io-index#sqlx-mysql@0.8.4",
-        "registry+https://github.com/rust-lang/crates.io-index#sqlx-postgres@0.8.4",
-        "registry+https://github.com/rust-lang/crates.io-index#sqlx-sqlite@0.8.4",
+        "registry+https://github.com/rust-lang/crates.io-index#sqlx-core@0.8.6",
+        "registry+https://github.com/rust-lang/crates.io-index#sqlx-mysql@0.8.6",
+        "registry+https://github.com/rust-lang/crates.io-index#sqlx-postgres@0.8.6",
+        "registry+https://github.com/rust-lang/crates.io-index#sqlx-sqlite@0.8.6",
         "registry+https://github.com/rust-lang/crates.io-index#syn@2.0.100",
-        "registry+https://github.com/rust-lang/crates.io-index#tempfile@3.19.1",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
         "registry+https://github.com/rust-lang/crates.io-index#url@2.5.4"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-macros-core@0.8.4"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-macros-core@0.8.6"
     },
     {
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.94",
         "registry+https://github.com/rust-lang/crates.io-index#quote@1.0.40",
-        "registry+https://github.com/rust-lang/crates.io-index#sqlx-core@0.8.4",
-        "registry+https://github.com/rust-lang/crates.io-index#sqlx-macros-core@0.8.4",
+        "registry+https://github.com/rust-lang/crates.io-index#sqlx-core@0.8.6",
+        "registry+https://github.com/rust-lang/crates.io-index#sqlx-macros-core@0.8.6",
         "registry+https://github.com/rust-lang/crates.io-index#syn@2.0.100"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-macros@0.8.4"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-macros@0.8.6"
     },
     {
       "dependsOn": [
@@ -12392,15 +12212,15 @@
         "registry+https://github.com/rust-lang/crates.io-index#sha1@0.10.6",
         "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.8",
         "registry+https://github.com/rust-lang/crates.io-index#smallvec@1.15.0",
-        "registry+https://github.com/rust-lang/crates.io-index#sqlx-core@0.8.4",
+        "registry+https://github.com/rust-lang/crates.io-index#sqlx-core@0.8.6",
         "registry+https://github.com/rust-lang/crates.io-index#stringprep@0.1.5",
         "registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.12",
         "registry+https://github.com/rust-lang/crates.io-index#time@0.3.41",
         "registry+https://github.com/rust-lang/crates.io-index#tracing@0.1.41",
-        "registry+https://github.com/rust-lang/crates.io-index#uuid@1.16.0",
+        "registry+https://github.com/rust-lang/crates.io-index#uuid@1.17.0",
         "registry+https://github.com/rust-lang/crates.io-index#whoami@1.6.0"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-mysql@0.8.4"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-mysql@0.8.6"
     },
     {
       "dependsOn": [
@@ -12427,15 +12247,15 @@
         "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.140",
         "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.8",
         "registry+https://github.com/rust-lang/crates.io-index#smallvec@1.15.0",
-        "registry+https://github.com/rust-lang/crates.io-index#sqlx-core@0.8.4",
+        "registry+https://github.com/rust-lang/crates.io-index#sqlx-core@0.8.6",
         "registry+https://github.com/rust-lang/crates.io-index#stringprep@0.1.5",
         "registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.12",
         "registry+https://github.com/rust-lang/crates.io-index#time@0.3.41",
         "registry+https://github.com/rust-lang/crates.io-index#tracing@0.1.41",
-        "registry+https://github.com/rust-lang/crates.io-index#uuid@1.16.0",
+        "registry+https://github.com/rust-lang/crates.io-index#uuid@1.17.0",
         "registry+https://github.com/rust-lang/crates.io-index#whoami@1.6.0"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-postgres@0.8.4"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-postgres@0.8.6"
     },
     {
       "dependsOn": [
@@ -12451,24 +12271,24 @@
         "registry+https://github.com/rust-lang/crates.io-index#percent-encoding@2.3.1",
         "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.219",
         "registry+https://github.com/rust-lang/crates.io-index#serde_urlencoded@0.7.1",
-        "registry+https://github.com/rust-lang/crates.io-index#sqlx-core@0.8.4",
+        "registry+https://github.com/rust-lang/crates.io-index#sqlx-core@0.8.6",
         "registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.12",
         "registry+https://github.com/rust-lang/crates.io-index#time@0.3.41",
         "registry+https://github.com/rust-lang/crates.io-index#tracing@0.1.41",
         "registry+https://github.com/rust-lang/crates.io-index#url@2.5.4",
-        "registry+https://github.com/rust-lang/crates.io-index#uuid@1.16.0"
+        "registry+https://github.com/rust-lang/crates.io-index#uuid@1.17.0"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-sqlite@0.8.4"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx-sqlite@0.8.6"
     },
     {
       "dependsOn": [
-        "registry+https://github.com/rust-lang/crates.io-index#sqlx-core@0.8.4",
-        "registry+https://github.com/rust-lang/crates.io-index#sqlx-macros@0.8.4",
-        "registry+https://github.com/rust-lang/crates.io-index#sqlx-mysql@0.8.4",
-        "registry+https://github.com/rust-lang/crates.io-index#sqlx-postgres@0.8.4",
-        "registry+https://github.com/rust-lang/crates.io-index#sqlx-sqlite@0.8.4"
+        "registry+https://github.com/rust-lang/crates.io-index#sqlx-core@0.8.6",
+        "registry+https://github.com/rust-lang/crates.io-index#sqlx-macros@0.8.6",
+        "registry+https://github.com/rust-lang/crates.io-index#sqlx-mysql@0.8.6",
+        "registry+https://github.com/rust-lang/crates.io-index#sqlx-postgres@0.8.6",
+        "registry+https://github.com/rust-lang/crates.io-index#sqlx-sqlite@0.8.6"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx@0.8.4"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#sqlx@0.8.6"
     },
     {
       "dependsOn": [],
@@ -12527,15 +12347,6 @@
     {
       "dependsOn": [],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#tagptr@0.2.0"
-    },
-    {
-      "dependsOn": [
-        "registry+https://github.com/rust-lang/crates.io-index#fastrand@2.3.0",
-        "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.3.2",
-        "registry+https://github.com/rust-lang/crates.io-index#once_cell@1.21.3",
-        "registry+https://github.com/rust-lang/crates.io-index#rustix@1.0.5"
-      ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#tempfile@3.19.1"
     },
     {
       "dependsOn": [
@@ -12628,8 +12439,8 @@
     },
     {
       "dependsOn": [
-        "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.26",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2"
+        "registry+https://github.com/rust-lang/crates.io-index#rustls@0.23.27",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1"
       ],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#tokio-rustls@0.26.2"
     },
@@ -12637,7 +12448,7 @@
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#futures-core@0.3.31",
         "registry+https://github.com/rust-lang/crates.io-index#pin-project-lite@0.2.16",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2"
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1"
       ],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#tokio-stream@0.1.17"
     },
@@ -12647,7 +12458,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#futures-core@0.3.31",
         "registry+https://github.com/rust-lang/crates.io-index#futures-sink@0.3.31",
         "registry+https://github.com/rust-lang/crates.io-index#pin-project-lite@0.2.16",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2"
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1"
       ],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#tokio-util@0.7.14"
     },
@@ -12661,7 +12472,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#socket2@0.5.9",
         "registry+https://github.com/rust-lang/crates.io-index#tokio-macros@2.5.0"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1"
     },
     {
       "dependsOn": [
@@ -12687,7 +12498,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#tower-service@0.3.3",
         "registry+https://github.com/rust-lang/crates.io-index#tracing@0.1.41"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#tower-http@0.6.2"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#tower-http@0.6.6"
     },
     {
       "dependsOn": [],
@@ -12710,7 +12521,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.140",
         "registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.12",
         "registry+https://github.com/rust-lang/crates.io-index#time@0.3.41",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
         "registry+https://github.com/rust-lang/crates.io-index#tracing@0.1.41"
       ],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#tower-sessions-core@0.14.0"
@@ -12719,7 +12530,7 @@
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#async-trait@0.1.88",
         "registry+https://github.com/rust-lang/crates.io-index#time@0.3.41",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
         "registry+https://github.com/rust-lang/crates.io-index#tower-sessions-core@0.14.0"
       ],
       "ref": "registry+https://github.com/rust-lang/crates.io-index#tower-sessions-memory-store@0.14.0"
@@ -12728,7 +12539,7 @@
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#async-trait@0.1.88",
         "registry+https://github.com/rust-lang/crates.io-index#rmp-serde@1.3.0",
-        "registry+https://github.com/rust-lang/crates.io-index#sqlx@0.8.4",
+        "registry+https://github.com/rust-lang/crates.io-index#sqlx@0.8.6",
         "registry+https://github.com/rust-lang/crates.io-index#thiserror@1.0.69",
         "registry+https://github.com/rust-lang/crates.io-index#time@0.3.41",
         "registry+https://github.com/rust-lang/crates.io-index#tower-sessions-core@0.14.0"
@@ -12740,7 +12551,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#async-trait@0.1.88",
         "registry+https://github.com/rust-lang/crates.io-index#http@1.3.1",
         "registry+https://github.com/rust-lang/crates.io-index#time@0.3.41",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
         "registry+https://github.com/rust-lang/crates.io-index#tower-cookies@0.11.0",
         "registry+https://github.com/rust-lang/crates.io-index#tower-layer@0.3.3",
         "registry+https://github.com/rust-lang/crates.io-index#tower-service@0.3.3",
@@ -12764,7 +12575,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#futures-util@0.3.31",
         "registry+https://github.com/rust-lang/crates.io-index#pin-project-lite@0.2.16",
         "registry+https://github.com/rust-lang/crates.io-index#sync_wrapper@1.0.2",
-        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.44.2",
+        "registry+https://github.com/rust-lang/crates.io-index#tokio@1.45.1",
         "registry+https://github.com/rust-lang/crates.io-index#tower-layer@0.3.3",
         "registry+https://github.com/rust-lang/crates.io-index#tower-service@0.3.3",
         "registry+https://github.com/rust-lang/crates.io-index#tracing@0.1.41"
@@ -12881,7 +12692,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.3.2",
         "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.219"
       ],
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#uuid@1.16.0"
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#uuid@1.17.0"
     },
     {
       "dependsOn": [],
