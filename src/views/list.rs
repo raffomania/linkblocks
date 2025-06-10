@@ -1,7 +1,10 @@
 use htmf::prelude::*;
 
 use super::{content, layout};
-use crate::db::{self, LinkWithContent};
+use crate::{
+    db::{self, LinkWithContent},
+    views::content::pluralize,
+};
 
 pub struct Data {
     pub layout: layout::Template,
@@ -29,7 +32,7 @@ pub fn view(
                         text("∙"),
                         p([]).with(format!("{} bookmarks", metadata.linked_bookmark_count)),
                         text("∙"),
-                        p([]).with(format!("{} lists", metadata.linked_list_count)),
+                        p([]).with(pluralize(metadata.linked_list_count, "list", "lists")),
                         text("∙"),
                         p(id("private_indicator")).with(if list.private {
                             "private"
@@ -181,32 +184,28 @@ fn list_item_list(inner_list: &db::ListWithLinks) -> Element {
         ])
         .with(&inner_list.list.title),
         fragment().with(inner_list.list.content.as_ref().and_then(|content| {
-            (!content.is_empty()).then_some(p(class("max-w-2xl mt-2")).with(content))
+            (!content.is_empty()).then_some(p(class("max-w-2xl mb-2")).with(content))
         })),
-        fragment().with(
-            (!inner_list.links.is_empty()).then_some(
-                ul(class("flex flex-col mt-2 gap-y-2")).with(
-                    inner_list
-                        .links
-                        .iter()
-                        .map(|link| match link {
-                            db::LinkDestination::Bookmark(bookmark) => li(()).with([
-                                a([
-                                    class("block leading-8 text-orange-100 hover:text-orange-300"),
-                                    href(&bookmark.url),
-                                ])
-                                .with(&bookmark.title),
-                                content::link_url(&bookmark.url),
-                            ]),
-                            db::LinkDestination::List(list) => li(()).with([a([
-                                class("block leading-8 text-fuchsia-100 hover:text-fuchsia-300"),
-                                href(format!("/lists/{}", list.id)),
-                            ])
-                            .with(format!("{} →", list.title))]),
-                        })
-                        .collect::<Vec<Element>>(),
-                ),
-            ),
-        ),
+        {
+            let bookmark_count = inner_list
+                .links
+                .iter()
+                .filter(|l| matches!(l, db::LinkDestination::Bookmark(_)))
+                .count();
+            let list_count = inner_list.links.len() - bookmark_count;
+            div(class("text-sm text-neutral-400 flex flex-wrap gap-x-1")).with([
+                p([]).with(pluralize(
+                    bookmark_count.try_into().unwrap_or(-1),
+                    "bookmark",
+                    "bookmarks",
+                )),
+                text("∙"),
+                p([]).with(pluralize(
+                    list_count.try_into().unwrap_or(-1),
+                    "list",
+                    "lists",
+                )),
+            ])
+        },
     ])
 }

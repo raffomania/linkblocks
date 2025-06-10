@@ -6,3 +6,14 @@ pub fn link_url(url: &str) -> Element {
     ))
     .with(url)
 }
+
+pub fn pluralize<'a>(
+    count: i64,
+    singular_description: &'a str,
+    plural_description: &'a str,
+) -> String {
+    match count {
+        1 => format!("{count} {singular_description}"),
+        _ => format!("{count} {plural_description}"),
+    }
+}
