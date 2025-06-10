@@ -32,8 +32,8 @@ export TARGET_FILE
 
 # Run hyperfine benchmark
 hyperfine \
-    --warmup 1 \
+    --warmup 2 \
     --max-runs 10 \
     --prepare "prepare_next" \
     --setup "make_change \$RANDOM" \
-    "cargo build"
+    "cargo +nightly build"
