@@ -73,6 +73,7 @@ pub async fn app(state: AppState) -> anyhow::Result<Router> {
 
 pub async fn start(
     listen: ListenArgs,
+    base_url: Url,
     app: Router,
     tls_cert: Option<PathBuf>,
     tls_key: Option<PathBuf>,
@@ -101,15 +102,19 @@ pub async fn start(
 
     if let (Some(cert), Some(key)) = (tls_cert, tls_key) {
         tracing::info!("Using TLS files at: {cert:?}, {key:?}");
+        tracing::info!("Listening on {listening_on}");
+        tracing::info!("Access the server at {base_url}");
+
         let config = RustlsConfig::from_pem_file(cert, key).await?;
-        tracing::info!("Listening on https://{listening_on}");
         axum_server::from_tcp_rustls(listener.into_std()?, config)
             .handle(handle)
             .serve(app.into_make_service())
             .await?;
     } else {
         tracing::info!("No TLS certificate specified, not using TLS");
-        tracing::info!("Listening on http://{listening_on}");
+        tracing::info!("Listening on {listening_on}");
+        tracing::info!("Access the server at {base_url}");
+
         axum_server::from_tcp(listener.into_std()?)
             .handle(handle)
             .serve(app.into_make_service())

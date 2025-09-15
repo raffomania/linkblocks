@@ -41,6 +41,7 @@ pub struct OidcArgs {
     /// Configure your redirect URL to be `{base_url}/login_oidc_redirect`.
     #[clap(long, env, required = false)]
     pub oidc_client_id: String,
+    // TODO use redact::Secret for this
     #[clap(hide_env_values = true, long, env, required = false)]
     pub oidc_client_secret: String,
     #[clap(long, env, required = false)]
@@ -91,6 +92,7 @@ struct AdminCredentials {
     #[clap(env = "ADMIN_USERNAME", long = "admin_username")]
     /// Create an admin user if it does not exist yet.
     username: Option<String>,
+    // TODO use redact::Secret for this
     #[clap(
         env = "ADMIN_PASSWORD",
         long = "admin_password",
@@ -174,7 +176,7 @@ pub async fn run() -> Result<()> {
                 federation_config: federation::config::new_config(pool, base_url.clone()).await?,
             })
             .await?;
-            server::start(listen_address, app, tls_cert, tls_key).await?;
+            server::start(listen_address, base_url.clone(), app, tls_cert, tls_key).await?;
         }
         Command::Db {
             command: DbCommand::Migrate,
