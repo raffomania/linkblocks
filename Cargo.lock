@@ -1764,6 +1764,7 @@ dependencies = [
  "percent-encoding",
  "railwind",
  "rand 0.9.2",
+ "redact",
  "regex",
  "rustls",
  "serde",
@@ -2379,6 +2380,12 @@ checksum = "99d9a13982dcf210057a8a78572b2217b667c3beacbf3a0d8b454f6f82837d38"
 dependencies = [
  "getrandom 0.3.2",
 ]
+
+[[package]]
+name = "redact"
+version = "0.1.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dcecefd225c2fb69914585a7a6f8878929feb316a7ecb61c07d79e361d46d8ac"
 
 [[package]]
 name = "redox_syscall"

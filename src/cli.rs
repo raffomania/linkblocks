@@ -43,7 +43,7 @@ pub struct OidcArgs {
     pub oidc_client_id: String,
     // TODO use redact::Secret for this
     #[clap(hide_env_values = true, long, env, required = false)]
-    pub oidc_client_secret: String,
+    pub oidc_client_secret: redact::Secret<String>,
     #[clap(long, env, required = false)]
     pub oidc_issuer_url: String,
     /// This will be displayed on the login page.
@@ -92,20 +92,22 @@ struct AdminCredentials {
     #[clap(env = "ADMIN_USERNAME", long = "admin_username")]
     /// Create an admin user if it does not exist yet.
     username: Option<String>,
-    // TODO use redact::Secret for this
     #[clap(
         env = "ADMIN_PASSWORD",
         long = "admin_password",
         hide_env_values = true
     )]
     /// Password for the admin user.
-    password: Option<String>,
+    password: Option<redact::Secret<String>>,
 }
 
 impl From<AdminCredentials> for Option<CreateUser> {
     fn from(value: AdminCredentials) -> Self {
         if let (Some(username), Some(password)) = (value.username, value.password) {
-            Some(CreateUser { username, password })
+            Some(CreateUser {
+                username,
+                password: password.expose_secret().clone(),
+            })
         } else {
             None
         }

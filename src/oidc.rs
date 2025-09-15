@@ -222,7 +222,7 @@ impl State {
 
         let args = args.context("OIDC configuration is absent or incomplete.")?;
         let client_id = ClientId::new(args.oidc_client_id);
-        let client_secret = ClientSecret::new(args.oidc_client_secret);
+        let client_secret = ClientSecret::new(args.oidc_client_secret.expose_secret().clone());
         let issuer_url =
             IssuerUrl::new(args.oidc_issuer_url).context("failed to parse issuer URL")?;
 
