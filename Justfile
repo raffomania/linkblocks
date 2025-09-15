@@ -1,10 +1,10 @@
 set dotenv-load := true
 set export := true
 
-watch *args: development-cert start-database
+watch *args: development-cert migrate-database
     cargo bin systemfd --no-pid -s http::443 -- cargo bin cargo-watch -- cargo run start --listenfd {{args}}
 
-run *args: development-cert
+run *args: development-cert migrate-database
     cargo run -- {{args}}
 
 insert-demo-data: migrate-database
