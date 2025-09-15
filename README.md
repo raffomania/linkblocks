@@ -28,7 +28,7 @@ Install the dependencies:
 - [Latest stable version of Rust](https://www.rust-lang.org/learn/get-started) (An older version might work as well, but is not tested)
 - [mkcert](https://github.com/FiloSottile/mkcert#installation)
   - Don't forget to run `mkcert -install`
-- Optional: [podman](http://podman.io/docs/installation), for conveniently running postgres for development and tests
+- [podman](http://podman.io/docs/installation), for conveniently running postgres for development and tests
 
 Install dependencies available via cargo:
 
