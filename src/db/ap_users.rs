@@ -31,14 +31,14 @@ pub struct ApUser {
 struct ApUserRow {
     pub id: Uuid,
 
-    pub ap_id: String,
-    pub username: String,
-    pub inbox_url: String,
-    pub public_key: String,
-    pub private_key: Option<String>,
-    pub last_refreshed_at: OffsetDateTime,
-    pub display_name: Option<String>,
-    pub bio: Option<String>,
+    ap_id: String,
+    username: String,
+    inbox_url: String,
+    public_key: String,
+    private_key: Option<String>,
+    last_refreshed_at: OffsetDateTime,
+    display_name: Option<String>,
+    bio: Option<String>,
 }
 
 impl TryFrom<ApUserRow> for ApUser {
