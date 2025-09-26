@@ -14,5 +14,6 @@ pub mod list_unpinned_lists;
 pub mod login;
 pub mod login_demo;
 pub mod oidc_select_username;
+pub mod profile;
 pub mod unsorted_bookmarks;
 pub mod users;

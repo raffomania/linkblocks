@@ -35,7 +35,7 @@ expression: unsorted_bookmarks.dom.htmls()
           </ul>
         </div>
         <header class="sticky bottom-0 flex justify-between p-2 leading-8 bg-neutral-900">
-          <a href="/" class="px-2 font-bold rounded hover:bg-neutral-800">testuser</a>
+          <a href="/user/testuser" class="px-2 font-bold rounded hover:bg-neutral-800">testuser</a>
           <form action="/logout" method="post">
             <button class="rounded px-3 text-neutral-400 hover:bg-neutral-800">
               Logout

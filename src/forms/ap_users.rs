@@ -74,3 +74,13 @@ impl CreateApUser {
         Ok(create_user)
     }
 }
+
+// Currently only used in insert-demo-data script
+#[allow(dead_code)]
+#[derive(Validate)]
+pub struct UpdateApUser {
+    #[garde(length(max = 100))]
+    pub display_name: Option<String>,
+    #[garde(length(max = 1_000))]
+    pub bio: Option<String>,
+}

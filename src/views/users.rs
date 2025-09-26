@@ -9,7 +9,7 @@ pub struct ProfileTemplate {
     pub base_url: Url,
 }
 
-pub fn profile(template: &ProfileTemplate) -> Element {
+pub fn start_page(template: &ProfileTemplate) -> Element {
     layout(
         fragment().with([
             header(class("px-4 pt-3 mb-2"))

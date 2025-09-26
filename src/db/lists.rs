@@ -24,7 +24,7 @@ pub struct List {
 pub struct Metadata {
     pub linked_bookmark_count: i64,
     pub linked_list_count: i64,
-    pub user_description: String,
+    pub username: String,
 }
 
 impl List {
@@ -40,6 +40,11 @@ pub struct ListWithLinks {
 
     #[serde(deserialize_with = "serde_aux::field_attributes::deserialize_default_from_null")]
     pub links: Vec<LinkDestination>,
+}
+
+pub struct ListWithMetadata {
+    pub list: List,
+    pub metadata: Metadata,
 }
 
 pub async fn insert(
@@ -99,7 +104,7 @@ pub async fn metadata_by_id(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Met
         Metadata,
         r#"
             select
-                coalesce(users.username, users.email) as "user_description!",
+                users.username,
                 count(links.dest_bookmark_id) as "linked_bookmark_count!",
                 count(links.dest_list_id) as "linked_list_count!"
             from lists
@@ -143,6 +148,50 @@ pub async fn list_pinned_by_user(tx: &mut AppTx, user_id: Uuid) -> ResponseResul
     )
     .fetch_all(&mut **tx)
     .await?;
+
+    Ok(lists)
+}
+
+pub async fn list_public_by_user(
+    tx: &mut AppTx,
+    user_id: Uuid,
+) -> ResponseResult<Vec<ListWithMetadata>> {
+    let lists = query!(
+        r#"
+        select lists.* as l,
+            users.username,
+            count(links.dest_bookmark_id) as "linked_bookmark_count!",
+            count(links.dest_list_id) as "linked_list_count!"
+        from lists
+
+        join users on lists.user_id = users.id
+        left join links
+            on lists.id = links.src_list_id
+        where lists.user_id = $1 and not private
+        group by lists.id, users.username
+        "#,
+        user_id,
+    )
+    .fetch_all(&mut **tx)
+    .await?
+    .into_iter()
+    .map(|record| ListWithMetadata {
+        list: List {
+            id: record.id,
+            created_at: record.created_at,
+            user_id: record.user_id,
+            title: record.title,
+            content: record.content,
+            private: record.private,
+            pinned: record.pinned,
+        },
+        metadata: Metadata {
+            linked_bookmark_count: record.linked_bookmark_count,
+            linked_list_count: record.linked_list_count,
+            username: record.username,
+        },
+    })
+    .collect();
 
     Ok(lists)
 }

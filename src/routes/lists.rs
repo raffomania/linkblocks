@@ -25,7 +25,7 @@ pub fn router() -> Router<AppState> {
     let router: Router<AppState> = Router::new();
     router
         .route("/lists/create", get(get_create).post(post_create))
-        .route("/lists/{list_id}", get(list))
+        .route("/lists/{list_id}", get(get_show))
         .route("/lists/{list_id}/edit_private", post(edit_private))
         .route("/lists/{list_id}/edit_title", post(post_edit_title))
         .route("/lists/{list_id}/edit_title", get(get_edit_title))
@@ -33,7 +33,7 @@ pub fn router() -> Router<AppState> {
         .route("/lists/unpinned", get(list_unpinned))
 }
 
-async fn list(
+async fn get_show(
     auth_user: Option<AuthUser>,
     extract::Tx(mut tx): extract::Tx,
     Path(list_id): Path<Uuid>,
@@ -50,7 +50,7 @@ async fn list(
         }
         None => {
             if list.private {
-                return Err(ResponseError::NotAuthenticated);
+                return Err(ResponseError::NotFound);
             }
         }
     }

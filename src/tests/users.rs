@@ -1,7 +1,7 @@
 use axum::http::{StatusCode, header};
 
 use crate::{
-    db::ap_users,
+    db::{self, ap_users},
     forms::users::{CreateOidcUser, Credentials, Login},
     tests::util::test_app::TestApp,
 };
@@ -55,6 +55,38 @@ async fn insert_oidc_creates_ap_user() -> anyhow::Result<()> {
 
     // Verify AP user properties
     assert_eq!(ap_user.username, "test_oidc_user");
+
+    Ok(())
+}
+
+#[test_log::test(tokio::test)]
+async fn profile() -> anyhow::Result<()> {
+    let mut app = TestApp::new().await;
+
+    let user = app.create_test_user().await;
+    app.login_test_user().await;
+    // Check that we can access the index when logged in
+    let profile = app
+        .req()
+        .get(&format!("/user/{}", user.username))
+        .await
+        .test_page()
+        .await;
+
+    let lists_header = profile
+        .dom
+        .find("section > p > span")
+        .into_iter()
+        .find(|el| el.text_content().contains("public lists"))
+        .unwrap()
+        .text_content();
+
+    let mut tx = app.pool.begin().await?;
+    let public_lists = db::lists::list_public_by_user(&mut tx, user.id)
+        .await?
+        .len();
+
+    assert_eq!(lists_header, format!("{public_lists} public lists"));
 
     Ok(())
 }

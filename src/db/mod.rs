@@ -10,7 +10,7 @@ pub mod layout;
 pub mod links;
 pub use links::{LinkDestination, LinkDestinationWithChildren, LinkWithContent};
 pub mod lists;
-pub use lists::{List, ListWithLinks};
+pub use lists::{List, ListWithLinks, ListWithMetadata};
 pub mod users;
 use url::Url;
 pub use users::User;

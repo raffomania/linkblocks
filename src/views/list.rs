@@ -28,7 +28,11 @@ pub fn view(
                     div(class("flex items-center justify-between"))
                         .with([h1(class("text-xl font-bold")).with(&list.title)]),
                     div(class("flex flex-wrap text-sm gap-x-1 text-neutral-400")).with([
-                        p([]).with(format!("by {}", metadata.user_description)),
+                        a([
+                            href(format!("/user/{}", metadata.username)),
+                            class("hover:text-neutral-200"),
+                        ])
+                        .with(format!("by {}", metadata.username)),
                         text("∙"),
                         p([]).with(format!("{} bookmarks", metadata.linked_bookmark_count)),
                         text("∙"),
@@ -174,6 +178,8 @@ fn list_item_bookmark(bookmark: &db::Bookmark) -> Element {
 }
 
 fn list_item_list(inner_list: &db::ListWithLinks) -> Element {
+    // TODO show owning user if it's different than this list's owner
+    // https://github.com/raffomania/linkblocks/issues/152
     fragment().with([
         a([
             class(

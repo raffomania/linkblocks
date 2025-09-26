@@ -1,7 +1,7 @@
 use anyhow::{Context, anyhow};
 use axum::{
     Router,
-    extract::{Query, State},
+    extract::{Path, Query, State},
     response::{IntoResponse, Redirect, Response},
     routing::{get, post},
 };
@@ -29,7 +29,8 @@ pub fn router() -> Router<AppState> {
         .route("/login_oidc", get(get_login_oidc))
         .route("/login_demo", post(post_login_demo))
         .route("/logout", post(logout))
-        .route("/profile", get(get_profile))
+        .route("/start", get(get_start_page))
+        .route("/user/{username}", get(get_profile))
 }
 
 async fn post_login(
@@ -207,17 +208,50 @@ async fn get_login(
     }
 }
 
-async fn get_profile(
+async fn get_start_page(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
     State(state): State<AppState>,
 ) -> ResponseResult<HtmfResponse> {
     let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
 
-    Ok(HtmfResponse(views::users::profile(&ProfileTemplate {
+    Ok(HtmfResponse(views::users::start_page(&ProfileTemplate {
         layout,
         base_url: state.base_url,
     })))
+}
+
+// TODO: set this route as @url in activitypub person objects
+// https://www.w3.org/TR/activitystreams-vocabulary/#dfn-url
+// https://github.com/raffomania/linkblocks/issues/150
+async fn get_profile(
+    extract::Tx(mut tx): extract::Tx,
+    // TODO: activitypub usernames are not guaranteed to be unique across different domains. Also
+    // check if we have a unique index on this column
+    // https://github.com/raffomania/linkblocks/issues/151
+    Path(username): Path<String>,
+) -> ResponseResult<HtmfResponse> {
+    let layout = layout::Template::from_db(&mut tx, None).await?;
+
+    let ap_user = db::ap_users::read_by_username(&mut tx, &username).await?;
+    let maybe_user = db::users::by_ap_user_id(&mut tx, ap_user.id).await?;
+    let public_lists = if let Some(user) = maybe_user {
+        db::lists::list_public_by_user(&mut tx, user.id).await?
+    } else {
+        Vec::new()
+    };
+
+    let elem = views::profile::view(
+        tx,
+        &views::profile::Data {
+            layout,
+            ap_user,
+            public_lists,
+        },
+    )
+    .await?;
+
+    Ok(HtmfResponse(elem))
 }
 
 async fn logout(auth_user: AuthUser) -> ResponseResult<Redirect> {
