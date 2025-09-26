@@ -119,6 +119,21 @@ pub async fn by_username(tx: &mut AppTx, username: &str) -> ResponseResult<User>
     Ok(user)
 }
 
+pub async fn by_ap_user_id(tx: &mut AppTx, ap_user_id: Uuid) -> ResponseResult<Option<User>> {
+    let user = query_as!(
+        User,
+        r#"
+        select * from users
+        where ap_user_id = $1
+        "#,
+        ap_user_id
+    )
+    .fetch_optional(&mut **tx)
+    .await?;
+
+    Ok(user)
+}
+
 pub async fn create_user_if_not_exists(
     tx: &mut AppTx,
     create: CreateUser,

@@ -49,10 +49,10 @@ fn sidebar(authed_info: &AuthedInfo) -> Element {
         ))
         .with([
             a([
-                href("/"),
+                href(format!("/user/{}", authed_info.username)),
                 class("px-2 font-bold rounded  hover:bg-neutral-800"),
             ])
-            .with(&authed_info.user_description),
+            .with(&authed_info.username),
             form([action("/logout"), method("post")]).with(
                 button(class("rounded px-3  text-neutral-400 hover:bg-neutral-800")).with("Logout"),
             ),

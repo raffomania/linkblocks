@@ -88,9 +88,9 @@ impl TestApp {
         user
     }
 
-    pub async fn create_test_user(&self) {
+    pub async fn create_test_user(&self) -> db::User {
         self.create_user(TEST_USER_USERNAME, TEST_USER_PASSWORD)
-            .await;
+            .await
     }
 
     pub async fn login_test_user(&mut self) {

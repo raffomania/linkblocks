@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n    select ap_users.username from ap_users\n    join users on users.ap_user_id = ap_users.id\n    where users.id = $1\n    ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "username",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "7aba5b51795697d0a21ce5403403441c600d0b319ad9284a3d2541d07501f435"
+}

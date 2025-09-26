@@ -5,7 +5,10 @@ use url::Url;
 use uuid::Uuid;
 
 use super::AppTx;
-use crate::{forms::ap_users::CreateApUser, response_error::ResponseResult};
+use crate::{
+    forms::ap_users::{CreateApUser, UpdateApUser},
+    response_error::ResponseResult,
+};
 
 #[derive(FromRow, Debug)]
 pub struct ApUser {
@@ -88,6 +91,29 @@ pub async fn insert(tx: &mut AppTx, create_user: CreateApUser) -> ResponseResult
         create_user.last_refreshed_at,
         create_user.display_name,
         create_user.bio,
+    )
+    .fetch_one(&mut **tx)
+    .await?
+    .try_into()?;
+
+    Ok(user)
+}
+
+// Currently only used in insert-demo-data script
+#[allow(dead_code)]
+pub async fn update(tx: &mut AppTx, id: Uuid, update: UpdateApUser) -> ResponseResult<ApUser> {
+    let user = query_as!(
+        ApUserRow,
+        r#"
+        update ap_users set
+            display_name = $2,
+            bio = $3
+        where id = $1
+        returning *
+        "#,
+        id,
+        update.display_name,
+        update.bio
     )
     .fetch_one(&mut **tx)
     .await?

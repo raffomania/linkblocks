@@ -1,3 +1,4 @@
+use anyhow::{Context, anyhow};
 use serde::Deserialize;
 use sqlx::{FromRow, query, query_as};
 use time::OffsetDateTime;
@@ -68,11 +69,71 @@ pub struct LinkWithContent {
     pub dest: LinkDestinationWithChildren,
 }
 
+// TODO: when showing backlinks in the browser, this needs to be re-evaluated
+// https://github.com/raffomania/linkblocks/issues/147
+async fn validate_private_lists_belong_to_same_owner(
+    tx: &mut AppTx,
+    create_link: &CreateLink,
+) -> ResponseResult<()> {
+    let dest_is_bookmark = query!(
+        r#"
+        select exists (
+            select 1
+            from bookmarks
+            where id = $1
+        )
+        "#,
+        create_link.dest
+    )
+    .fetch_one(&mut **tx)
+    .await?;
+    if let Some(true) = dest_is_bookmark.exists {
+        return Ok(());
+    }
+
+    let lists = query!(
+        r#"
+        select src.user_id as src_user_id,
+            src.private as src_private,
+            dest.user_id as dest_user_id,
+            dest.private as dest_private
+        from lists src
+        inner join lists dest on dest.id = $2
+        where src.id = $1
+        "#,
+        create_link.src,
+        create_link.dest
+    )
+    .fetch_one(&mut **tx)
+    .await
+    .context("Failed getting data for authorization check")?;
+
+    // If destination list is public, everything's fine
+    if !lists.dest_private {
+        return Ok(());
+    }
+
+    // If source is public, but destination is private, that's not ok
+    if !lists.src_private && lists.dest_private {
+        return Err(anyhow!("Can't link from a public list to a private list").into());
+    }
+
+    // If source and destination are private, and they belong to the same user, it's
+    // ok
+    if lists.src_private && lists.dest_private && lists.src_user_id == lists.dest_user_id {
+        return Ok(());
+    }
+
+    Err(anyhow!("Private lists need to belong to the same owner to be linked").into())
+}
+
 pub async fn insert(
     tx: &mut AppTx,
     user_id: Uuid,
     create_link: CreateLink,
 ) -> ResponseResult<Link> {
+    validate_private_lists_belong_to_same_owner(tx, &create_link).await?;
+
     let list = query_as!(
         Link,
         r#"
@@ -94,7 +155,8 @@ pub async fn insert(
         create_link.dest
     )
     .fetch_one(&mut **tx)
-    .await?;
+    .await
+    .context("Failed inserting link")?;
 
     Ok(list)
 }

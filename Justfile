@@ -8,7 +8,7 @@ run *args: development-cert migrate-database
     cargo run -- {{args}}
 
 insert-demo-data: migrate-database
-    RUST_LOG=error cargo run -- insert-demo-data
+    cargo run -- insert-demo-data
 
 start-database:
     #!/usr/bin/env bash
