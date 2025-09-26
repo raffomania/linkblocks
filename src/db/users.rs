@@ -31,7 +31,7 @@ pub struct User {
     pub oidc_id: Option<String>,
 
     // ActivityPub data
-    #[expect(dead_code)]
+    #[allow(dead_code)]
     pub ap_user_id: Uuid,
 }
 
@@ -50,27 +50,31 @@ pub async fn user_by_oidc_id(tx: &mut AppTx, oidc_id: &str) -> ResponseResult<Us
     Ok(user)
 }
 
-pub async fn insert_oidc(tx: &mut AppTx, create_user: CreateOidcUser) -> ResponseResult<User> {
+// TODO this needs to create an AP user?
+pub async fn insert_oidc(
+    tx: &mut AppTx,
+    create_user: CreateOidcUser,
+    base_url: &Url,
+) -> ResponseResult<User> {
+    let create_ap_user = CreateApUser::new_local(base_url, create_user.username.clone())?;
+    let ap_user = super::ap_users::insert(tx, create_ap_user).await?;
+
     let user = query_as!(
         User,
         r#"
         insert into users
-        (email, oidc_id, username)
-        values ($1, $2, $3)
+        (email, oidc_id, username, ap_user_id)
+        values ($1, $2, $3, $4)
         returning *"#,
         create_user.email,
         create_user.oidc_id,
-        create_user.username
+        create_user.username,
+        ap_user.id
     )
     .fetch_one(&mut **tx)
-    .await;
-    match user {
-        Ok(user) => Ok(user),
-        Err(e) => {
-            tracing::warn!("Error inserting user: {:?}", e);
-            Err(e.into())
-        }
-    }
+    .await?;
+
+    Ok(user)
 }
 
 pub async fn insert(
@@ -96,6 +100,7 @@ pub async fn insert(
     )
     .fetch_one(&mut **tx)
     .await?;
+
     Ok(user)
 }
 

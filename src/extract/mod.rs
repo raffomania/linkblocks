@@ -13,8 +13,8 @@ impl FromRequestParts<AppState> for Tx {
         _parts: &mut Parts,
         state: &AppState,
     ) -> Result<Self, Self::Rejection> {
-        let conn = state.pool.begin().await?;
+        let tx = state.pool.begin().await?;
 
-        Ok(Self(conn))
+        Ok(Self(tx))
     }
 }
