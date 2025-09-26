@@ -21,7 +21,8 @@ pub struct ApUser {
     pub public_key: String,
 
     /// For local users, this is always present.
-    pub private_key: Option<String>,
+    // TODO wrap this in redact::Secret
+    pub private_key: Option<redact::Secret<String>>,
     pub last_refreshed_at: OffsetDateTime,
     pub display_name: Option<String>,
     pub bio: Option<String>,
@@ -29,7 +30,7 @@ pub struct ApUser {
 
 #[derive(FromRow, Debug)]
 struct ApUserRow {
-    pub id: Uuid,
+    id: Uuid,
 
     ap_id: String,
     username: String,
@@ -49,7 +50,7 @@ impl TryFrom<ApUserRow> for ApUser {
             username: value.username,
             inbox_url: value.inbox_url.parse()?,
             public_key: value.public_key,
-            private_key: value.private_key,
+            private_key: value.private_key.map(redact::Secret::new),
             last_refreshed_at: value.last_refreshed_at,
             display_name: value.display_name,
             bio: value.bio,
