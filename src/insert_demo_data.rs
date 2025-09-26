@@ -34,7 +34,7 @@ pub async fn insert_demo_data(
                 username,
             };
 
-            users.push(db::users::insert_oidc(&mut tx, create_oidc_user).await?);
+            users.push(db::users::insert_oidc(&mut tx, create_oidc_user, base_url).await?);
         } else {
             let create_user = CreateUser {
                 username,

@@ -129,6 +129,7 @@ async fn get_login_oidc_redirect(
 async fn post_login_oidc_redirect(
     session: Session,
     extract::Tx(mut tx): extract::Tx,
+    State(state): State<AppState>,
     QsForm(input): QsForm<OidcSelectUsername>,
 ) -> ResponseResult<Response> {
     if let Err(errors) = input.validate() {
@@ -153,7 +154,13 @@ async fn post_login_oidc_redirect(
         return Err(anyhow!("Invalid OIDC user data received").context(e).into());
     }
 
-    authentication::create_and_login_oidc_user(&mut tx, &session, create_oidc_user).await?;
+    authentication::create_and_login_oidc_user(
+        &mut tx,
+        &session,
+        create_oidc_user,
+        &state.base_url,
+    )
+    .await?;
 
     tx.commit().await?;
 

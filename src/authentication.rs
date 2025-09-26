@@ -77,12 +77,15 @@ pub async fn create_and_login_oidc_user(
     tx: &mut AppTx,
     session: &Session,
     create_oidc_user: CreateOidcUser,
+    base_url: &Url,
 ) -> ResponseResult<()> {
     let user = db::users::user_by_oidc_id(tx, &create_oidc_user.oidc_id).await;
 
     let user = match user {
         Ok(user) => user,
-        Err(ResponseError::NotFound) => db::users::insert_oidc(tx, create_oidc_user).await?,
+        Err(ResponseError::NotFound) => {
+            db::users::insert_oidc(tx, create_oidc_user, base_url).await?
+        }
         Err(_) => return Err(anyhow!("Failed to look up user by OIDC id").into()),
     };
 
