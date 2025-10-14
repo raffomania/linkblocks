@@ -28,10 +28,15 @@ pub struct TestApp {
 
 impl TestApp {
     pub async fn new() -> Self {
-        let pool = super::db::new_pool().await;
         let port = NEXT_TEST_APP_PORT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
         let base_url = Url::parse(&format!("http://localhost:{port}",))
             .expect("Failed to parse URL for test instance");
+        let pool = super::db::new_test_pool().await;
+
+        crate::db::migrate(&pool, &base_url, None)
+            .await
+            .expect("Failed to migrate database");
+
         let state = AppState {
             pool: pool.clone(),
             base_url: base_url.clone(),
