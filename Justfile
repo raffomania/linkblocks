@@ -73,10 +73,15 @@ wipe-database: stop-database && migrate-database
     podman rm --ignore linkblocks_postgres
 
 migrate-database: start-database
+    # SQLX_OFFLINE: when migrating an empty db, checking queries against
+    # it would fail during compilation
     SQLX_OFFLINE=true cargo run -- db migrate
 
+exec-database-cli: start-database
+    podman exec -ti -u postgres linkblocks_postgres psql ${DATABASE_NAME}
+
 generate-database-info: start-database migrate-database
-    cargo bin sqlx-cli prepare
+    cargo bin sqlx-cli prepare -- --all-targets
 
 start-test-database:
     #!/usr/bin/env bash
@@ -106,6 +111,8 @@ start-test-database:
     podman wait --condition=healthy linkblocks_postgres
 
 test *args: start-test-database
+    # SQLX_OFFLINE: Without it, `cargo test` would compile against the test db
+    # which is always empty and only migrated inside the tests themselves.
     RUST_BACKTRACE=1 DATABASE_URL=${DATABASE_URL_TEST} SQLX_OFFLINE=true cargo test {{args}}
 
 development-cert:
@@ -131,6 +138,7 @@ lint *args: reuse-lint
 
 lint-fix *args: reuse-lint
     cargo clippy --fix {{args}}
+    cargo fix --allow-staged --all-targets
 
 reuse-lint:
     reuse --root . lint
