@@ -22,6 +22,8 @@ start-database:
     if ! podman inspect linkblocks_postgres &> /dev/null; then
         podman create \
             --name linkblocks_postgres \
+            --health-cmd="pg_isready" \
+            --health-startup-cmd="pg_isready" --health-startup-interval=2s \
             -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_DB=${DATABASE_NAME} \
             -p ${DATABASE_PORT}:5432 docker.io/postgres:15 \
             postgres
@@ -29,10 +31,7 @@ start-database:
 
     podman start linkblocks_postgres
 
-    for i in {1..20}; do
-        pg_isready -h localhost -p $DATABASE_PORT && break
-        sleep 2
-    done
+    podman wait --condition=healthy linkblocks_postgres
 
 start-rauthy:
     #!/usr/bin/env bash
@@ -68,10 +67,10 @@ wipe-rauthy: stop-rauthy
     podman rm linkblocks_rauthy
 
 stop-database:
-    podman stop linkblocks_postgres
+    podman stop --ignore linkblocks_postgres
 
 wipe-database: stop-database && migrate-database
-    podman rm linkblocks_postgres
+    podman rm --ignore linkblocks_postgres
 
 migrate-database: start-database
     cargo bin sqlx-cli migrate run
