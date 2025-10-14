@@ -91,6 +91,7 @@ start-test-database:
         podman create \
             --replace --name linkblocks_postgres_test --image-volume tmpfs \
             --health-cmd pg_isready --health-interval 10s \
+            --health-startup-cmd="pg_isready" --health-startup-interval=2s \
             -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_DB=${DATABASE_NAME_TEST} \
             -p ${DATABASE_PORT_TEST}:5432 --rm docker.io/postgres:16 \
             postgres \
@@ -102,10 +103,7 @@ start-test-database:
 
     podman start linkblocks_postgres_test
 
-    for i in {1..20}; do
-        pg_isready -h localhost -p $DATABASE_PORT_TEST && break
-        sleep 2
-    done
+    podman wait --condition=healthy linkblocks_postgres
 
 test *args: start-test-database
     RUST_BACKTRACE=1 DATABASE_URL=${DATABASE_URL_TEST} SQLX_OFFLINE=true cargo test {{args}}
