@@ -112,7 +112,7 @@ development-cert:
     mkdir -p development_cert
     test -f development_cert/localhost.crt || mkcert -cert-file development_cert/localhost.crt -key-file development_cert/localhost.key localhost linkblocks.localhost 127.0.0.1 ::1
 
-ci-dev : migrate-database start-test-database && generate-sbom
+ci-dev : migrate-database start-test-database && generate-sbom generate-database-info
     #!/usr/bin/env bash
     set -euxo pipefail
 

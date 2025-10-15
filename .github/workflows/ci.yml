@@ -54,15 +54,13 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
 
-      - run: cargo bin sqlx-cli prepare
+      - run: cargo bin just generate-database-info
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
 
       - run: cargo bin just lint
 
       - run: cargo bin just generate-sbom
-
-      - run: cargo bin just generate-database-info
 
       - name: Check for file changes
         run: |
