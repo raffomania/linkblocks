@@ -62,6 +62,8 @@ jobs:
 
       - run: cargo bin just generate-sbom
 
+      - run: cargo bin just generate-database-info
+
       - name: Check for file changes
         run: |
           if [[ -n "$(git status --porcelain)" ]]; then
