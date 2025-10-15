@@ -54,7 +54,8 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
 
-      - run: cargo bin just generate-database-info
+      # Use --no-deps to prevent the justfile from trying to launch a new podman container for the db
+      - run: cargo bin just --no-deps generate-database-info
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
 
