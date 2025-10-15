@@ -147,4 +147,7 @@ generate-sbom:
     rm linkblocks_bin.cdx.json
 
 install-git-hooks:
-    ln -srf pre-commit.sh .git/hooks/pre-commit
+    ln -srf bin/pre-commit.sh .git/hooks/pre-commit
+
+benchmark-hot-compilation:
+    bin/benchmark-hot-compilation.sh
