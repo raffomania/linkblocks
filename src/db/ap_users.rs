@@ -11,10 +11,16 @@ use crate::{forms::ap_users::CreateApUser, response_error::ResponseResult};
 pub struct ApUser {
     pub id: Uuid,
 
+    /// For local users, this will have the format:
+    /// `{base_url}/ap/user/{id}`
+    ///
+    /// For remote users, it's an arbitrary URL.
     pub ap_id: ObjectId<ApUser>,
     pub username: String,
     pub inbox_url: Url,
     pub public_key: String,
+
+    /// For local users, this is always present.
     pub private_key: Option<String>,
     pub last_refreshed_at: OffsetDateTime,
     pub display_name: Option<String>,
@@ -59,6 +65,7 @@ pub async fn insert(tx: &mut AppTx, create_user: CreateApUser) -> ResponseResult
         r#"
         insert into ap_users
         (
+            id,
             ap_id,
             username,
             inbox_url,
@@ -68,9 +75,10 @@ pub async fn insert(tx: &mut AppTx, create_user: CreateApUser) -> ResponseResult
             display_name,
             bio
         )
-        values ($1, $2, $3, $4, $5, $6, $7, $8)
+        values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         returning *
         "#,
+        create_user.id,
         create_user.ap_id.to_string(),
         create_user.username,
         create_user.inbox_url.to_string(),
@@ -100,9 +108,11 @@ pub async fn upsert(tx: &mut AppTx, create_user: CreateApUser) -> ResponseResult
             private_key,
             last_refreshed_at,
             display_name,
-            bio
+            bio,
+            -- insert id, but don't update it below
+            id
         )
-        values ($1, $2, $3, $4, $5, $6, $7, $8)
+        values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         on conflict(ap_id) do update set
             ap_id = $1,
             username = $2,
@@ -122,6 +132,7 @@ pub async fn upsert(tx: &mut AppTx, create_user: CreateApUser) -> ResponseResult
         create_user.last_refreshed_at,
         create_user.display_name,
         create_user.bio,
+        create_user.id,
     )
     .fetch_one(&mut **tx)
     .await?
@@ -138,6 +149,22 @@ pub async fn read_by_ap_id(tx: &mut AppTx, ap_id: &Url) -> ResponseResult<ApUser
         where ap_id = $1
         "#,
         ap_id.to_string()
+    )
+    .fetch_one(&mut **tx)
+    .await?
+    .try_into()?;
+
+    Ok(user)
+}
+
+pub async fn read_by_id(tx: &mut AppTx, id: Uuid) -> ResponseResult<ApUser> {
+    let user = query_as!(
+        ApUserRow,
+        r#"
+        select * from ap_users
+        where id = $1
+        "#,
+        id
     )
     .fetch_one(&mut **tx)
     .await?

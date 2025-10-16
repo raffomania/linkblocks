@@ -55,7 +55,7 @@ async fn test_generate_missing_ap_users_migration() -> anyhow::Result<()> {
 
     // Verify that the AP user was created with correct data
     let row = sqlx::query!(
-        "select ap_id, username, inbox_url from ap_users where id = $1",
+        "select ap_id, username, id, inbox_url from ap_users where id = $1",
         ap_user_id
     )
     .fetch_one(&mut *conn)
@@ -67,7 +67,10 @@ async fn test_generate_missing_ap_users_migration() -> anyhow::Result<()> {
     );
     assert_eq!(
         row.ap_id,
-        base_url.join("/ap/user/")?.join(&row.username)?.to_string(),
+        base_url
+            .join("/ap/user/")?
+            .join(&row.id.to_string())?
+            .to_string(),
         "AP ID should be correctly formatted"
     );
     assert_eq!(

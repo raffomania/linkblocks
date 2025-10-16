@@ -1,4 +1,4 @@
-use activitypub_federation::fetch::{object_id::ObjectId, webfinger::webfinger_resolve_actor};
+use activitypub_federation::fetch::webfinger::webfinger_resolve_actor;
 use anyhow::Result;
 use axum::http::StatusCode;
 
@@ -60,13 +60,12 @@ async fn can_resolve_user() -> Result<()> {
     let ap_cx_b = app_b.state.federation_config.to_request_data();
 
     // Check that instance B can resolve user on instance A
-    let user_id =
-        ObjectId::<db::ApUser>::parse(&format!("{}ap/user/{}", app_a.base_url, user.username))?;
-    assert_eq!(user_id, app_a_ap_user.ap_id);
-    let resolved_ap_user_1 = user_id.dereference(&ap_cx_b).await?;
-    let resolved_ap_user_2 = app_a_ap_user.ap_id.dereference(&ap_cx_b).await?;
-    assert_eq!(resolved_ap_user_1.ap_id, resolved_ap_user_2.ap_id);
-    assert_eq!(resolved_ap_user_1.id, resolved_ap_user_2.id);
+    let app_b_ap_user = app_a_ap_user.ap_id.dereference(&ap_cx_b).await?;
+
+    assert_ne!(app_b_ap_user.id, app_a_ap_user.id);
+    assert_eq!(app_b_ap_user.username, app_a_ap_user.username);
+    assert_eq!(app_b_ap_user.inbox_url, app_a_ap_user.inbox_url);
+    assert_eq!(app_b_ap_user.ap_id, app_a_ap_user.ap_id);
 
     Ok(())
 }

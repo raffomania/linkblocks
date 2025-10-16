@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "select ap_id, username, inbox_url from ap_users where id = $1",
+  "query": "select ap_id, username, id, inbox_url from ap_users where id = $1",
   "describe": {
     "columns": [
       {
@@ -15,6 +15,11 @@
       },
       {
         "ordinal": 2,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 3,
         "name": "inbox_url",
         "type_info": "Varchar"
       }
@@ -27,8 +32,9 @@
     "nullable": [
       false,
       false,
+      false,
       false
     ]
   },
-  "hash": "7b1d88ccf6865f2a26fb0db28696bb2a54a728c3668b19a4bc4e8b08b96615c6"
+  "hash": "b460a4577bc22188372416017c24a298fdb2297ed490b7011074d154f67c393d"
 }
