@@ -1,3 +1,5 @@
+//! Most of this code is modeled after sqlx' own migration code.
+
 use std::collections::{HashMap, HashSet};
 
 use anyhow::Result;
@@ -91,7 +93,7 @@ pub(super) async fn run_migrations(
             );
             let mut tx = conn.begin().await?;
 
-            super::migrations::run_before(migration, &mut tx, base_url).await?;
+            super::migration_hooks::run_before(migration, &mut tx, base_url).await?;
             tx.apply(migration).await?;
 
             tx.commit().await?;
