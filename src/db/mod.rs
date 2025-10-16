@@ -15,7 +15,7 @@ pub mod users;
 use url::Url;
 pub use users::User;
 pub mod bookmarks;
-pub mod migrations;
+pub mod migration_hooks;
 pub use bookmarks::Bookmark;
 
 pub async fn migrate(pool: &PgPool, base_url: &Url, up_to_version: Option<i64>) -> Result<()> {
