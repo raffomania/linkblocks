@@ -1,10 +1,9 @@
 use anyhow::Result;
 use sqlx::{FromRow, PgTransaction, Row};
-use time::OffsetDateTime;
 use url::Url;
 use uuid::Uuid;
 
-use crate::{federation, forms::ap_users::CreateApUser};
+use crate::forms::ap_users::CreateApUser;
 
 #[derive(sqlx::FromRow)]
 struct User {
@@ -27,27 +26,15 @@ pub async fn migrate(tx: &mut PgTransaction<'_>, base_url: &Url) -> Result<()> {
 }
 
 async fn new_ap_user(base_url: &Url, user: User, tx: &mut PgTransaction<'_>) -> Result<()> {
-    let ap_keypair = federation::signing::generate_keypair()?;
-
     let username = user.username;
-    let ap_id = base_url.join("/ap/user/")?.join(&username)?;
-    let inbox_url = base_url.join("/ap/inbox")?;
 
-    let create_user = CreateApUser {
-        ap_id,
-        username,
-        inbox_url,
-        public_key: ap_keypair.public_key,
-        private_key: Some(ap_keypair.private_key),
-        last_refreshed_at: OffsetDateTime::now_utc(),
-        display_name: None,
-        bio: None,
-    };
+    let create_user = CreateApUser::new_local(base_url, username)?;
 
     let id: Uuid = sqlx::query(
         r"
             insert into ap_users
             (
+                id,
                 ap_id,
                 username,
                 inbox_url,
@@ -57,10 +44,11 @@ async fn new_ap_user(base_url: &Url, user: User, tx: &mut PgTransaction<'_>) -> 
                 display_name,
                 bio
             )
-            values ($1, $2, $3, $4, $5, $6, $7, $8)
+            values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
             returning id
         ",
     )
+    .bind(create_user.id)
     .bind(create_user.ap_id.to_string())
     .bind(create_user.username)
     .bind(create_user.inbox_url.to_string())

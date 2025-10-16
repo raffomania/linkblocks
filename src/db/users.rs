@@ -1,12 +1,10 @@
 use sqlx::{FromRow, query_as};
-use time::OffsetDateTime;
 use url::Url;
 use uuid::Uuid;
 
 use super::AppTx;
 use crate::{
     authentication::hash_password,
-    federation,
     forms::{
         ap_users::CreateApUser,
         users::{CreateOidcUser, CreateUser},
@@ -81,21 +79,7 @@ pub async fn insert(
     base_url: &Url,
 ) -> ResponseResult<User> {
     let hashed_password = hash_password(&create_user.password)?;
-    let ap_keypair = federation::signing::generate_keypair()?;
-
-    let ap_id = base_url.join("/ap/user/")?.join(&create_user.username)?;
-    let inbox_url = base_url.join("/ap/inbox")?;
-
-    let create_ap_user = CreateApUser {
-        ap_id,
-        username: create_user.username.clone(),
-        inbox_url,
-        public_key: ap_keypair.public_key,
-        private_key: Some(ap_keypair.private_key),
-        last_refreshed_at: OffsetDateTime::now_utc(),
-        display_name: None,
-        bio: None,
-    };
+    let create_ap_user = CreateApUser::new_local(base_url, create_user.username.clone())?;
     let ap_user = super::ap_users::insert(tx, create_ap_user).await?;
 
     let user = query_as!(

@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        insert into ap_users\n        (\n            ap_id,\n            username,\n            inbox_url,\n            public_key,\n            private_key,\n            last_refreshed_at,\n            display_name,\n            bio\n        )\n        values ($1, $2, $3, $4, $5, $6, $7, $8)\n        returning *\n        ",
+  "query": "\n        insert into ap_users\n        (\n            ap_id,\n            username,\n            inbox_url,\n            public_key,\n            private_key,\n            last_refreshed_at,\n            display_name,\n            bio,\n            -- insert id, but don't update it below\n            id\n        )\n        values ($1, $2, $3, $4, $5, $6, $7, $8, $9)\n        on conflict(ap_id) do update set\n            ap_id = $1,\n            username = $2,\n            inbox_url = $3,\n            public_key = $4,\n            private_key = $5,\n            last_refreshed_at = $6,\n            display_name = $7,\n            bio = $8\n        returning *\n        ",
   "describe": {
     "columns": [
       {
@@ -58,7 +58,8 @@
         "Varchar",
         "Timestamptz",
         "Varchar",
-        "Varchar"
+        "Varchar",
+        "Uuid"
       ]
     },
     "nullable": [
@@ -73,5 +74,5 @@
       true
     ]
   },
-  "hash": "a0accff69fb69735855056703fb25d34bb158f762413ed7771930d55b84d1798"
+  "hash": "4c8cffb9103a0877fa59dc68b531095da57450233de3080b911e0d947c38fb02"
 }

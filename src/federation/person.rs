@@ -11,7 +11,6 @@ use activitypub_federation::{
 use anyhow::{Context, Result};
 use garde::Validate;
 use serde::{Deserialize, Serialize};
-use time::OffsetDateTime;
 use url::Url;
 
 use crate::{
@@ -22,34 +21,21 @@ use crate::{
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Person {
-    id: ObjectId<db::ApUser>,
+    pub id: ObjectId<db::ApUser>,
     #[serde(rename = "type")]
-    kind: PersonType,
-    preferred_username: String,
-    name: Option<String>,
-    summary: Option<String>,
-    inbox: Url,
-    public_key: PublicKey,
+    pub kind: PersonType,
+    pub preferred_username: String,
+    pub name: Option<String>,
+    pub summary: Option<String>,
+    pub inbox: Url,
+    pub public_key: PublicKey,
 }
 
 impl TryFrom<Person> for CreateApUser {
     type Error = anyhow::Error;
 
     fn try_from(json: Person) -> std::result::Result<Self, Self::Error> {
-        let create_user = CreateApUser {
-            ap_id: json.id.into_inner(),
-            username: json.preferred_username,
-            inbox_url: json.inbox,
-            public_key: json.public_key.public_key_pem,
-            private_key: None,
-            last_refreshed_at: OffsetDateTime::now_utc(),
-            display_name: json.name,
-            bio: json.summary,
-        };
-
-        create_user.validate()?;
-
-        Ok(create_user)
+        CreateApUser::new_public(json)
     }
 }
 

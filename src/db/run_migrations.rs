@@ -1,4 +1,5 @@
-//! Most of this code is modeled after sqlx' own migration code.
+//! Most of this code is modeled after sqlx' own migration code. We can't just
+//! call their code because it's private.
 
 use std::collections::{HashMap, HashSet};
 

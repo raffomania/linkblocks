@@ -1,0 +1,78 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        insert into ap_users\n        (\n            id,\n            ap_id,\n            username,\n            inbox_url,\n            public_key,\n            private_key,\n            last_refreshed_at,\n            display_name,\n            bio\n        )\n        values ($1, $2, $3, $4, $5, $6, $7, $8, $9)\n        returning *\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "ap_id",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "username",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "inbox_url",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "public_key",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "private_key",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 6,
+        "name": "last_refreshed_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 7,
+        "name": "display_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 8,
+        "name": "bio",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Varchar",
+        "Varchar",
+        "Varchar",
+        "Varchar",
+        "Varchar",
+        "Timestamptz",
+        "Varchar",
+        "Varchar"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "e1e5bfbd6fef62ba71d6bd90d84d1a295d5fba7556ef8d6501c4acde667a1f97"
+}
