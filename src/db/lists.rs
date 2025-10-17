@@ -147,6 +147,21 @@ pub async fn list_pinned_by_user(tx: &mut AppTx, user_id: Uuid) -> ResponseResul
     Ok(lists)
 }
 
+pub async fn list_public_by_user(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<List>> {
+    let lists = query_as!(
+        List,
+        r#"
+        select * from lists
+        where user_id = $1 and not private
+        "#,
+        user_id,
+    )
+    .fetch_all(&mut **tx)
+    .await?;
+
+    Ok(lists)
+}
+
 pub async fn search(tx: &mut AppTx, term: &str, user_id: Uuid) -> ResponseResult<Vec<List>> {
     let lists = query_as!(
         List,

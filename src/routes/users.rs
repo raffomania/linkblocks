@@ -1,7 +1,7 @@
 use anyhow::{Context, anyhow};
 use axum::{
     Router,
-    extract::{Query, State},
+    extract::{Path, Query, State},
     response::{IntoResponse, Redirect, Response},
     routing::{get, post},
 };
@@ -29,7 +29,8 @@ pub fn router() -> Router<AppState> {
         .route("/login_oidc", get(get_login_oidc))
         .route("/login_demo", post(post_login_demo))
         .route("/logout", post(logout))
-        .route("/profile", get(get_profile))
+        .route("/start", get(get_start_page))
+        .route("/user/{ap_id}", get(get_profile))
 }
 
 async fn post_login(
@@ -207,16 +208,40 @@ async fn get_login(
     }
 }
 
-async fn get_profile(
+async fn get_start_page(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
     State(state): State<AppState>,
 ) -> ResponseResult<HtmfResponse> {
     let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
 
-    Ok(HtmfResponse(views::users::profile(&ProfileTemplate {
+    Ok(HtmfResponse(views::users::start_page(&ProfileTemplate {
         layout,
         base_url: state.base_url,
+    })))
+}
+
+// TODO: set this route as @url in activitypub person objects
+// https://www.w3.org/TR/activitystreams-vocabulary/#dfn-url
+async fn get_profile(
+    extract::Tx(mut tx): extract::Tx,
+    auth_user: AuthUser,
+    Path(username): Path<String>,
+) -> ResponseResult<HtmfResponse> {
+    let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
+
+    let ap_user = db::ap_users::read_by_username(&mut tx, &username).await?;
+    let maybe_user = db::users::by_ap_id(&mut tx, ap_user.id).await?;
+    let lists = if let Some(user) = maybe_user {
+        db::lists::list_public_by_user(&mut tx, user.id).await?
+    } else {
+        Vec::new()
+    };
+
+    Ok(HtmfResponse(views::profile::view(&views::profile::Data {
+        layout,
+        ap_user,
+        lists,
     })))
 }
 
