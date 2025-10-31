@@ -100,9 +100,7 @@ impl Actor for db::ApUser {
     }
 
     fn private_key_pem(&self) -> Option<String> {
-        self.private_key
-            .as_ref()
-            .map(|s| s.expose_secret().to_string())
+        self.private_key.as_ref().map(|s| s.expose_secret().clone())
     }
 
     fn inbox(&self) -> Url {

@@ -9,15 +9,13 @@ use crate::{
     oidc,
 };
 
+#[derive(Default)]
 pub enum OidcInfo {
+    #[default]
     NotConfigured,
-    Configured { name: String },
-}
-
-impl Default for OidcInfo {
-    fn default() -> Self {
-        Self::NotConfigured
-    }
+    Configured {
+        name: String,
+    },
 }
 
 impl From<oidc::State> for OidcInfo {
