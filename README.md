@@ -58,6 +58,10 @@ Then, open [http://localhost:4040] in your browser.
 1. Restart the linkblocks server. Click the  "Sign in with Rauthy" button at the bottom of linkblocks' login page. If it's not there, check the server logs to see if something related to OIDC went wrong.
 1. Use the same admin credentials as above to log into rauthy again.
 
+### Writing Migrations
+
+See [the docs](doc/migrations.md).
+
 ## Hosting Your Own Instance
 
 ⚠️ linkblocks is in a pre-alpha stage. There are no versions and no changelog. All data in the system will be publicly available. There are no authorization checks. Expect data loss.
