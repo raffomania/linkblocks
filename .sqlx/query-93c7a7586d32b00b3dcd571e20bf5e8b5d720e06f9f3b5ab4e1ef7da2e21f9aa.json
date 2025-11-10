@@ -15,28 +15,28 @@
       },
       {
         "ordinal": 2,
-        "name": "user_id",
-        "type_info": "Uuid"
-      },
-      {
-        "ordinal": 3,
         "name": "title",
         "type_info": "Text"
       },
       {
-        "ordinal": 4,
+        "ordinal": 3,
         "name": "content",
         "type_info": "Text"
       },
       {
-        "ordinal": 5,
+        "ordinal": 4,
         "name": "private",
         "type_info": "Bool"
       },
       {
-        "ordinal": 6,
+        "ordinal": 5,
         "name": "pinned",
         "type_info": "Bool"
+      },
+      {
+        "ordinal": 6,
+        "name": "ap_user_id",
+        "type_info": "Uuid"
       }
     ],
     "parameters": {
@@ -48,8 +48,8 @@
       false,
       false,
       false,
-      false,
       true,
+      false,
       false,
       false
     ]

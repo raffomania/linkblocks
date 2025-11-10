@@ -14,7 +14,7 @@ pub struct Bookmark {
     #[expect(dead_code)]
     pub created_at: OffsetDateTime,
     #[expect(dead_code)]
-    pub user_id: Uuid,
+    pub ap_user_id: Uuid,
 
     pub url: String,
     pub title: String,
@@ -28,7 +28,7 @@ pub struct Bookmark {
 struct BookmarkRow {
     id: Uuid,
     created_at: OffsetDateTime,
-    user_id: Uuid,
+    ap_user_id: Uuid,
 
     url: String,
     title: String,
@@ -42,7 +42,7 @@ impl TryFrom<BookmarkRow> for Bookmark {
         Ok(Bookmark {
             id: value.id,
             created_at: value.created_at,
-            user_id: value.user_id,
+            ap_user_id: value.ap_user_id,
             url: value.url,
             title: value.title,
             // ap_id: value.ap_id.parse()?,
@@ -65,7 +65,7 @@ pub struct InsertBookmark {
 
 pub async fn insert(
     tx: &mut AppTx,
-    user_id: Uuid,
+    ap_user_id: Uuid,
     create_bookmark: InsertBookmark,
     base_url: &Url,
 ) -> ResponseResult<Bookmark> {
@@ -75,11 +75,11 @@ pub async fn insert(
         BookmarkRow,
         r#"
         insert into bookmarks
-        (id, user_id, url, title, ap_id)
+        (id, ap_user_id, url, title, ap_id)
         values ($1, $2, $3, $4, $5)
         returning *"#,
         id,
-        user_id,
+        ap_user_id,
         create_bookmark.url,
         create_bookmark.title,
         ap_id.to_string()
@@ -90,19 +90,19 @@ pub async fn insert(
     bookmark.try_into()
 }
 
-pub async fn list_unsorted(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<Bookmark>> {
+pub async fn list_unsorted(tx: &mut AppTx, ap_user_id: Uuid) -> ResponseResult<Vec<Bookmark>> {
     let bookmarks = query_as!(
         BookmarkRow,
         r#"
         select *
         from bookmarks
-        where user_id = $1
+        where ap_user_id = $1
         and not exists (
             select null from links
             where dest_bookmark_id = bookmarks.id
         );
         "#,
-        user_id,
+        ap_user_id,
     )
     .fetch_all(&mut **tx)
     .await?;

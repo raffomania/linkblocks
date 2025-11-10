@@ -93,9 +93,9 @@ async fn validate_private_lists_belong_to_same_owner(
 
     let lists = query!(
         r#"
-        select src.user_id as src_user_id,
+        select src.ap_user_id as src_ap_user_id,
             src.private as src_private,
-            dest.user_id as dest_user_id,
+            dest.ap_user_id as dest_ap_user_id,
             dest.private as dest_private
         from lists src
         inner join lists dest on dest.id = $2
@@ -120,7 +120,7 @@ async fn validate_private_lists_belong_to_same_owner(
 
     // If source and destination are private, and they belong to the same user, it's
     // ok
-    if lists.src_private && lists.dest_private && lists.src_user_id == lists.dest_user_id {
+    if lists.src_private && lists.dest_private && lists.src_ap_user_id == lists.dest_ap_user_id {
         return Ok(());
     }
 
@@ -164,7 +164,7 @@ pub async fn insert(
 pub async fn list_by_list(
     tx: &mut AppTx,
     list_id: Uuid,
-    user_id: Option<Uuid>,
+    ap_user_id: Option<Uuid>,
 ) -> ResponseResult<Vec<LinkWithContent>> {
     let rows = query!(
         r#"
@@ -199,13 +199,13 @@ pub async fn list_by_list(
         left join bookmarks on bookmarks.id = links.dest_bookmark_id
 
         where links.src_list_id = $1
-            and (lists is null or not lists.private or lists.user_id = $2)
-            and (lists_lists is null or not lists_lists.private or lists.user_id = $2)
+            and (lists is null or not lists.private or lists.ap_user_id = $2)
+            and (lists_lists is null or not lists_lists.private or lists.ap_user_id = $2)
         group by links.id, lists.id, bookmarks.id
         order by links.created_at desc
         "#,
         list_id,
-        user_id
+        ap_user_id
     )
     .fetch_all(&mut **tx)
     .await?;

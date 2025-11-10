@@ -82,7 +82,7 @@ async fn profile() -> anyhow::Result<()> {
         .text_content();
 
     let mut tx = app.pool.begin().await?;
-    let public_lists = db::lists::list_public_by_user(&mut tx, user.id)
+    let public_lists = db::lists::list_public_by_user(&mut tx, user.ap_user_id)
         .await?
         .len();
 

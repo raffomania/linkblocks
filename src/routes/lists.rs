@@ -39,12 +39,12 @@ async fn get_show(
     Path(list_id): Path<Uuid>,
 ) -> ResponseResult<HtmfResponse> {
     let links =
-        db::links::list_by_list(&mut tx, list_id, auth_user.as_ref().map(|u| u.user_id)).await?;
+        db::links::list_by_list(&mut tx, list_id, auth_user.as_ref().map(|u| u.ap_user_id)).await?;
     let list = db::lists::by_id(&mut tx, list_id).await?;
 
     match auth_user {
         Some(ref user) => {
-            if list.private && list.user_id != user.user_id {
+            if list.private && list.ap_user_id != user.ap_user_id {
                 return Err(ResponseError::NotFound);
             }
         }
@@ -68,7 +68,6 @@ async fn post_create(
     auth_user: AuthUser,
     Form(input): Form<CreateList>,
 ) -> ResponseResult<Response> {
-    let user_id = auth_user.user_id;
     let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
 
     if let Err(errors) = input.validate() {
@@ -81,7 +80,7 @@ async fn post_create(
         .into_response());
     }
 
-    let list = db::lists::insert(&mut tx, user_id, input).await?;
+    let list = db::lists::insert(&mut tx, auth_user.ap_user_id, input).await?;
 
     tx.commit().await?;
 
@@ -110,7 +109,7 @@ async fn get_edit_title(
 ) -> ResponseResult<HtmfResponse> {
     let list = db::lists::by_id(&mut tx, list_id).await?;
 
-    if list.user_id != auth_user.user_id {
+    if list.ap_user_id != auth_user.ap_user_id {
         return Err(ResponseError::NotFound);
     }
 
@@ -133,7 +132,7 @@ async fn post_edit_title(
 ) -> ResponseResult<Response> {
     let list = db::lists::by_id(&mut tx, list_id).await?;
 
-    if list.user_id != auth_user.user_id {
+    if list.ap_user_id != auth_user.ap_user_id {
         return Err(ResponseError::NotFound);
     }
 
@@ -152,7 +151,7 @@ async fn edit_private(
 ) -> ResponseResult<Response> {
     let list = db::lists::by_id(&mut tx, list_id).await?;
 
-    if list.user_id != auth_user.user_id {
+    if list.ap_user_id != auth_user.ap_user_id {
         return Err(ResponseError::NotFound);
     }
 
@@ -171,7 +170,7 @@ async fn edit_pinned(
 ) -> ResponseResult<Response> {
     let list = db::lists::by_id(&mut tx, list_id).await?;
 
-    if list.user_id != auth_user.user_id {
+    if list.ap_user_id != auth_user.ap_user_id {
         return Err(ResponseError::NotFound);
     }
 
@@ -187,7 +186,7 @@ async fn list_unpinned(
     auth_user: AuthUser,
     extract::Tx(mut tx): extract::Tx,
 ) -> ResponseResult<HtmfResponse> {
-    let lists = db::lists::list_unpinned(&mut tx, auth_user.user_id).await?;
+    let lists = db::lists::list_unpinned(&mut tx, auth_user.ap_user_id).await?;
 
     Ok(
         views::list_unpinned_lists::view(views::list_unpinned_lists::Data {

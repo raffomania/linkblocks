@@ -14,7 +14,7 @@ pub struct Template {
 impl Template {
     pub async fn from_db(tx: &mut AppTx, auth_user: Option<&AuthUser>) -> ResponseResult<Self> {
         let auth_info = if let Some(auth_user) = auth_user {
-            Some(db::layout::by_user_id(tx, auth_user.user_id).await?)
+            Some(db::layout::by_ap_user_id(tx, auth_user.ap_user_id).await?)
         } else {
             None
         };

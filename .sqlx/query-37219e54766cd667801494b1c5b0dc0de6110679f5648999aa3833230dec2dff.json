@@ -1,11 +1,11 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select src.user_id as src_user_id,\n            src.private as src_private,\n            dest.user_id as dest_user_id,\n            dest.private as dest_private\n        from lists src\n        inner join lists dest on dest.id = $2\n        where src.id = $1\n        ",
+  "query": "\n        select src.ap_user_id as src_ap_user_id,\n            src.private as src_private,\n            dest.ap_user_id as dest_ap_user_id,\n            dest.private as dest_private\n        from lists src\n        inner join lists dest on dest.id = $2\n        where src.id = $1\n        ",
   "describe": {
     "columns": [
       {
         "ordinal": 0,
-        "name": "src_user_id",
+        "name": "src_ap_user_id",
         "type_info": "Uuid"
       },
       {
@@ -15,7 +15,7 @@
       },
       {
         "ordinal": 2,
-        "name": "dest_user_id",
+        "name": "dest_ap_user_id",
         "type_info": "Uuid"
       },
       {
@@ -37,5 +37,5 @@
       false
     ]
   },
-  "hash": "1c787c065e721b6a91862fa798f24f0e963d1f5c50c4da0b435f83cae3747f48"
+  "hash": "37219e54766cd667801494b1c5b0dc0de6110679f5648999aa3833230dec2dff"
 }

@@ -15,23 +15,23 @@
       },
       {
         "ordinal": 2,
-        "name": "user_id",
-        "type_info": "Uuid"
-      },
-      {
-        "ordinal": 3,
         "name": "url",
         "type_info": "Text"
       },
       {
-        "ordinal": 4,
+        "ordinal": 3,
         "name": "title",
         "type_info": "Text"
       },
       {
-        "ordinal": 5,
+        "ordinal": 4,
         "name": "ap_id",
         "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "ap_user_id",
+        "type_info": "Uuid"
       }
     ],
     "parameters": {

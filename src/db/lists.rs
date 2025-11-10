@@ -12,7 +12,7 @@ pub struct List {
     #[serde(with = "time::serde::iso8601")]
     #[expect(dead_code)]
     pub created_at: OffsetDateTime,
-    pub user_id: Uuid,
+    pub ap_user_id: Uuid,
 
     pub title: String,
     pub content: Option<String>,
@@ -49,17 +49,17 @@ pub struct ListWithMetadata {
 
 pub async fn insert(
     tx: &mut AppTx,
-    user_id: Uuid,
+    ap_user_id: Uuid,
     create_list: CreateList,
 ) -> ResponseResult<List> {
     let list = query_as!(
         List,
         r#"
         insert into lists
-        (user_id, title, content, private)
+        (ap_user_id, title, content, private)
         values ($1, $2, $3, $4)
         returning *"#,
-        user_id,
+        ap_user_id,
         create_list.title,
         create_list.content,
         create_list.private,
@@ -108,7 +108,7 @@ pub async fn metadata_by_id(tx: &mut AppTx, list_id: Uuid) -> ResponseResult<Met
                 count(links.dest_bookmark_id) as "linked_bookmark_count!",
                 count(links.dest_list_id) as "linked_list_count!"
             from lists
-            join users on lists.user_id = users.id
+            join users on lists.ap_user_id = users.ap_user_id
             left join links
                 on lists.id = links.src_list_id
             where lists.id = $1
@@ -137,14 +137,14 @@ pub async fn list_by_id(tx: &mut AppTx, list_ids: &[Uuid]) -> ResponseResult<Vec
     Ok(list)
 }
 
-pub async fn list_pinned_by_user(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<List>> {
+pub async fn list_pinned_by_user(tx: &mut AppTx, ap_user_id: Uuid) -> ResponseResult<Vec<List>> {
     let lists = query_as!(
         List,
         r#"
         select * from lists
-        where user_id = $1 and pinned
+        where ap_user_id = $1 and pinned
         "#,
-        user_id,
+        ap_user_id,
     )
     .fetch_all(&mut **tx)
     .await?;
@@ -154,23 +154,23 @@ pub async fn list_pinned_by_user(tx: &mut AppTx, user_id: Uuid) -> ResponseResul
 
 pub async fn list_public_by_user(
     tx: &mut AppTx,
-    user_id: Uuid,
+    ap_user_id: Uuid,
 ) -> ResponseResult<Vec<ListWithMetadata>> {
     let lists = query!(
         r#"
         select lists.* as l,
-            users.username,
+            ap_users.username,
             count(links.dest_bookmark_id) as "linked_bookmark_count!",
             count(links.dest_list_id) as "linked_list_count!"
         from lists
 
-        join users on lists.user_id = users.id
+        join ap_users on lists.ap_user_id = ap_users.id
         left join links
             on lists.id = links.src_list_id
-        where lists.user_id = $1 and not private
-        group by lists.id, users.username
+        where lists.ap_user_id = $1 and not private
+        group by lists.id, ap_users.username
         "#,
-        user_id,
+        ap_user_id,
     )
     .fetch_all(&mut **tx)
     .await?
@@ -179,7 +179,7 @@ pub async fn list_public_by_user(
         list: List {
             id: record.id,
             created_at: record.created_at,
-            user_id: record.user_id,
+            ap_user_id: record.ap_user_id,
             title: record.title,
             content: record.content,
             private: record.private,
@@ -196,18 +196,18 @@ pub async fn list_public_by_user(
     Ok(lists)
 }
 
-pub async fn search(tx: &mut AppTx, term: &str, user_id: Uuid) -> ResponseResult<Vec<List>> {
+pub async fn search(tx: &mut AppTx, term: &str, ap_user_id: Uuid) -> ResponseResult<Vec<List>> {
     let lists = query_as!(
         List,
         r#"
             select *
             from lists
             where (lists.title ilike '%' || $1 || '%')
-            and lists.user_id = $2
+            and lists.ap_user_id = $2
             limit 10
         "#,
         term,
-        user_id,
+        ap_user_id,
     )
     .fetch_all(&mut **tx)
     .await?;
@@ -215,7 +215,7 @@ pub async fn search(tx: &mut AppTx, term: &str, user_id: Uuid) -> ResponseResult
     Ok(lists)
 }
 
-pub async fn list_recent(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<List>> {
+pub async fn list_recent(tx: &mut AppTx, ap_user_id: Uuid) -> ResponseResult<Vec<List>> {
     let lists = query_as!(
         List,
         r#"
@@ -223,7 +223,7 @@ pub async fn list_recent(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<Li
             from lists
             left join links as src_links on lists.id = src_links.src_list_id
             left join links as dest_links on lists.id = dest_links.dest_list_id
-            where lists.user_id = $1
+            where lists.ap_user_id = $1
             group by lists.id
             order by
                 max(src_links.created_at) desc nulls last,
@@ -231,7 +231,7 @@ pub async fn list_recent(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<Li
                 max(lists.created_at) desc
             limit 500
         "#,
-        user_id,
+        ap_user_id,
     )
     .fetch_all(&mut **tx)
     .await?;
@@ -248,7 +248,7 @@ pub struct UnpinnedList {
     pub linked_list_count: i64,
 }
 
-pub async fn list_unpinned(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<UnpinnedList>> {
+pub async fn list_unpinned(tx: &mut AppTx, ap_user_id: Uuid) -> ResponseResult<Vec<UnpinnedList>> {
     let lists = query_as!(
         UnpinnedList,
         r#"
@@ -258,10 +258,10 @@ pub async fn list_unpinned(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<Vec<
             from lists
             left join links
                 on lists.id = links.src_list_id
-            where lists.user_id = $1 and not pinned
+            where lists.ap_user_id = $1 and not pinned
             group by lists.id
         "#,
-        user_id,
+        ap_user_id,
     )
     .fetch_all(&mut **tx)
     .await?;

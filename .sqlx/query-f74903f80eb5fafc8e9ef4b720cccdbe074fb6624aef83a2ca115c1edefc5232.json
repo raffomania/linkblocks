@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        insert into lists\n        (user_id, title, content, private)\n        values ($1, $2, $3, $4)\n        returning *",
+  "query": "\n        insert into lists\n        (ap_user_id, title, content, private)\n        values ($1, $2, $3, $4)\n        returning *",
   "describe": {
     "columns": [
       {
@@ -15,28 +15,28 @@
       },
       {
         "ordinal": 2,
-        "name": "user_id",
-        "type_info": "Uuid"
-      },
-      {
-        "ordinal": 3,
         "name": "title",
         "type_info": "Text"
       },
       {
-        "ordinal": 4,
+        "ordinal": 3,
         "name": "content",
         "type_info": "Text"
       },
       {
-        "ordinal": 5,
+        "ordinal": 4,
         "name": "private",
         "type_info": "Bool"
       },
       {
-        "ordinal": 6,
+        "ordinal": 5,
         "name": "pinned",
         "type_info": "Bool"
+      },
+      {
+        "ordinal": 6,
+        "name": "ap_user_id",
+        "type_info": "Uuid"
       }
     ],
     "parameters": {
@@ -51,11 +51,11 @@
       false,
       false,
       false,
-      false,
       true,
+      false,
       false,
       false
     ]
   },
-  "hash": "4b838eb44c8c6fb60069894f80e9b4702faca004c4daf9d140cc9152929119eb"
+  "hash": "f74903f80eb5fafc8e9ef4b720cccdbe074fb6624aef83a2ca115c1edefc5232"
 }

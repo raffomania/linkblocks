@@ -49,7 +49,7 @@ pub fn view(
                     (!content.is_empty()).then_some(p(class("max-w-2xl mt-2")).with(content))
                 }))])
             .with(layout.authed_info.as_ref().and_then(|authed_info| {
-                (authed_info.user_id == list.user_id).then(|| edit_buttons(data))
+                (authed_info.ap_user_id == list.ap_user_id).then(|| edit_buttons(data))
             }))
             .with(
                 links
@@ -143,7 +143,7 @@ fn list_item(link: &LinkWithContent, Data { layout, list, .. }: &Data) -> Elemen
                     href(format!("/links/create?dest_id={}", link.dest.id())),
                 ])
                 .with("Connect"),
-                if authed_info.user_id == list.user_id {
+                if authed_info.ap_user_id == list.ap_user_id {
                     fragment().with([
                         span(()).with("∙"),
                         button([

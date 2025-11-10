@@ -25,8 +25,7 @@ async fn get_metadata(tx: &mut AppTx, ap_user_id: Uuid) -> ResponseResult<Metada
         r#"
             select count(distinct links.dest_bookmark_id) as "public_bookmark_count!"
             from ap_users
-            join users on users.ap_user_id = ap_users.id
-            join lists on lists.user_id = users.id
+            join lists on lists.ap_user_id = ap_users.id
             join links on links.src_list_id = lists.id
             where ap_users.id = $1
                 and not lists.private
