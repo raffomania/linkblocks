@@ -2,6 +2,7 @@ use axum::http::{StatusCode, header};
 
 use crate::{
     db::{self, ap_users},
+    federation::webfinger,
     forms::users::{CreateOidcUser, Credentials, Login},
     tests::util::test_app::TestApp,
 };
@@ -65,7 +66,7 @@ async fn profile() -> anyhow::Result<()> {
 
     let user = app.create_test_user().await;
     app.login_test_user().await;
-    // Check that we can access the index when logged in
+    // Check that we can access the logged in user's profile page
     let profile = app
         .req()
         .get(&format!("/user/{}", user.username))
@@ -87,6 +88,41 @@ async fn profile() -> anyhow::Result<()> {
         .len();
 
     assert_eq!(lists_header, format!("{public_lists} public lists"));
+
+    Ok(())
+}
+
+#[test_log::test(tokio::test)]
+async fn profile_remote_user() -> anyhow::Result<()> {
+    let mut app_a = TestApp::new().await;
+    app_a.create_test_user().await;
+
+    let app_b = TestApp::new().await;
+    let user_to_show = app_b.create_user("testb", "testpassword").await;
+    let user_to_show_ap_user = db::ap_users::read_by_username(
+        &mut app_b.pool.begin().await?,
+        webfinger::Resource::from_name_and_url(user_to_show.username.clone(), &app_b.base_url)?,
+    )
+    .await?;
+
+    // Fetch the user from B and store it in A's db
+    app_b.serve().await;
+    let ap_cx_a = app_a.state.federation_config.to_request_data();
+    user_to_show_ap_user.ap_id.dereference(&ap_cx_a).await?;
+
+    // Check that A can display the profile for the remote user
+    app_a.login_test_user().await;
+    app_a
+        .req()
+        .get(&format!(
+            "/user/{}@{}:{}",
+            user_to_show.username,
+            app_b.base_url.domain().unwrap(),
+            app_b.base_url.port().unwrap()
+        ))
+        .await
+        .test_page()
+        .await;
 
     Ok(())
 }

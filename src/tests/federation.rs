@@ -4,6 +4,7 @@ use axum::http::StatusCode;
 
 use crate::{
     db,
+    federation::webfinger,
     forms::users::{Credentials, Login},
     tests::util::test_app::TestApp,
 };
@@ -52,8 +53,11 @@ async fn spin_up_two_instances() -> anyhow::Result<()> {
 async fn can_resolve_user() -> Result<()> {
     let app_a = TestApp::new().await;
     let user = app_a.create_user("testa", "testpassword").await;
-    let app_a_ap_user =
-        db::ap_users::read_by_username(&mut app_a.pool.begin().await?, &user.username).await?;
+    let app_a_ap_user = db::ap_users::read_by_username(
+        &mut app_a.pool.begin().await?,
+        webfinger::Resource::from_name_and_url(user.username, &app_a.base_url)?,
+    )
+    .await?;
     app_a.serve().await;
 
     let app_b = TestApp::new().await;
@@ -74,8 +78,11 @@ async fn can_resolve_user() -> Result<()> {
 async fn can_resolve_webfinger() -> Result<()> {
     let app = TestApp::new().await;
     let user = app.create_user("testa", "testpassword").await;
-    let local_ap_user =
-        db::ap_users::read_by_username(&mut app.pool.begin().await?, &user.username).await?;
+    let local_ap_user = db::ap_users::read_by_username(
+        &mut app.pool.begin().await?,
+        webfinger::Resource::from_name_and_url(user.username, &app.base_url)?,
+    )
+    .await?;
     app.serve().await;
 
     let actor: db::ApUser = webfinger_resolve_actor(

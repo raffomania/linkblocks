@@ -114,7 +114,7 @@ start-test-database:
 test *args: start-test-database generate-database-info
     # SQLX_OFFLINE: Without it, `cargo test` would compile against the test db
     # which is always empty and only migrated inside the tests themselves.
-    RUST_BACKTRACE=1 DATABASE_URL=${DATABASE_URL_TEST} SQLX_OFFLINE=true cargo test {{args}}
+    DATABASE_URL=${DATABASE_URL_TEST} SQLX_OFFLINE=true cargo test {{args}}
 
 development-cert:
     mkdir -p development_cert

@@ -6,6 +6,7 @@ use uuid::Uuid;
 
 use super::AppTx;
 use crate::{
+    federation::webfinger,
     forms::ap_users::{CreateApUser, UpdateApUser},
     response_error::ResponseResult,
 };
@@ -200,14 +201,23 @@ pub async fn read_by_id(tx: &mut AppTx, id: Uuid) -> ResponseResult<ApUser> {
     Ok(user)
 }
 
-pub async fn read_by_username(tx: &mut AppTx, username: &str) -> ResponseResult<ApUser> {
+/// Since usernames are not unique, always pass in a domain as well.
+/// for local users, just use the configured `base_url`.
+pub async fn read_by_username(
+    tx: &mut AppTx,
+    resource: webfinger::Resource,
+) -> ResponseResult<ApUser> {
+    dbg!(&resource);
+    let domain_pattern = format!("%://{}/%", resource.domain);
     let user = query_as!(
         ApUserRow,
         r#"
         select * from ap_users
         where username = $1
+            and ap_id like $2
         "#,
-        username
+        resource.name,
+        domain_pattern
     )
     .fetch_one(&mut **tx)
     .await?
