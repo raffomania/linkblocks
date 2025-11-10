@@ -47,12 +47,17 @@ pub struct WebfingerQuery {
 async fn webfinger(
     extract::Tx(mut tx): extract::Tx,
     Query(query): Query<WebfingerQuery>,
+    State(state): State<AppState>,
     data: federation::Data,
 ) -> ResponseResult<Json<Webfinger>> {
+    // This also verifies that the domain is correct
     let username = extract_webfinger_name(&query.resource, &data)?;
-    let ap_id = db::ap_users::read_by_username(&mut tx, username)
-        .await?
-        .ap_id;
+    let ap_id = db::ap_users::read_by_username(
+        &mut tx,
+        federation::webfinger::Resource::from_name_and_url(username.to_string(), &state.base_url)?,
+    )
+    .await?
+    .ap_id;
     Ok(Json(build_webfinger_response(
         query.resource,
         ap_id.into_inner(),

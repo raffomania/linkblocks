@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select * from ap_users\n        where username = $1\n        ",
+  "query": "\n        select * from ap_users\n        where username = $1\n            and ap_id like $2\n        ",
   "describe": {
     "columns": [
       {
@@ -51,6 +51,7 @@
     ],
     "parameters": {
       "Left": [
+        "Text",
         "Text"
       ]
     },
@@ -66,5 +67,5 @@
       true
     ]
   },
-  "hash": "b3e6a2f6d38821cea1853eee400a58341abe8551852352cd462fbb936b9044c5"
+  "hash": "e5e27d32784022a444b90a4a7ecd518827f9ea451bded880a4cfde272c1ccc88"
 }

@@ -226,14 +226,16 @@ async fn get_start_page(
 // https://github.com/raffomania/linkblocks/issues/150
 async fn get_profile(
     extract::Tx(mut tx): extract::Tx,
-    // TODO: activitypub usernames are not guaranteed to be unique across different domains. Also
-    // check if we have a unique index on this column
-    // https://github.com/raffomania/linkblocks/issues/151
-    Path(username): Path<String>,
+    Path(handle): Path<String>,
+    State(state): State<AppState>,
 ) -> ResponseResult<HtmfResponse> {
     let layout = layout::Template::from_db(&mut tx, None).await?;
 
-    let ap_user = db::ap_users::read_by_username(&mut tx, &username).await?;
+    let ap_user = db::ap_users::read_by_username(
+        &mut tx,
+        crate::federation::webfinger::Resource::parse_handle(&handle, &state.base_url)?,
+    )
+    .await?;
     let maybe_user = db::users::by_ap_user_id(&mut tx, ap_user.id).await?;
     let public_lists = if let Some(user) = maybe_user {
         db::lists::list_public_by_user(&mut tx, user.id).await?
