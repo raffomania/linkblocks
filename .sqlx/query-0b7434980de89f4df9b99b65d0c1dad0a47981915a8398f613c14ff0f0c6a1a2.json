@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select lists.* as l,\n            users.username,\n            count(links.dest_bookmark_id) as \"linked_bookmark_count!\",\n            count(links.dest_list_id) as \"linked_list_count!\"\n        from lists\n\n        join users on lists.user_id = users.id\n        left join links\n            on lists.id = links.src_list_id\n        where lists.user_id = $1 and not private\n        group by lists.id, users.username\n        ",
+  "query": "\n        select lists.* as l,\n            ap_users.username,\n            count(links.dest_bookmark_id) as \"linked_bookmark_count!\",\n            count(links.dest_list_id) as \"linked_list_count!\"\n        from lists\n\n        join ap_users on lists.ap_user_id = ap_users.id\n        left join links\n            on lists.id = links.src_list_id\n        where lists.ap_user_id = $1 and not private\n        group by lists.id, ap_users.username\n        ",
   "describe": {
     "columns": [
       {
@@ -15,33 +15,33 @@
       },
       {
         "ordinal": 2,
-        "name": "user_id",
-        "type_info": "Uuid"
-      },
-      {
-        "ordinal": 3,
         "name": "title",
         "type_info": "Text"
       },
       {
-        "ordinal": 4,
+        "ordinal": 3,
         "name": "content",
         "type_info": "Text"
       },
       {
-        "ordinal": 5,
+        "ordinal": 4,
         "name": "private",
         "type_info": "Bool"
       },
       {
-        "ordinal": 6,
+        "ordinal": 5,
         "name": "pinned",
         "type_info": "Bool"
       },
       {
+        "ordinal": 6,
+        "name": "ap_user_id",
+        "type_info": "Uuid"
+      },
+      {
         "ordinal": 7,
         "name": "username",
-        "type_info": "Text"
+        "type_info": "Varchar"
       },
       {
         "ordinal": 8,
@@ -63,8 +63,8 @@
       false,
       false,
       false,
-      false,
       true,
+      false,
       false,
       false,
       false,
@@ -72,5 +72,5 @@
       null
     ]
   },
-  "hash": "55dd248654ebb87a6362152664a75de20fe0f5cebabe7667739b2bd5e38bd2b1"
+  "hash": "0b7434980de89f4df9b99b65d0c1dad0a47981915a8398f613c14ff0f0c6a1a2"
 }

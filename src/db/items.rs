@@ -13,23 +13,23 @@ use crate::response_error::ResponseResult;
 pub async fn search(
     tx: &mut AppTx,
     term: &str,
-    user_id: Uuid,
+    ap_user_id: Uuid,
 ) -> ResponseResult<Vec<LinkDestination>> {
     let jsons = query!(
         r#"
             select to_jsonb(bookmarks.*) as item
             from bookmarks
             where bookmarks.title ilike '%' || $1 || '%'
-            and bookmarks.user_id = $2
+            and bookmarks.ap_user_id = $2
             union
             select to_jsonb(lists.*) as item
             from lists
             where lists.title ilike '%' || $1 || '%'
-            and lists.user_id = $2
+            and lists.ap_user_id = $2
             limit 10
         "#,
         term,
-        user_id
+        ap_user_id
     )
     .fetch_all(&mut **tx)
     .await?;

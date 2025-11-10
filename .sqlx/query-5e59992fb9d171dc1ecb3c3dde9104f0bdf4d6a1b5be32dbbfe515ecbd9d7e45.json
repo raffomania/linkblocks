@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n    select ap_users.username from ap_users\n    join users on users.ap_user_id = ap_users.id\n    where users.id = $1\n    ",
+  "query": "\n    select ap_users.username from ap_users\n    where id = $1\n    ",
   "describe": {
     "columns": [
       {
@@ -18,5 +18,5 @@
       false
     ]
   },
-  "hash": "7aba5b51795697d0a21ce5403403441c600d0b319ad9284a3d2541d07501f435"
+  "hash": "5e59992fb9d171dc1ecb3c3dde9104f0bdf4d6a1b5be32dbbfe515ecbd9d7e45"
 }

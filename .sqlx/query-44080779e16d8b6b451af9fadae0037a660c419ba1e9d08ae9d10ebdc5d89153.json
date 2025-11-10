@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        insert into bookmarks\n        (id, user_id, url, title, ap_id)\n        values ($1, $2, $3, $4, $5)\n        returning *",
+  "query": "\n        select * from lists\n        where ap_user_id = $1 and pinned\n        ",
   "describe": {
     "columns": [
       {
@@ -15,42 +15,44 @@
       },
       {
         "ordinal": 2,
-        "name": "user_id",
-        "type_info": "Uuid"
-      },
-      {
-        "ordinal": 3,
-        "name": "url",
-        "type_info": "Text"
-      },
-      {
-        "ordinal": 4,
         "name": "title",
         "type_info": "Text"
       },
       {
+        "ordinal": 3,
+        "name": "content",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "private",
+        "type_info": "Bool"
+      },
+      {
         "ordinal": 5,
-        "name": "ap_id",
-        "type_info": "Varchar"
+        "name": "pinned",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 6,
+        "name": "ap_user_id",
+        "type_info": "Uuid"
       }
     ],
     "parameters": {
       "Left": [
-        "Uuid",
-        "Uuid",
-        "Text",
-        "Text",
-        "Varchar"
+        "Uuid"
       ]
     },
     "nullable": [
       false,
       false,
       false,
+      true,
       false,
       false,
       false
     ]
   },
-  "hash": "0327af07b2a1c2eba30738c26575938fdaf4060c7f47012aae1c17edebb3ed4c"
+  "hash": "44080779e16d8b6b451af9fadae0037a660c419ba1e9d08ae9d10ebdc5d89153"
 }

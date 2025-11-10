@@ -7,6 +7,7 @@ use axum::{
 };
 use garde::Validate;
 use percent_encoding::utf8_percent_encode;
+use serde::{Deserialize, Serialize};
 use tower_sessions::Session;
 use url::Url;
 use uuid::Uuid;
@@ -51,7 +52,7 @@ pub async fn login(tx: &mut AppTx, session: Session, creds: &Credentials) -> Res
 
     verify_password(&user, &creds.password)?;
 
-    AuthUser::save_in_session(&session, user.id).await?;
+    AuthUser::save_in_session(&session, &user).await?;
 
     Ok(())
 }
@@ -68,7 +69,7 @@ pub async fn create_and_login_temp_user(
     create.validate().context("Invalid demo user generated")?;
     let user = db::users::insert(tx, create, base_url).await?;
 
-    AuthUser::save_in_session(&session, user.id).await?;
+    AuthUser::save_in_session(&session, &user).await?;
 
     Ok(())
 }
@@ -89,27 +90,38 @@ pub async fn create_and_login_oidc_user(
         Err(_) => return Err(anyhow!("Failed to look up user by OIDC id").into()),
     };
 
-    AuthUser::save_in_session(session, user.id).await?;
+    AuthUser::save_in_session(session, &user).await?;
 
     Ok(())
 }
 
 pub async fn login_oidc_user(session: &Session, user: &User) -> ResponseResult<()> {
-    AuthUser::save_in_session(session, user.id).await
+    AuthUser::save_in_session(session, user).await
 }
 
 #[derive(Debug)]
 pub struct AuthUser {
     pub user_id: Uuid,
+    pub ap_user_id: Uuid,
     session: Session,
 }
 
-impl AuthUser {
-    const SESSION_KEY: &'static str = "auth_user_id";
+#[derive(Serialize, Deserialize)]
+struct SessionValue {
+    user_id: Uuid,
+    ap_user_id: Uuid,
+}
 
-    pub async fn save_in_session(session: &Session, id: Uuid) -> ResponseResult<()> {
+impl AuthUser {
+    const SESSION_KEY: &'static str = "auth_user";
+
+    pub async fn save_in_session(session: &Session, user: &db::User) -> ResponseResult<()> {
+        let value = SessionValue {
+            user_id: user.id,
+            ap_user_id: user.ap_user_id,
+        };
         session
-            .insert(Self::SESSION_KEY, id)
+            .insert(Self::SESSION_KEY, value)
             .await
             .context("Failed to insert id into session")?;
 
@@ -117,13 +129,17 @@ impl AuthUser {
     }
 
     pub async fn from_session(session: Session) -> ResponseResult<Self> {
-        let user_id: Uuid = session
+        let value: SessionValue = session
             .get(Self::SESSION_KEY)
             .await
             .context("Failed to load authenticated user id")?
             .ok_or(ResponseError::NotAuthenticated)?;
 
-        Ok(Self { user_id, session })
+        Ok(Self {
+            user_id: value.user_id,
+            ap_user_id: value.ap_user_id,
+            session,
+        })
     }
 
     pub async fn logout(self) -> ResponseResult<()> {

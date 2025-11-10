@@ -47,7 +47,7 @@ pub async fn insert_demo_data(
                 content: content.map(|c| c.join("\n\n")),
                 private: fake::Faker.fake(),
             };
-            let list = db::lists::insert(&mut tx, user.id, create_list).await?;
+            let list = db::lists::insert(&mut tx, user.ap_user_id, create_list).await?;
 
             if fake::faker::boolean::en::Boolean(10).fake() {
                 db::lists::set_pinned(&mut tx, list.id, false).await?;
@@ -117,7 +117,8 @@ async fn create_bookmarks(
             title,
         };
 
-        let bookmark = db::bookmarks::insert(tx, user.id, insert_bookmark, base_url).await?;
+        let bookmark =
+            db::bookmarks::insert(tx, user.ap_user_id, insert_bookmark, base_url).await?;
         bookmarks.push(bookmark);
     }
 

@@ -238,7 +238,7 @@ async fn get_profile(
     .await?;
     let maybe_user = db::users::by_ap_user_id(&mut tx, ap_user.id).await?;
     let public_lists = if let Some(user) = maybe_user {
-        db::lists::list_public_by_user(&mut tx, user.id).await?
+        db::lists::list_public_by_user(&mut tx, user.ap_user_id).await?
     } else {
         Vec::new()
     };

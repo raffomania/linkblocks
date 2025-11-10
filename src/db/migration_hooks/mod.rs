@@ -30,5 +30,6 @@ pub async fn run_before(
     } else if previous_migration.version == 2025_11_05_102754 {
         generate_bookmark_ap_ids::migrate(tx, base_url).await?;
     }
+
     Ok(())
 }

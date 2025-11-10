@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            select lists.id, title, content,\n                count(links.dest_bookmark_id) as \"bookmark_count!\",\n                count(links.dest_list_id) as \"linked_list_count!\"\n            from lists\n            left join links\n                on lists.id = links.src_list_id\n            where lists.user_id = $1 and not pinned\n            group by lists.id\n        ",
+  "query": "\n            select lists.id, title, content,\n                count(links.dest_bookmark_id) as \"bookmark_count!\",\n                count(links.dest_list_id) as \"linked_list_count!\"\n            from lists\n            left join links\n                on lists.id = links.src_list_id\n            where lists.ap_user_id = $1 and not pinned\n            group by lists.id\n        ",
   "describe": {
     "columns": [
       {
@@ -42,5 +42,5 @@
       null
     ]
   },
-  "hash": "dced076a8e72c6a98fee5a26fcc87090098469b1e03103fc931838610e647d33"
+  "hash": "526cb3692169a029be9c0d3d0348c92cc7191883768e2ea3901f7607acb107ed"
 }

@@ -6,18 +6,17 @@ use crate::{db, response_error::ResponseResult};
 pub struct AuthedInfo {
     pub username: String,
     pub lists: Vec<db::List>,
-    pub user_id: Uuid,
+    pub ap_user_id: Uuid,
 }
 
-pub async fn by_user_id(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<AuthedInfo> {
-    let lists = db::lists::list_pinned_by_user(tx, user_id).await?;
+pub async fn by_ap_user_id(tx: &mut AppTx, ap_user_id: Uuid) -> ResponseResult<AuthedInfo> {
+    let lists = db::lists::list_pinned_by_user(tx, ap_user_id).await?;
     let username = sqlx::query!(
         "
     select ap_users.username from ap_users
-    join users on users.ap_user_id = ap_users.id
-    where users.id = $1
+    where id = $1
     ",
-        user_id
+        ap_user_id
     )
     .fetch_one(&mut **tx)
     .await?
@@ -26,6 +25,6 @@ pub async fn by_user_id(tx: &mut AppTx, user_id: Uuid) -> ResponseResult<AuthedI
     Ok(AuthedInfo {
         username,
         lists,
-        user_id,
+        ap_user_id,
     })
 }

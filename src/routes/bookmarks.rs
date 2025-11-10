@@ -40,8 +40,8 @@ async fn post_create(
 
     // TODO exclude items that are already linked
     let search_results = match input.list_search_term.as_ref() {
-        None => db::lists::list_recent(&mut tx, auth_user.user_id).await?,
-        Some(term) => db::lists::search(&mut tx, term, auth_user.user_id).await?,
+        None => db::lists::list_recent(&mut tx, auth_user.ap_user_id).await?,
+        Some(term) => db::lists::search(&mut tx, term, auth_user.ap_user_id).await?,
     };
 
     let insert_bookmark = match InsertBookmark::try_from(input.clone()) {
@@ -60,14 +60,19 @@ async fn post_create(
         Ok(i) => i,
     };
 
-    let bookmark =
-        db::bookmarks::insert(&mut tx, auth_user.user_id, insert_bookmark, &state.base_url).await?;
+    let bookmark = db::bookmarks::insert(
+        &mut tx,
+        auth_user.ap_user_id,
+        insert_bookmark,
+        &state.base_url,
+    )
+    .await?;
 
     let mut first_created_parent = Option::None;
     for parent_title in input.create_parents {
         let parent = db::lists::insert(
             &mut tx,
-            auth_user.user_id,
+            auth_user.ap_user_id,
             CreateList {
                 title: parent_title,
                 content: None,
@@ -152,7 +157,7 @@ async fn get_unsorted(
     auth_user: AuthUser,
 ) -> ResponseResult<HtmfResponse> {
     let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
-    let bookmarks = db::bookmarks::list_unsorted(&mut tx, auth_user.user_id).await?;
+    let bookmarks = db::bookmarks::list_unsorted(&mut tx, auth_user.ap_user_id).await?;
 
     Ok(HtmfResponse(unsorted_bookmarks::view(
         &unsorted_bookmarks::Data { layout, bookmarks },

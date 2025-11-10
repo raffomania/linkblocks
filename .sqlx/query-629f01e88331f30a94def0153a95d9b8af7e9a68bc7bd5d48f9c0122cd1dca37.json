@@ -1,0 +1,23 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            select to_jsonb(bookmarks.*) as item\n            from bookmarks\n            where bookmarks.title ilike '%' || $1 || '%'\n            and bookmarks.ap_user_id = $2\n            union\n            select to_jsonb(lists.*) as item\n            from lists\n            where lists.title ilike '%' || $1 || '%'\n            and lists.ap_user_id = $2\n            limit 10\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "item",
+        "type_info": "Jsonb"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "629f01e88331f30a94def0153a95d9b8af7e9a68bc7bd5d48f9c0122cd1dca37"
+}

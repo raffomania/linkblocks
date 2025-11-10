@@ -35,6 +35,7 @@ pub struct User {
     pub ap_user_id: Uuid,
 }
 
+// TODO remove the `user_` prefix here
 pub async fn user_by_oidc_id(tx: &mut AppTx, oidc_id: &str) -> ResponseResult<User> {
     let user = query_as!(
         User,
