@@ -35,8 +35,7 @@ pub struct User {
     pub ap_user_id: Uuid,
 }
 
-// TODO remove the `user_` prefix here
-pub async fn user_by_oidc_id(tx: &mut AppTx, oidc_id: &str) -> ResponseResult<User> {
+pub async fn by_oidc_id(tx: &mut AppTx, oidc_id: &str) -> ResponseResult<User> {
     let user = query_as!(
         User,
         r#"
@@ -135,7 +134,7 @@ pub async fn by_ap_user_id(tx: &mut AppTx, ap_user_id: Uuid) -> ResponseResult<O
     Ok(user)
 }
 
-pub async fn create_user_if_not_exists(
+pub async fn create_if_not_exists(
     tx: &mut AppTx,
     create: CreateUser,
     base_url: &Url,

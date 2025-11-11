@@ -80,7 +80,7 @@ pub async fn create_and_login_oidc_user(
     create_oidc_user: CreateOidcUser,
     base_url: &Url,
 ) -> ResponseResult<()> {
-    let user = db::users::user_by_oidc_id(tx, &create_oidc_user.oidc_id).await;
+    let user = db::users::by_oidc_id(tx, &create_oidc_user.oidc_id).await;
 
     let user = match user {
         Ok(user) => user,

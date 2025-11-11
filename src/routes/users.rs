@@ -108,7 +108,7 @@ async fn get_login_oidc_redirect(
         )
         .await?;
 
-    let existing_user = db::users::user_by_oidc_id(&mut tx, &authed_oidc_info.oidc_id).await;
+    let existing_user = db::users::by_oidc_id(&mut tx, &authed_oidc_info.oidc_id).await;
     match existing_user {
         // Authenticate existing users in session
         Ok(existing_user) => {
