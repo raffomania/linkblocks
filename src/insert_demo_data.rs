@@ -26,7 +26,7 @@ pub async fn insert_demo_data(
 
     tracing::debug!("Creating dev user...");
     if let Some(create_dev_user) = dev_user_credentials {
-        users.push(db::users::create_user_if_not_exists(&mut tx, create_dev_user, base_url).await?);
+        users.push(db::users::create_if_not_exists(&mut tx, create_dev_user, base_url).await?);
     }
 
     let mut public_lists = Vec::new();

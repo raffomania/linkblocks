@@ -73,7 +73,7 @@ impl TestApp {
             .begin()
             .await
             .expect("Failed to create transaction");
-        let user = crate::db::users::create_user_if_not_exists(
+        let user = crate::db::users::create_if_not_exists(
             &mut tx,
             CreateUser {
                 username: username.to_string(),
