@@ -35,7 +35,7 @@ impl CreateApUser {
         let ap_id = base_url.join("/ap/user/")?.join(&id.to_string())?;
 
         // TODO this is completely broken
-        let inbox_url = base_url.join("/ap/inbox")?;
+        let inbox_url = base_url.join("/ap/inbox/")?.join(&id.to_string())?;
 
         let ap_keypair = federation::signing::generate_keypair()?;
         let create = CreateApUser {
