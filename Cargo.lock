@@ -1750,6 +1750,7 @@ dependencies = [
  "axum-server",
  "chrono",
  "clap",
+ "enum_delegate",
  "fake",
  "friendly-zoo",
  "garde",

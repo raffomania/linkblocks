@@ -2,7 +2,6 @@
 //! [`activitypub_federation`] crate
 
 use activitypub_federation::{
-    config::Data,
     fetch::object_id::ObjectId,
     kinds::actor::PersonType,
     protocol::{
@@ -49,16 +48,13 @@ impl Object for db::ApUser {
         Some(time_to_chrono(self.last_refreshed_at))
     }
 
-    async fn read_from_id(
-        object_id: Url,
-        data: &Data<Self::DataType>,
-    ) -> Result<Option<Self>, Self::Error> {
+    async fn read_from_id(object_id: Url, data: &super::Data) -> Result<Option<Self>, Self::Error> {
         let mut tx = data.db_pool.begin().await?;
         let user = db::ap_users::read_by_ap_id(&mut tx, &object_id).await;
         into_option(user)
     }
 
-    async fn into_json(self, context: &Data<Self::DataType>) -> Result<Self::Kind, Self::Error> {
+    async fn into_json(self, context: &super::Data) -> Result<Self::Kind, Self::Error> {
         let public_key = self.public_key();
         let url = context.base_url.join("/user/")?.join(&self.username)?;
         Ok(Person {
@@ -76,7 +72,7 @@ impl Object for db::ApUser {
     async fn verify(
         json: &Self::Kind,
         expected_domain: &Url,
-        data: &Data<Self::DataType>,
+        data: &super::Data,
     ) -> Result<(), Self::Error> {
         verify_domains_match(json.id.inner(), expected_domain)?;
         verify_is_remote_object(&json.id, data)?;
@@ -86,7 +82,7 @@ impl Object for db::ApUser {
         Ok(())
     }
 
-    async fn from_json(json: Self::Kind, data: &Data<Self::DataType>) -> Result<Self, Self::Error> {
+    async fn from_json(json: Self::Kind, data: &super::Data) -> Result<Self, Self::Error> {
         let create_user = CreateApUser::new_remote(json)?;
         let mut tx = data.db_pool.begin().await?;
         let new_user = db::ap_users::upsert(&mut tx, create_user).await?;
