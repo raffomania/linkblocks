@@ -10,17 +10,29 @@ We currently aim for compatibility with Mastodon, Lemmy and Betula. As each of t
 
 ## Users
 
+This is implemented using a pretty standard ActivityPub user object.
+Credentials for logging in live in a separate database table from ActivityPub users.
+
 ## Lists
 
 We'll probably build something similar to [Lemmy's groups](https://codeberg.org/fediverse/fep/src/branch/main/fep/1b12/fep-1b12.md).
+This allows users to receive updates for individual lists - on linkblocks, by adding them to one of their own lists, on mastodon by following the list's actor, and on lemmy by subscribing to the list as a "community".
+
+Private lists are not federated at all. Public lists can not link to private lists. Private lists can link to private lists of the same owner.
+
+Lists have exactly one owner.
 
 ## Bookmarks
 
+Bookmarks are considered public if they are added to at least one public list owned by their creator. All other bookmarks are considered private and will not be federated at all, and can only be viewed by their creator.
+
 Betula federates bookmarks [as notes](https://git.sr.ht/~bouncepaw/betula/tree/master/item/fediverse/activities/note.go). The bookmark URL is inserted as an `a` tag into the notes' html body, and as a `Link` object into the `attachments` array.
 
-Lemmy's posts are `Page` objects. It seems like mastodon can ingest both `Note` and `Page` objects as toots.
+Lemmy's posts are `Page` objects. It seems like mastodon can ingest both `Note` and `Page` objects as toots, altough pages have their URL appended to the bottom.
 
-## Comments
+Mastodon does not support attachments pointing to websites, only for images, video and audio. This means we'll have to inline the link in the `content` field, like betula does it. Luckily, when reading bookmarks objects from linkblocks, we can just ignore the `content` field and read the attachment instead.
+
+See more at https://docs.joinmastodon.org/spec/activitypub/#status.
 
 ## Knowledge Graph
 
