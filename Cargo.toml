@@ -66,6 +66,7 @@ url = { version = "2.5.7", features = ["serde"] }
 async-trait = "0.1.89"
 chrono = "0.4.41"
 redact = "0.1.11"
+enum_delegate = "0.2.0"
 
 [patch.crates-io]
 garde = { git = "https://github.com/raffomania/garde", branch = "url-length" }

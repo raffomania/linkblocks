@@ -1,15 +1,20 @@
 use activitypub_federation::{
-    axum::json::FederationJson,
+    axum::{
+        inbox::{ActivityData, receive_activity},
+        json::FederationJson,
+    },
+    config::Data,
     fetch::webfinger::{Webfinger, build_webfinger_response, extract_webfinger_name},
     protocol::context::WithContext,
-    traits::Object,
+    traits::{ActivityHandler, Object},
 };
 use axum::{
     Json, Router,
     extract::{Path, Query, State},
-    routing::get,
+    routing::{get, post},
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
+use url::Url;
 use uuid::Uuid;
 
 use crate::{
@@ -23,6 +28,7 @@ use crate::{
 pub fn router() -> Router<AppState> {
     Router::new()
         .route("/ap/user/{id}", get(get_person))
+        .route("/ap/inbox/{user_id}", post(post_inbox))
         .route("/ap/bookmark/{id}", get(get_bookmark))
         .route("/.well-known/webfinger", get(webfinger))
 }
@@ -38,6 +44,23 @@ async fn get_person(
         .into_json(&state.federation_config.to_request_data())
         .await?;
     Ok(FederationJson(WithContext::new_default(json_person)))
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+#[serde(untagged)]
+#[enum_delegate::implement(ActivityHandler)]
+pub enum PersonAcceptedActivities {
+    Follow(federation::follow::Follow),
+}
+
+async fn post_inbox(data: federation::Data, activity_data: ActivityData) -> ResponseResult<()> {
+    receive_activity::<WithContext<PersonAcceptedActivities>, db::ApUser, federation::Context>(
+        activity_data,
+        &data,
+    )
+    .await?;
+
+    Ok(())
 }
 
 /// Read a local bookmark by requesting the URL that is it's `ap_id`.

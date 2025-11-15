@@ -1,0 +1,41 @@
+use sqlx::{prelude::FromRow, query};
+use uuid::Uuid;
+
+use crate::{db::AppTx, response_error::ResponseResult};
+
+#[expect(dead_code)]
+#[derive(FromRow, Debug)]
+pub struct Follow {
+    pub id: Uuid,
+
+    pub follower_id: Uuid,
+    pub following_id: Uuid,
+}
+
+pub struct Insert {
+    pub follower_id: Uuid,
+    pub following_id: Uuid,
+}
+
+pub async fn upsert(tx: &mut AppTx, insert: Insert) -> ResponseResult<()> {
+    // Don't return the follow because the `on conflict ... do nothing` won't return
+    // anything on conflict
+    query!(
+        r"
+        insert into follows
+        (
+            follower_id,
+            following_id
+        )
+        values ($1, $2)
+        on conflict (follower_id, following_id)
+            do nothing
+        ",
+        insert.follower_id,
+        insert.following_id,
+    )
+    .execute(&mut **tx)
+    .await?;
+
+    Ok(())
+}
