@@ -35,6 +35,8 @@ pub struct Person {
     pub summary: Option<String>,
     pub inbox: Url,
     pub public_key: PublicKey,
+    /// "Identifies one or more links to representations of the object"
+    pub url: Url,
 }
 
 #[async_trait::async_trait]
@@ -56,8 +58,9 @@ impl Object for db::ApUser {
         into_option(user)
     }
 
-    async fn into_json(self, _context: &Data<Self::DataType>) -> Result<Self::Kind, Self::Error> {
+    async fn into_json(self, context: &Data<Self::DataType>) -> Result<Self::Kind, Self::Error> {
         let public_key = self.public_key();
+        let url = context.base_url.join("/user/")?.join(&self.username)?;
         Ok(Person {
             id: self.ap_id,
             name: self.display_name,
@@ -66,6 +69,7 @@ impl Object for db::ApUser {
             inbox: self.inbox_url,
             public_key,
             summary: self.bio,
+            url,
         })
     }
 
