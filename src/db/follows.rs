@@ -18,6 +18,7 @@ pub struct Insert {
 }
 
 pub async fn upsert(tx: &mut AppTx, insert: Insert) -> ResponseResult<Follow> {
+    // TODO on conflict this will return nothing
     let follow = query_as!(
         Follow,
         r"
