@@ -95,6 +95,7 @@ impl Object for db::Bookmark {
             attachments,
         })
     }
+
     async fn verify(
         json: &Self::Kind,
         expected_domain: &Url,

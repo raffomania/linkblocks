@@ -3,10 +3,13 @@ pub mod activity;
 pub mod bookmark;
 pub mod config;
 pub mod context;
+pub mod create_bookmark;
 pub mod follow;
 pub mod person;
 pub mod signing;
 pub mod webfinger;
 
 pub use accept::Accept;
+pub use bookmark::BookmarkJson;
 pub use context::{Context, Data};
+pub use create_bookmark::CreateBookmark;

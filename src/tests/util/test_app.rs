@@ -7,7 +7,8 @@ use url::Url;
 
 use super::request_builder::RequestBuilder;
 use crate::{
-    db, federation,
+    db::{self, AppTx},
+    federation,
     forms::users::CreateUser,
     server::{AppState, app},
 };
@@ -55,6 +56,13 @@ impl TestApp {
             state,
             port,
         }
+    }
+
+    pub async fn tx(&self) -> AppTx {
+        self.pool
+            .begin()
+            .await
+            .expect("Failed to start new transaction")
     }
 
     pub fn req(&mut self) -> RequestBuilder {
