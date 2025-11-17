@@ -1,7 +1,7 @@
 use activitypub_federation::{
     config::Data,
     fetch::object_id::ObjectId,
-    kinds::{link::LinkType, object::NoteType},
+    kinds::{link::LinkType, object::NoteType, public},
     protocol::verification::{verify_domains_match, verify_is_remote_object},
     traits::Object,
 };
@@ -21,6 +21,11 @@ pub struct BookmarkJson {
     #[serde(rename = "type")]
     pub kind: NoteType,
     pub attributed_to: ObjectId<db::ApUser>,
+    pub to: Vec<Url>,
+    /// Formatted content with the url inlined, for platforms that don't support
+    /// link attachments
+    pub content: Option<String>,
+    /// The title
     pub name: Option<String>,
     #[serde(default)]
     pub(crate) attachments: Vec<Link>,
@@ -76,21 +81,27 @@ impl Object for db::Bookmark {
         into_option(bookmark)
     }
 
-    async fn into_json(self, context: &Data<Self::DataType>) -> Result<Self::Kind, Self::Error> {
-        let mut tx = context.db_pool.begin().await?;
+    async fn into_json(self, data: &Data<Self::DataType>) -> Result<Self::Kind, Self::Error> {
+        let mut tx = data.db_pool.begin().await?;
         let author = db::ap_users::read_by_id(&mut tx, self.ap_user_id).await?;
         let attachments = vec![Link {
-            href: self.url,
+            href: self.url.clone(),
             // TODO according to ActivityStreams, this "identifies the MIME media type of the
             // referenced resource", but we currently do not fetch remote URLs so we
             // have no way of knowing the media type
             media_type: None,
             kind: LinkType::Link,
         }];
+        let content = format!(
+            r#"<p>{}</p><a href="{}">{}</p>"#,
+            self.title, self.url, self.url
+        );
         Ok(BookmarkJson {
             id: self.ap_id,
             kind: NoteType::Note,
             attributed_to: author.ap_id,
+            to: vec![public()],
+            content: Some(content),
             name: Some(self.title),
             attachments,
         })
