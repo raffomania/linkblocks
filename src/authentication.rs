@@ -144,7 +144,7 @@ impl AuthUser {
 
     pub async fn logout(self) -> ResponseResult<()> {
         self.session
-            .remove::<Uuid>(Self::SESSION_KEY)
+            .remove::<SessionValue>(Self::SESSION_KEY)
             .await
             .context("Failed to remove user id from session")?;
         Ok(())
