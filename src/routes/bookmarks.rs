@@ -13,6 +13,7 @@ use crate::{
     authentication::AuthUser,
     db::{self, bookmarks::InsertBookmark},
     extract::{self, qs_form::QsForm},
+    federation,
     form_errors::FormErrors,
     forms::{bookmarks::CreateBookmark, links::CreateLink, lists::CreateList},
     htmf_response::HtmfResponse,
@@ -32,6 +33,7 @@ async fn post_create(
     extract::Tx(mut tx): extract::Tx,
     auth_user: AuthUser,
     State(state): State<AppState>,
+    federation_data: federation::Data,
     QsForm(input): QsForm<CreateBookmark>,
 ) -> ResponseResult<Response> {
     let layout = layout::Template::from_db(&mut tx, Some(&auth_user)).await?;
@@ -103,6 +105,15 @@ async fn post_create(
                 src: parent,
                 dest: bookmark.id,
             },
+        )
+        .await?;
+    }
+
+    if db::links::is_bookmark_public(&mut tx, bookmark.id).await? {
+        federation::CreateBookmark::send_to_followers(
+            &db::ap_users::read_by_id(&mut tx, auth_user.ap_user_id).await?,
+            bookmark,
+            &federation_data,
         )
         .await?;
     }

@@ -1,8 +1,5 @@
 use activitypub_federation::{
-    config::Data,
-    fetch::object_id::ObjectId,
-    kinds::activity::AcceptType,
-    traits::{ActivityHandler, Actor},
+    config::Data, fetch::object_id::ObjectId, kinds::activity::AcceptType, traits::ActivityHandler,
 };
 use serde::{Deserialize, Serialize};
 use url::Url;
@@ -37,13 +34,7 @@ impl Accept {
             kind: AcceptType::Accept,
             id,
         };
-        activity::send(
-            actor,
-            accept,
-            vec![follower.shared_inbox_or_inbox()],
-            context,
-        )
-        .await?;
+        activity::send(actor, accept, &[follower], context).await?;
 
         Ok(())
     }

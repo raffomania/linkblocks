@@ -1,0 +1,76 @@
+use activitypub_federation::{
+    fetch::object_id::ObjectId,
+    kinds::activity::CreateType,
+    protocol::helpers::deserialize_one_or_many,
+    traits::{ActivityHandler, Object},
+};
+use serde::{Deserialize, Serialize};
+use url::Url;
+
+use crate::{
+    db, federation,
+    response_error::{ResponseError, ResponseResult},
+};
+
+#[derive(Deserialize, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct CreateBookmark {
+    pub actor: ObjectId<db::ApUser>,
+    #[serde(deserialize_with = "deserialize_one_or_many")]
+    pub to: Vec<Url>,
+    pub object: federation::BookmarkJson,
+    #[serde(rename = "type")]
+    pub kind: CreateType,
+    pub id: Url,
+}
+
+impl CreateBookmark {
+    pub async fn send_to_followers(
+        actor: &db::ApUser,
+        bookmark: db::Bookmark,
+        context: &super::Data,
+    ) -> ResponseResult<()> {
+        let object = bookmark.into_json(context).await?;
+        let id = super::activity::generate_id(context)?;
+
+        let mut tx = context.db_pool.begin().await?;
+        let followers = db::ap_users::list_followers(&mut tx, actor.id).await?;
+        let to = followers
+            .iter()
+            .map(|ap_user| ap_user.ap_id.clone().into_inner())
+            .collect();
+        let create = CreateBookmark {
+            actor: actor.ap_id.clone(),
+            to,
+            object,
+            kind: CreateType::Create,
+            id,
+        };
+
+        super::activity::send(actor, create, &followers, context).await?;
+
+        Ok(())
+    }
+}
+
+#[async_trait::async_trait]
+impl ActivityHandler for CreateBookmark {
+    type DataType = super::context::Context;
+    type Error = ResponseError;
+
+    fn id(&self) -> &Url {
+        &self.id
+    }
+
+    fn actor(&self) -> &Url {
+        self.actor.inner()
+    }
+
+    async fn verify(&self, _data: &super::Data) -> Result<(), Self::Error> {
+        Ok(())
+    }
+
+    async fn receive(self, _data: &super::Data) -> Result<(), Self::Error> {
+        Err(ResponseError::NotFound)
+    }
+}

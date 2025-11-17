@@ -10196,6 +10196,7 @@
         "registry+https://github.com/rust-lang/crates.io-index#axum-server@0.7.2",
         "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.41",
         "registry+https://github.com/rust-lang/crates.io-index#clap@4.5.46",
+        "registry+https://github.com/rust-lang/crates.io-index#enum_delegate@0.2.0",
         "registry+https://github.com/rust-lang/crates.io-index#fake@4.4.0",
         "registry+https://github.com/rust-lang/crates.io-index#friendly-zoo@1.1.0",
         "git+https://github.com/raffomania/garde?branch=url-length#0.22.0",

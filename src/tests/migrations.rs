@@ -77,7 +77,10 @@ async fn test_generate_missing_ap_users_migration() -> Result<()> {
     );
     assert_eq!(
         row.inbox_url,
-        base_url.join("/ap/inbox")?.to_string(),
+        base_url
+            .join("/ap/inbox/")?
+            .join(&row.id.to_string())?
+            .to_string(),
         "Inbox URL should be correctly formatted"
     );
 

@@ -241,3 +241,22 @@ pub async fn delete_by_id(tx: &mut AppTx, id: Uuid) -> ResponseResult<Link> {
 
     Ok(link)
 }
+
+/// Return true if at least one public list points to the item given by
+/// `dest_id`.
+pub async fn is_bookmark_public(tx: &mut AppTx, bookmark_id: Uuid) -> ResponseResult<bool> {
+    let public_destination_count = query!(
+        r#"
+        select count(lists.id) as "count!"
+        from links
+        inner join lists on links.src_list_id = lists.id
+        where not lists.private
+            and links.dest_bookmark_id = $1
+        "#,
+        bookmark_id
+    )
+    .fetch_one(&mut **tx)
+    .await?;
+
+    Ok(public_destination_count.count > 0)
+}
