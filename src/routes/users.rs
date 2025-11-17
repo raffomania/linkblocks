@@ -184,6 +184,8 @@ struct LoginQuery {
     previous_uri: Option<String>,
 }
 
+// TODO: redirect to homepage if already logged in
+// https://github.com/raffomania/linkblocks/issues/177
 async fn get_login(
     Query(query): Query<LoginQuery>,
     State(state): State<AppState>,
