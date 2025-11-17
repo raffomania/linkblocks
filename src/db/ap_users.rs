@@ -228,3 +228,22 @@ pub async fn read_by_username(
 
     Ok(user)
 }
+
+pub async fn list_followers(tx: &mut AppTx, followed_id: Uuid) -> ResponseResult<Vec<ApUser>> {
+    let users = query_as!(
+        ApUserRow,
+        r#"
+        select ap_users.* from follows
+            join ap_users on ap_users.id = follows.follower_id
+        where follows.following_id = $1
+        "#,
+        followed_id
+    )
+    .fetch_all(&mut **tx)
+    .await?
+    .into_iter()
+    .map(ApUser::try_from)
+    .collect::<Result<_, _>>()?;
+
+    Ok(users)
+}

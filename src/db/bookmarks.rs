@@ -1,6 +1,6 @@
 use activitypub_federation::fetch::object_id::ObjectId;
 use serde::Deserialize;
-use sqlx::{FromRow, query_as};
+use sqlx::{FromRow, query, query_as};
 use time::OffsetDateTime;
 use url::Url;
 use uuid::Uuid;
@@ -193,4 +193,22 @@ pub async fn upsert_remote(
     .try_into()?;
 
     Ok(user)
+}
+
+/// Return true if at least one public list points to the given bookmark.
+pub async fn is_public(tx: &mut AppTx, bookmark_id: Uuid) -> ResponseResult<bool> {
+    let public_destination_count = query!(
+        r#"
+        select count(lists.id) as "count!"
+        from links
+        inner join lists on links.src_list_id = lists.id
+        where not lists.private
+            and links.dest_bookmark_id = $1
+        "#,
+        bookmark_id
+    )
+    .fetch_one(&mut **tx)
+    .await?;
+
+    Ok(public_destination_count.count > 0)
 }

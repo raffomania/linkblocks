@@ -9,12 +9,12 @@ use serde::Serialize;
 use url::Url;
 use uuid::Uuid;
 
-use crate::federation::context::Data;
+use crate::{db, federation::context::Data};
 
 pub async fn send<Activity, ActorType: Actor>(
     actor: &ActorType,
     activity: Activity,
-    recipients: Vec<Url>,
+    recipients: &[&db::ApUser],
     context: &Data,
 ) -> Result<(), <Activity as ActivityHandler>::Error>
 where
@@ -22,7 +22,11 @@ where
     <Activity as ActivityHandler>::Error: From<activitypub_federation::error::Error>,
 {
     let activity = WithContext::new_default(activity);
-    queue_activity(&activity, actor, recipients, context).await?;
+    let inboxes = recipients
+        .iter()
+        .map(|ap_user| ap_user.shared_inbox_or_inbox())
+        .collect();
+    queue_activity(&activity, actor, inboxes, context).await?;
     Ok(())
 }
 
