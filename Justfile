@@ -134,6 +134,13 @@ ci-dev : migrate-database start-test-database && generate-sbom generate-database
     just format
     just test
 
+build-podman-container target="release":
+    #!/bin/sh
+    [[ "{{target}}" == "debug" ]] && cargo_flag="" || cargo_flag="--{{target}}"
+    cargo build $cargo_flag
+
+    podman build --format docker --platform linux/amd64 --manifest linkblocks -f Containerfile target/{{target}}
+
 lint *args: reuse-lint
     cargo clippy {{args}} -- -D warnings
 
