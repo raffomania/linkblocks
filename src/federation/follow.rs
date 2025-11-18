@@ -8,7 +8,11 @@ use activitypub_federation::{
 use serde::{Deserialize, Serialize};
 use url::Url;
 
-use crate::{db, federation, response_error::ResponseError};
+use crate::{
+    db,
+    federation::{self, activity},
+    response_error::{ResponseError, ResponseResult},
+};
 
 #[derive(Deserialize, Serialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -18,6 +22,33 @@ pub struct Follow {
     #[serde(rename = "type")]
     pub kind: FollowType,
     pub id: Url,
+}
+
+impl Follow {
+    pub fn new(
+        actor: &db::ApUser,
+        object: &db::ApUser,
+        context: &Data<super::context::Context>,
+    ) -> ResponseResult<Self> {
+        let id = super::activity::generate_id(context)?;
+        let follow = Follow {
+            actor: actor.ap_id.clone(),
+            object: object.ap_id.clone(),
+            kind: FollowType::Follow,
+            id,
+        };
+        Ok(follow)
+    }
+    pub async fn send(
+        self,
+        actor: &db::ApUser,
+        object: &db::ApUser,
+        context: &Data<super::context::Context>,
+    ) -> ResponseResult<()> {
+        activity::send(actor, self, &[object], context).await?;
+
+        Ok(())
+    }
 }
 
 #[async_trait::async_trait]

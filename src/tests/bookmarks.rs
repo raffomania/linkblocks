@@ -19,7 +19,7 @@ async fn get_unsorted_bookmarks() -> anyhow::Result<()> {
 
 #[test_log::test(tokio::test)]
 async fn is_bookmark_public() -> anyhow::Result<()> {
-    let mut app = TestApp::new().await;
+    let app = TestApp::new().await;
     let user = app.create_test_user().await;
 
     let mut tx = app.tx().await;
