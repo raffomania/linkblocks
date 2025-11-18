@@ -8,7 +8,9 @@ use crate::{db::AppTx, response_error::ResponseResult};
 pub struct Follow {
     pub id: Uuid,
 
+    /// The user that is following
     pub follower_id: Uuid,
+    /// The user being followed
     pub following_id: Uuid,
 }
 
@@ -33,6 +35,21 @@ pub async fn upsert(tx: &mut AppTx, insert: Insert) -> ResponseResult<()> {
         ",
         insert.follower_id,
         insert.following_id,
+    )
+    .execute(&mut **tx)
+    .await?;
+
+    Ok(())
+}
+
+pub async fn remove(tx: &mut AppTx, insert: Insert) -> ResponseResult<()> {
+    query!(
+        r"
+        delete from follows
+        where follower_id = $1 and following_id = $2
+        ",
+        insert.follower_id,
+        insert.following_id
     )
     .execute(&mut **tx)
     .await?;

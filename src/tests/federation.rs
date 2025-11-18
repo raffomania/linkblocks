@@ -4,7 +4,7 @@ use axum::http::StatusCode;
 
 use crate::{
     db::{self, bookmarks::InsertBookmark},
-    federation::webfinger,
+    federation::{self, webfinger},
     forms::users::{Credentials, Login},
     tests::util::test_app::TestApp,
 };
@@ -126,6 +126,47 @@ async fn can_resolve_webfinger() -> Result<()> {
     .await?;
 
     assert_eq!(local_ap_user.id, actor.id);
+
+    Ok(())
+}
+
+#[test_log::test(tokio::test)]
+async fn can_follow_undo_follow() -> Result<()> {
+    // Set up two test instances
+    let app_a = TestApp::new().await;
+    let user_a = app_a.create_test_user().await;
+    let mut tx_a = app_a.tx().await;
+    let ap_user_a = db::ap_users::read_by_id(&mut tx_a, user_a.ap_user_id).await?;
+
+    let app_b = TestApp::new().await;
+    let user_b = app_b.create_test_user().await;
+    let mut tx_b = app_b.tx().await;
+    let ap_user_b = db::ap_users::read_by_id(&mut tx_b, user_b.ap_user_id).await?;
+    drop(tx_b);
+
+    app_a.serve().await;
+    app_b.serve().await;
+    let ap_cx_a = app_a.state.federation_config.to_request_data();
+
+    // Create a Follow activity that we'll undo
+    let follow = federation::Follow::new(&ap_user_a, &ap_user_b, &ap_cx_a)?;
+    follow
+        .clone()
+        .send(&ap_user_a, &ap_user_b, &ap_cx_a)
+        .await?;
+
+    let mut tx_b = app_b.tx().await;
+    let followers = db::ap_users::list_followers(&mut tx_b, user_b.ap_user_id).await?;
+    drop(tx_b);
+    assert!(!followers.is_empty());
+
+    // Create the UndoFollow activity
+    federation::UndoFollow::send(&ap_user_a, follow, &ap_cx_a).await?;
+
+    let mut tx_b = app_b.tx().await;
+    let followers = db::ap_users::list_followers(&mut tx_b, user_b.ap_user_id).await?;
+    drop(tx_b);
+    assert!(followers.is_empty());
 
     Ok(())
 }

@@ -50,7 +50,8 @@ async fn get_person(
 #[serde(untagged)]
 #[enum_delegate::implement(ActivityHandler)]
 pub enum PersonAcceptedActivities {
-    Follow(federation::follow::Follow),
+    Follow(federation::Follow),
+    UndoFollow(federation::UndoFollow),
 }
 
 async fn post_inbox(data: federation::Data, activity_data: ActivityData) -> ResponseResult<()> {
