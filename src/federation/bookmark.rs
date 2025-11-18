@@ -89,6 +89,7 @@ impl Object for db::Bookmark {
             // TODO according to ActivityStreams, this "identifies the MIME media type of the
             // referenced resource", but we currently do not fetch remote URLs so we
             // have no way of knowing the media type
+            // https://github.com/raffomania/linkblocks/issues/164
             media_type: None,
             kind: LinkType::Link,
         }];
