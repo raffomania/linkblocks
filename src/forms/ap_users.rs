@@ -24,7 +24,7 @@ pub struct CreateApUser {
     pub last_refreshed_at: OffsetDateTime,
     #[garde(length(max = 100))]
     pub display_name: Option<String>,
-    #[garde(length(max = 1_000))]
+    #[garde(length(max = 5_000))]
     pub bio: Option<String>,
 }
 
