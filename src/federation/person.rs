@@ -33,6 +33,7 @@ pub struct Person {
     pub name: Option<String>,
     pub summary: Option<String>,
     pub inbox: Url,
+    pub outbox: Url,
     pub public_key: PublicKey,
     /// "Identifies one or more links to representations of the object"
     pub url: Url,
@@ -57,12 +58,17 @@ impl Object for db::ApUser {
     async fn into_json(self, context: &super::Data) -> Result<Self::Kind, Self::Error> {
         let public_key = self.public_key();
         let url = context.base_url.join("/user/")?.join(&self.username)?;
+        let outbox = context
+            .base_url
+            .join("/ap/outbox/")?
+            .join(&self.id.to_string())?;
         Ok(Person {
             id: self.ap_id,
             name: self.display_name,
             preferred_username: self.username,
             kind: PersonType::Person,
             inbox: self.inbox_url,
+            outbox,
             public_key,
             summary: self.bio,
             url,
