@@ -1,6 +1,6 @@
-# Testing federation manually
+# Testing federation with other software manually
 
-## Mastodon
+## Using public instances
 
 The easiest way to test federation features with Mastodon is to expose a local development environment to a public domain, e.g. using one of these tools:
 
