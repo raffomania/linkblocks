@@ -29,6 +29,7 @@ pub fn router() -> Router<AppState> {
     Router::new()
         .route("/ap/user/{id}", get(get_person))
         .route("/ap/inbox/{user_id}", post(post_inbox))
+        .route("/ap/outbox/{user_id}", get(get_outbox))
         .route("/ap/bookmark/{id}", get(get_bookmark))
         .route("/.well-known/webfinger", get(webfinger))
 }
@@ -62,6 +63,15 @@ async fn post_inbox(data: federation::Data, activity_data: ActivityData) -> Resp
     .await?;
 
     Ok(())
+}
+
+async fn get_outbox() -> ResponseResult<FederationJson<WithContext<serde_json::Value>>> {
+    let empty_outbox = serde_json::json!({
+        "type": "OrderedCollection",
+        "orderedItems": [],
+        "totalItems": 0
+    });
+    Ok(FederationJson(WithContext::new_default(empty_outbox)))
 }
 
 /// Read a local bookmark by requesting the URL that is it's `ap_id`.
