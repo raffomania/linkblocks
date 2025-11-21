@@ -34,7 +34,11 @@ SPDX-License-Identifier = "CC-BY-SA-4.0"
 
 # People deploying linkblocks can copy .env.example and do whatever they wish with it.
 [[annotations]]
-path = [".env.example"]
+path = [
+    ".env.example",
+    "doc/docker-compose.yml",
+    "doc/.docker-compose.test.yml",
+]
 SPDX-FileCopyrightText = "linkblocks Contributors"
 SPDX-License-Identifier = "CC0-1.0"
 

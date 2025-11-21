@@ -1,0 +1,40 @@
+services:
+  linkblocks:
+    image: ghcr.io/raffomania/linkblocks:latest
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - LISTEN=0.0.0.0:3000
+      - DATABASE_URL=postgres://linkblocks:linkblocks@db/linkblocks
+      - RUST_LOG=info
+      - BASE_URL=
+      - ADMIN_USERNAME=
+      - ADMIN_PASSWORD=
+    restart: always
+    ports:
+      - "3000:3000"
+
+  db:
+    image: docker.io/library/postgres:18
+    environment:
+      - POSTGRES_DB=linkblocks
+      - POSTGRES_USER=linkblocks
+      - POSTGRES_PASSWORD=linkblocks
+    volumes:
+      - db:/var/lib/postgresql
+    command: |
+      -c shared_buffers=16MB
+      -c work_mem=1MB
+      -c max_connections=10
+      -c maintenance_work_mem=4MB
+      -c effective_cache_size=32MB
+
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "linkblocks"]
+      interval: 60s
+      start_period: 30s
+    restart: always
+
+volumes:
+  db:

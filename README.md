@@ -68,6 +68,10 @@ See [the docs](doc/migrations.md).
 
 You can run the container at `ghcr.io/raffomania/linkblocks:latest`. It's automatically updated to contain the latest version of the `main` branch.
 
+### With docker-compose
+
+See [doc/docker-compose.yml](doc/docker-compose.yml) for an example configuration. Make sure to fill out the blank environment variables such as `BASE_URL` and the admin credentials, then start the server using `docker-compose up`. By default, the server will be exposed on port `3000`.
+
 ### Building from Source
 
 Install the rust toolchain, version `1.88.0` or later. Then build the linkblocks binary using:

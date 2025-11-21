@@ -1,0 +1,13 @@
+# Overrides values in the example docker-compose.yml
+# to locally verify that it works when running
+# `just check-example-docker-compose`.
+# Do not use these values for production.
+services:
+  linkblocks:
+    environment:
+      - BASE_URL=http://localhost:3000
+      - ADMIN_USERNAME=testuser
+      - ADMIN_PASSWORD=testpassword
+  db:
+    healthcheck:
+      interval: 2s

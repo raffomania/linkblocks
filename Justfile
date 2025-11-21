@@ -169,7 +169,16 @@ install-git-hooks:
     ln -srf pre-commit.sh .git/hooks/pre-commit
 
 # Run extended checks that are not part of the normal CI pipeline.
-check-extended: verify-msrv build-podman-container
+check-extended: verify-msrv build-podman-container check-example-docker-compose
+
+check-example-docker-compose:
+    #!/usr/bin/env bash
+
+    docker-compose -f doc/docker-compose.yml -f doc/.docker-compose.test.yml up -d
+
+    curl --retry 3 --retry-all-errors http://localhost:3000
+
+    docker-compose -f doc/docker-compose.yml down
 
 # Check GitHub Actions workflows for security problems.
 check-zizmor:
