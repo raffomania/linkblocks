@@ -1,6 +1,6 @@
 services:
   linkblocks:
-    image: ghcr.io/raffomania/linkblocks:latest
+    image: ghcr.io/raffomania/linkblocks
     depends_on:
       db:
         condition: service_healthy
