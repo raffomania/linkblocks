@@ -23,6 +23,8 @@ jobs:
     name: Build & Lint
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      packages: write # For uploading the container to GHCR
 
     services:
       postgres:
