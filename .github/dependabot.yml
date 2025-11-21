@@ -4,6 +4,10 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    cooldown:
+      # Only update after a dependency has been out for a while, to wait for hotfixes and supply-chain attacks.
+      # https://docs.zizmor.sh/audits/#dependabot-cooldown
+      default-days: 7
     groups:
       all-dependencies:
         patterns:

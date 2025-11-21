@@ -134,6 +134,7 @@ ci-dev : migrate-database start-test-database && generate-sbom generate-database
     just lint
     just format
     just test
+    just check-zizmor
 
 # Build a production-ready OCI container using podman.
 build-podman-container target="release":
@@ -169,6 +170,10 @@ install-git-hooks:
 
 # Run extended checks that are not part of the normal CI pipeline.
 check-extended: verify-msrv build-podman-container
+
+# Check GitHub Actions workflows for security problems.
+check-zizmor:
+    RUST_LOG=INFO zizmor --strict-collection --pedantic .
 
 verify-msrv: (ensure-command "cargo-msrv")
     cargo msrv verify

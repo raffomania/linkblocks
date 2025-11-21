@@ -9,14 +9,24 @@ env:
   CARGO_INCREMENTAL: 0
   RUSTFLAGS: "-D warnings"
 
+# Disable all permissions by default (https://docs.zizmor.sh/audits/#excessive-permissions)
+permissions: {}
+
+# Prevent race conditions and runner minute waste
+# https://docs.zizmor.sh/audits/#concurrency-limits
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-lint:
     name: Build & Lint
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     services:
       postgres:
-        image: postgres:16
+        image: postgres@sha256:5ec39c188013123927f30a006987c6b0e20f3ef2b54b140dfa96dac6844d883f
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -29,17 +39,18 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
         with:
           persist-credentials: false
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@0b1efabc08b657293548b77fb76cc02d26091c7e # master
         with:
           components: clippy
+          toolchain: stable
 
       - name: Setup rust cache
-        uses: Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@f13886b937689c021905a6b90929199931d60db1 # v2
         with:
           # For cargo-run-bin
           cache-directories: ".bin"
@@ -48,7 +59,7 @@ jobs:
         run: pipx install reuse
 
       - name: Install cargo-run-bin
-        run: cargo install cargo-run-bin
+        run: cargo install --locked cargo-run-bin
 
       - run: cargo bin sqlx-cli migrate run
         env:
@@ -62,6 +73,8 @@ jobs:
       - run: cargo bin just lint
 
       - run: cargo bin just generate-sbom
+
+      - run: cargo bin just check-zizmor
 
       - name: Check for file changes
         run: |
@@ -77,6 +90,8 @@ jobs:
         env:
           SQLX_OFFLINE: true
 
+      # Release in the same job to prevent slow copying of build artifacts between jobs
+      # TODO: this will still run if the tests fail
       - name: podman login
         env:
           USER: ${{ github.actor }}
@@ -95,20 +110,22 @@ jobs:
   format-nightly:
     name: Check Formatting (nightly)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
         with:
           persist-credentials: false
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@nightly
+        uses: dtolnay/rust-toolchain@0b1efabc08b657293548b77fb76cc02d26091c7e # master
         with:
+          toolchain: nightly
           components: "rustfmt"
 
       - name: Setup rust cache
-        uses: Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@f13886b937689c021905a6b90929199931d60db1 # v2
         with:
           # For cargo-run-bin
           cache-directories: ".bin"
@@ -121,10 +138,11 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     services:
       postgres:
-        image: postgres:16
+        image: postgres@sha256:5ec39c188013123927f30a006987c6b0e20f3ef2b54b140dfa96dac6844d883f
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -137,15 +155,17 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
         with:
           persist-credentials: false
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@0b1efabc08b657293548b77fb76cc02d26091c7e # master
+        with:
+          toolchain: stable
 
       - name: Setup rust cache
-        uses: Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@f13886b937689c021905a6b90929199931d60db1 # v2
 
       - name: cargo test
         run: cargo test
