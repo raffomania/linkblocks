@@ -116,10 +116,11 @@ test *args: start-test-database generate-database-info
     # which is always empty and only migrated inside the tests themselves.
     DATABASE_URL=${DATABASE_URL_TEST} SQLX_OFFLINE=true cargo test {{args}}
 
-development-cert:
+development-cert: (ensure-command "mkcert")
     mkdir -p development_cert
     test -f development_cert/localhost.crt || mkcert -cert-file development_cert/localhost.crt -key-file development_cert/localhost.key localhost linkblocks.localhost 127.0.0.1 ::1
 
+# Run most of the CI checks locally. Convenient to check for errors before pushing.
 ci-dev : migrate-database start-test-database && generate-sbom generate-database-info
     #!/usr/bin/env bash
     set -euxo pipefail
@@ -134,6 +135,7 @@ ci-dev : migrate-database start-test-database && generate-sbom generate-database
     just format
     just test
 
+# Build a production-ready OCI container using podman.
 build-podman-container target="release":
     #!/bin/sh
     [[ "{{target}}" == "debug" ]] && cargo_flag="" || cargo_flag="--{{target}}"
@@ -148,7 +150,7 @@ lint-fix *args: reuse-lint
     cargo clippy --fix {{args}}
     cargo fix --allow-staged --all-targets
 
-reuse-lint:
+reuse-lint: (ensure-command "reuse")
     reuse --root . lint
 
 format:
@@ -164,3 +166,34 @@ generate-sbom:
 
 install-git-hooks:
     ln -srf pre-commit.sh .git/hooks/pre-commit
+
+# Run extended checks that are not part of the normal CI pipeline.
+check-extended: verify-msrv build-podman-container
+
+verify-msrv: (ensure-command "cargo-msrv")
+    cargo msrv verify
+
+# Diagnose potential problems in the development environment.
+doctor:
+    #!/usr/bin/env bash
+
+    just ensure-command "podman"
+    just ensure-command "cargo"
+    just ensure-command "cargo-bin"
+    just ensure-command "mkcert"
+
+    [[ -f .env ]] || echo ".env file is missing. Please copy .env.example and adjust it for your environment."
+
+[private]
+ensure-command +command:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    read -r -a commands <<< "{{ command }}"
+
+    for cmd in "${commands[@]}"; do
+        if ! command -v "$cmd" > /dev/null 2>&1 ; then
+            printf "Couldn't find required executable '%s'\n" "$cmd" >&2
+            exit 1
+        fi
+    done
