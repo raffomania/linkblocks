@@ -64,13 +64,42 @@ See [the docs](doc/migrations.md).
 
 ## Hosting Your Own Instance
 
-⚠️ linkblocks is in a pre-alpha stage. There are no versions and no changelog. All data in the system will be publicly available. There are no authorization checks. Expect data loss.
+⚠️ linkblocks is in an alpha stage. All data in the system will be publicly available, even bookmarks in private lists. There are no authorization checks yet. Only single-user instances are supported.
 
 You can run the container at `ghcr.io/raffomania/linkblocks:latest`. It's automatically updated to contain the latest version of the `main` branch.
 
+### Building from Source
+
+Install the rust toolchain, version `1.88.0` or later. Then build the linkblocks binary using:
+
+```sh
+SQLX_OFFLINE=true cargo build --release
+```
+
+Afterwards, you can run the binary at `target/release/linkblocks` to start the linkblocks server.
+
+### Running the Server Binary
+
+If you've built the binary or downloaded it from [GitHub releases](https://github.com/raffomania/linkblocks/releases), you can run the server using `linkblocks start`.
+
+### Configuring the Server
+
 Linkblocks is configured through environment variables or command line options.
-Run `linkblocks --help` to for documentation on the available options.
-The [.env.example] file contains an example configuration for a development environment.
+Run `linkblocks start --help` to for comprehensive documentation on the available options.
+Let's go over a few of the central knobs you might want to configure:
+
+- `DATABASE_URL`: [PostgreSQL Connection URI](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING-URIS) for connecting to the database.
+- `BASE_URL`: Public URL the server is reachable at. Cannot be changed once the first user has been created.
+- `LISTEN`: IP address and port to listen on.
+- `ADMIN_USERNAME`, `ADMIN_PASSWORD` (Optional): Create an admin user with these credentials if it doesn't exist yet.
+- `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`, `OIDC_ISSUER_URL`, `OIDC_ISSUER_NAME` (Optional): Configuration for single-sign-on using an OIDC provider.
+- `TLS_CERT`, `TLS_KEY` (Optional): Paths to TLS keypair, if you'd like to serve linkblocks via TLS directly. If you don't set this, it's recommended to use a reverse proxy in front of linkblocks.
+
+### Upgrading & Stability
+
+By default, upgrades do not require manual intervention. The database is migrated automatically when the server starts.
+
+If an upgrade does require manual intervention, it is marked with a new minor version ([as long as we are pre-1.0](https://semver.org/)), and will be called out prominently in the [changelog](CHANGELOG.md).
 
 ## Technical Details
 
