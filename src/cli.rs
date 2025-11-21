@@ -29,6 +29,8 @@ struct Cli {
 struct SharedConfig {
     #[clap(env, long, hide_env_values = true)]
     database_url: String,
+    /// Public URL the server is reachable at. Cannot be changed once the first
+    /// user has been created.
     #[clap(long, env)]
     base_url: Url,
 }
@@ -69,6 +71,8 @@ enum Command {
         tls_key: Option<PathBuf>,
         #[clap(flatten)]
         admin_credentials: AdminCredentials,
+        /// Replace the login page with an anonymous one-click signup and delete
+        /// all data periodically.
         #[clap(long, env, default_value = "false")]
         demo_mode: bool,
         #[clap(flatten)]
