@@ -77,7 +77,7 @@ See [doc/docker-compose.yml](doc/docker-compose.yml) for an example configuratio
 Install the rust toolchain, version `1.88.0` or later. Then build the linkblocks binary using:
 
 ```sh
-SQLX_OFFLINE=true cargo build --release
+cargo build --release
 ```
 
 Afterwards, you can run the binary at `target/release/linkblocks` to start the linkblocks server.
