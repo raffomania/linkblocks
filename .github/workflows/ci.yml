@@ -88,9 +88,7 @@ jobs:
             exit 1
           fi
 
-      - run: cargo build --release
-        env:
-          SQLX_OFFLINE: true
+      - run: cargo build --release --locked
 
       # Release in the same job to prevent slow copying of build artifacts between jobs
       # TODO: this will still run if the tests fail
@@ -108,6 +106,14 @@ jobs:
       - name: podman manifest push latest
         run: podman manifest push linkblocks ghcr.io/raffomania/linkblocks:latest
         if: github.ref == 'refs/heads/main'
+
+      # For the release job
+      - name: Upload artifact
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        if: (startsWith(github.ref_name, 'v') && github.ref_type == 'tag')
+        with:
+          name: linkblocks
+          path: target/release/linkblocks
 
   format-nightly:
     name: Check Formatting (nightly)
@@ -174,3 +180,55 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           SQLX_OFFLINE: true
+
+  release-version:
+    name: Release new version
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write # For uploading the container to GHCR
+      contents: write # For creating a GitHub release
+    needs: [test, build-lint, format-nightly]
+    # Run for tags only
+    if: (startsWith(github.ref_name, 'v') && github.ref_type == 'tag')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
+        with:
+          persist-credentials: false
+
+      - name: Download release binary artifact
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          name: linkblocks
+          path: target/release
+
+      - name: Get version from tag
+        id: extract_version
+        run: |
+          echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+      - name: podman build linux/amd64
+        run: podman build --format docker --platform linux/amd64 --manifest linkblocks -f Containerfile target/release
+
+      - name: podman login
+        env:
+          USER: ${{ github.actor }}
+          PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: podman login --username "$USER" --password "$PASSWORD" ghcr.io
+
+      # Preparations complete: create release and push container
+
+      - name: Create GitHub release
+        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 # v2.11.3
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/release/linkblocks
+          tag: ${{ github.ref_name }}
+          asset_name: linkblocks-${{ steps.extract_version.outputs.version }}
+
+      - name: podman manifest push tag version
+        run: podman manifest push linkblocks ghcr.io/raffomania/linkblocks:${STEPS_EXTRACT_VERSION_OUTPUTS_VERSION}
+        env:
+          # Prevent code injection by using an env var which is subject to normal shell quoting rules
+          STEPS_EXTRACT_VERSION_OUTPUTS_VERSION: ${{ steps.extract_version.outputs.version }}
