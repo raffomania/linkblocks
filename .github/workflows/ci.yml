@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   pull_request:
 
 env:
@@ -56,6 +57,9 @@ jobs:
         with:
           # For cargo-run-bin
           cache-directories: ".bin"
+          # Prevent cache poisoning attacks for release workflow
+          # zizmor: ignore[cache-poisoning]
+          lookup-only: ${{ (startsWith(github.ref_name, 'v') && github.ref_type == 'tag') }}
 
       - name: Install REUSE tool
         run: pipx install reuse
@@ -137,6 +141,9 @@ jobs:
         with:
           # For cargo-run-bin
           cache-directories: ".bin"
+          # Prevent cache poisoning attacks for release workflow
+          # zizmor: ignore[cache-poisoning]
+          lookup-only: ${{ (startsWith(github.ref_name, 'v') && github.ref_type == 'tag') }}
 
       - name: Install cargo-run-bin
         run: cargo install cargo-run-bin
@@ -174,6 +181,10 @@ jobs:
 
       - name: Setup rust cache
         uses: Swatinem/rust-cache@f13886b937689c021905a6b90929199931d60db1 # v2
+        with:
+          # Prevent cache poisoning attacks for release workflow
+          # zizmor: ignore[cache-poisoning]
+          lookup-only: ${{ (startsWith(github.ref_name, 'v') && github.ref_type == 'tag') }}
 
       - name: cargo test
         run: cargo test
@@ -205,7 +216,9 @@ jobs:
       - name: Get version from tag
         id: extract_version
         run: |
-          echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          version=${GITHUB_REF_NAME#v}
+          version=${version//test-release/}
+          echo "version=$version" >> "$GITHUB_OUTPUT"
         shell: bash
 
       - name: podman build linux/amd64
@@ -225,10 +238,13 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: target/release/linkblocks
           tag: ${{ github.ref_name }}
+          release_name: ${{ steps.extract_version.outputs.version }}
           asset_name: linkblocks-${{ steps.extract_version.outputs.version }}
+          draft: true
 
       - name: podman manifest push tag version
         run: podman manifest push linkblocks ghcr.io/raffomania/linkblocks:${STEPS_EXTRACT_VERSION_OUTPUTS_VERSION}
+        if: ${{ !contains(github.ref_name, 'test-release') }}
         env:
           # Prevent code injection by using an env var which is subject to normal shell quoting rules
           STEPS_EXTRACT_VERSION_OUTPUTS_VERSION: ${{ steps.extract_version.outputs.version }}
