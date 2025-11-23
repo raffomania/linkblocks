@@ -1,14 +1,21 @@
 # linkblocks Changelog
 
-## Unreleased - Release Date
+## 0.1.0
+
+_Released on 2025-11-23_
 
 This is the initial release of linkblocks!
+A lot of groundwork has been laid for federating with other services, and posting bookmarks to Mastodon is the first fruit of that labor available with this release. For an example, check out [rafael@lb.rafa.ee](https://mstdn.io/@rafael@lb.rafa.ee), or try it with [the linkblocks demo](https://linkblocks.rafa.ee).
+
+linkblocks is now quite stable, and I've been using it for myself for over a year.
+Of course there are still some rough edges, and tons of features I'd like to add, so watch this space!
 
 ### Features
 
-- linkblocks users can be followed from Mastodon. Any bookmark added to a public list is considered public and will show up in the timeline.
-- linkblocks user handles can now be looked up via webfinger. This should work on most fediverse platforms, and was tested with Lemmy.
-- The new user profile page shows all public lists of a user.
-- Single-sign-on: Users can register and log in via OIDC.
-- Bookmarklet for one-click adding of new bookmarks.
-- Deployed as a single binary, with PostgreSQL as the only dependency.
+- Post bookmarks to Mastodon: any bookmark added to a public list is considered public and will show up in the timeline.
+- Look up linkblocks user handles via webfinger. This should work on most fediverse platforms, and was tested with Lemmy.
+- See all public lists of a user on the new profile page.
+- Organize bookmarks using lists with arbitrary nesting.
+- Single-sign-on: Register and log in via OIDC.
+- Add new bookmarks with a single click using the bookmarklet.
+- Deploy it as a single binary, with PostgreSQL as the only dependency.
