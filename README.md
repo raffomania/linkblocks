@@ -21,6 +21,49 @@ It's getting harder and harder to find good web pages. When you do find good one
 - [Where have all the Websites gone?](https://www.fromjason.xyz/p/notebook/where-have-all-the-websites-gone/) talks about the importance of website curation. Linkblocks is for publicly curating websites.
 - [The Small Website Discoverability Crisis](https://www.marginalia.nu/log/19-website-discoverability-crisis/) similar to the previous link, it encourages everyone to share reading lists. By the author of the amazing [marginalia search engine](https://search.marginalia.nu/).
 
+## Installation and Configuration
+
+⚠️ linkblocks is in an alpha stage. Consider all data in the system to be publicly available, even bookmarks in private lists. Only single-user instances are supported.
+
+You can run the container at `ghcr.io/raffomania/linkblocks:latest`. It's automatically updated to contain the latest version of the `main` branch.
+
+### With docker-compose
+
+See [doc/docker-compose.yml](doc/docker-compose.yml) for an example configuration. Make sure to fill out the blank environment variables such as `BASE_URL` and the admin credentials, then start the server using `docker-compose up`. By default, the server will be exposed on port `3000`.
+
+### Building from Source
+
+Install the rust toolchain, version `1.88.0` or later. Then build the linkblocks binary using:
+
+```sh
+cargo build --release
+```
+
+### Running the Server Binary
+
+linkblocks is deployed using a single binary.
+If you've built the binary or downloaded it from [GitHub releases](https://github.com/raffomania/linkblocks/releases), you can run the server using `linkblocks start`.
+The only dependency is a PostgreSQL instance.
+
+### Configuring the Server
+
+Linkblocks is configured through environment variables or command line options.
+Run `linkblocks start --help` to for comprehensive documentation on the available options.
+Let's go over a few of the central knobs you might want to configure:
+
+- `DATABASE_URL`: [PostgreSQL Connection URI](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING-URIS) for connecting to the database.
+- `BASE_URL`: Public URL the server is reachable at. Cannot be changed once the first user has been created.
+- `LISTEN`: IP address and port to listen on.
+- `ADMIN_USERNAME`, `ADMIN_PASSWORD` (Optional): Create an admin user with these credentials if it doesn't exist yet.
+- `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`, `OIDC_ISSUER_URL`, `OIDC_ISSUER_NAME` (Optional): Configuration for single-sign-on using an OIDC provider.
+- `TLS_CERT`, `TLS_KEY` (Optional): Paths to TLS keypair, if you'd like to serve linkblocks via TLS directly. If you don't set this, it's recommended to use a reverse proxy in front of linkblocks.
+
+### Upgrading & Stability
+
+By default, upgrades do not require manual intervention. The database is migrated automatically when the server starts.
+
+If an upgrade does require manual intervention, it is marked with a new minor version ([as long as we are pre-1.0](https://semver.org/)), and will be called out prominently in the [changelog](CHANGELOG.md).
+
 ## Development Setup
 
 Install the dependencies:
@@ -62,48 +105,6 @@ Then, open [http://localhost:4040] in your browser.
 
 See [the docs](doc/migrations.md).
 
-## Hosting Your Own Instance
-
-⚠️ linkblocks is in an alpha stage. All data in the system will be publicly available, even bookmarks in private lists. There are no authorization checks yet. Only single-user instances are supported.
-
-You can run the container at `ghcr.io/raffomania/linkblocks:latest`. It's automatically updated to contain the latest version of the `main` branch.
-
-### With docker-compose
-
-See [doc/docker-compose.yml](doc/docker-compose.yml) for an example configuration. Make sure to fill out the blank environment variables such as `BASE_URL` and the admin credentials, then start the server using `docker-compose up`. By default, the server will be exposed on port `3000`.
-
-### Building from Source
-
-Install the rust toolchain, version `1.88.0` or later. Then build the linkblocks binary using:
-
-```sh
-cargo build --release
-```
-
-Afterwards, you can run the binary at `target/release/linkblocks` to start the linkblocks server.
-
-### Running the Server Binary
-
-If you've built the binary or downloaded it from [GitHub releases](https://github.com/raffomania/linkblocks/releases), you can run the server using `linkblocks start`.
-
-### Configuring the Server
-
-Linkblocks is configured through environment variables or command line options.
-Run `linkblocks start --help` to for comprehensive documentation on the available options.
-Let's go over a few of the central knobs you might want to configure:
-
-- `DATABASE_URL`: [PostgreSQL Connection URI](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING-URIS) for connecting to the database.
-- `BASE_URL`: Public URL the server is reachable at. Cannot be changed once the first user has been created.
-- `LISTEN`: IP address and port to listen on.
-- `ADMIN_USERNAME`, `ADMIN_PASSWORD` (Optional): Create an admin user with these credentials if it doesn't exist yet.
-- `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`, `OIDC_ISSUER_URL`, `OIDC_ISSUER_NAME` (Optional): Configuration for single-sign-on using an OIDC provider.
-- `TLS_CERT`, `TLS_KEY` (Optional): Paths to TLS keypair, if you'd like to serve linkblocks via TLS directly. If you don't set this, it's recommended to use a reverse proxy in front of linkblocks.
-
-### Upgrading & Stability
-
-By default, upgrades do not require manual intervention. The database is migrated automatically when the server starts.
-
-If an upgrade does require manual intervention, it is marked with a new minor version ([as long as we are pre-1.0](https://semver.org/)), and will be called out prominently in the [changelog](CHANGELOG.md).
 
 ## Technical Details
 
