@@ -8,4 +8,6 @@ Some manual steps are still necessary before handing off to the CI:
 
 - [ ] Change the "Unreleased" section header in CHANGELOG.md to the new version number
 - [ ] Update the version number in Cargo.toml
-- [ ] Create a new tag using `git tag -a`
+- [ ] Commit using the conventional message "Release v<version>"
+- [ ] Create a new tag using `git tag -a v<version>`
+- [ ] Push the commit and tag
