@@ -7,5 +7,6 @@ mod federation;
 mod index;
 mod lists;
 mod migrations;
+mod search;
 mod users;
 mod util;

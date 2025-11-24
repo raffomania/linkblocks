@@ -86,6 +86,7 @@ test-log = { version = "0.2.18", features = [
 ], default-features = false }
 itertools = "0.14.0"
 insta = "1.43.2"
+pretty_assertions = "1.4.1"
 
 [package.metadata.bin]
 just = { version = "1.38.0", locked = true }
