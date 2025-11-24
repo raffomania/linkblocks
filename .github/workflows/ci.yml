@@ -213,14 +213,6 @@ jobs:
           name: linkblocks
           path: target/release
 
-      - name: Get version from tag
-        id: extract_version
-        run: |
-          version=${GITHUB_REF_NAME#v}
-          version=${version//test-release/}
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-        shell: bash
-
       - name: podman build linux/amd64
         run: podman build --format docker --platform linux/amd64 --manifest linkblocks -f Containerfile target/release
 
@@ -229,6 +221,21 @@ jobs:
           USER: ${{ github.actor }}
           PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: podman login --username "$USER" --password "$PASSWORD" ghcr.io
+
+      - name: Get version from tag
+        id: extract_version
+        run: |
+          version=${GITHUB_REF_NAME#v}
+          version=${version//test-release/}
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+      - uses: sean0x42/markdown-extract@7b185cbe85263116bbf741e739e7198ba86465dc # v2
+        id: changelog_entry
+        with:
+          file: CHANGELOG.md
+          pattern: ${{ steps.extract_version.outputs.version }}
+          no-print-matched-heading: true
 
       # Preparations complete: create release and push container
 
@@ -240,6 +247,7 @@ jobs:
           tag: ${{ github.ref_name }}
           release_name: ${{ steps.extract_version.outputs.version }}
           asset_name: linkblocks-${{ steps.extract_version.outputs.version }}
+          body: ${{ steps.changelog_entry.outputs.markdown }}
           draft: true
 
       - name: podman manifest push tag version
