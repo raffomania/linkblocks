@@ -1,35 +1,51 @@
+use std::collections::HashMap;
+
 use serde::Serialize;
-use serde_json::Value;
 
+/// Validates that an HTML form's input fields match the expected form struct,
+/// and that each of the form struct's values has a matching html input element.
 pub fn assert_form_matches<I: Serialize>(form: &visdom::types::Elements, input: &I) {
-    let json_input = serde_json::to_value(input).unwrap();
-    let json_input = json_input.as_object().unwrap();
-    for field in form.find("input") {
-        let html = field.outer_html();
-        tracing::debug!("Checking form field {html}");
-        let value = json_input.get(&field.get_attribute("name").unwrap().to_string());
+    // Serialize input to query string using serde_qs
+    let input_as_qs_fields =
+        serde_qs::to_string(input).expect("Input should serialize to query string");
 
-        let Some(value) = value else {
-            assert!(
-                field.get_attribute("required").is_some(),
-                "Missing value for required form field {html}"
-            );
-            continue;
-        };
-        tracing::debug!("Found input value: {value}");
+    // Parse query string into HashMap
+    // However, do *not* use qs here so field names will keep the syntax from the
+    // HTML itself
+    let input_entries: HashMap<String, String> =
+        url::form_urlencoded::parse(input_as_qs_fields.as_bytes())
+            .map(|(k, v)| (k.into_owned(), v.into_owned()))
+            .collect();
 
-        let field_type = field.get_attribute("type").unwrap().to_string();
+    tracing::debug!("Form: {:?}", form.htmls());
 
-        let types_match = matches!(
-            (field_type.as_str(), value),
-            ("text" | "password", Value::String(_))
-                | ("number", Value::Number(_))
-                | ("checkbox", Value::Bool(_))
-        );
-
-        assert!(
-            types_match,
-            r#"Input type "{field_type}" and value {value} don't match!"#
+    tracing::debug!(
+        "Looking for HTML fields matching this form data: {:?}",
+        input_entries
+    );
+    for name in input_entries.keys() {
+        assert_eq!(
+            form.find(&format!("input[name='{name}']")).length(),
+            1,
+            "Expected to find exactly one element with name '{name}'"
         );
     }
+
+    // Check that each required form field has a corresponding value in the input
+    for form_element in form.find("input") {
+        tracing::debug!("Checking HTML field {}", form_element.outer_html());
+
+        let field_name = form_element
+            .get_attribute("name")
+            .expect("Input field should have 'name' attribute")
+            .to_string();
+
+        assert!(
+            form_element.get_attribute("required").is_none()
+                || input_entries.contains_key(&field_name),
+            "Missing value for required form field {field_name}"
+        );
+    }
+
+    tracing::debug!("All form fields validated successfully");
 }
