@@ -82,7 +82,7 @@ exec-database-cli: start-database
     podman exec -ti -u postgres linkblocks_postgres psql ${DATABASE_NAME}
 
 generate-database-info: start-database migrate-database
-    cargo bin sqlx-cli prepare -- --all-targets
+    SQLX_OFFLINE=false cargo bin sqlx-cli prepare -- --all-targets
 
 start-test-database:
     #!/usr/bin/env bash
