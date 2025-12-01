@@ -13,9 +13,9 @@ doctest = false
 [dependencies]
 anyhow = { version = "1.0.100" }
 argon2 = "0.5.3"
-axum = { version = "0.8.6", features = ["macros", "tracing"] }
-axum-server = { version = "0.7.2", features = ["tls-rustls-no-provider"] }
-clap = { version = "4.5.51", features = ["derive", "env"] }
+axum = { version = "0.8.7", features = ["macros", "tracing"] }
+axum-server = { version = "0.7.3", features = ["tls-rustls-no-provider"] }
+clap = { version = "4.5.53", features = ["derive", "env"] }
 fake = { version = "4.4.0", default-features = false }
 friendly-zoo = "1.1.0"
 garde = { version = "0.22.0", default-features = false, features = [
@@ -85,7 +85,7 @@ test-log = { version = "0.2.18", features = [
     "trace",
 ], default-features = false }
 itertools = "0.14.0"
-insta = "1.43.2"
+insta = "1.44.1"
 
 [package.metadata.bin]
 just = { version = "1.38.0", locked = true }
