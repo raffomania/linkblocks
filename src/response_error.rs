@@ -1,6 +1,6 @@
 use axum::{
     http::StatusCode,
-    response::{IntoResponse, Response},
+    response::{IntoResponse, Redirect, Response},
 };
 use thiserror::Error;
 
@@ -23,15 +23,15 @@ pub enum ResponseError {
 impl IntoResponse for ResponseError {
     fn into_response(self) -> Response {
         tracing::error!("{self:?}");
-        let status = match self {
-            ResponseError::NotFound => StatusCode::NOT_FOUND,
-            // TODO redirect to login instead of returning an error
-            ResponseError::NotAuthenticated => StatusCode::UNAUTHORIZED,
+        match self {
+            ResponseError::NotFound => (StatusCode::NOT_FOUND, self.to_string()).into_response(),
+            ResponseError::NotAuthenticated => Redirect::to("/login").into_response(),
             ResponseError::Anyhow(_)
             | ResponseError::UrlParseError(_)
-            | ResponseError::FederationError(_) => StatusCode::INTERNAL_SERVER_ERROR,
-        };
-        (status, self.to_string()).into_response()
+            | ResponseError::FederationError(_) => {
+                (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()).into_response()
+            }
+        }
     }
 }
 
