@@ -7,5 +7,6 @@ mod federation;
 mod index;
 mod lists;
 mod migrations;
+mod response_error;
 mod users;
 mod util;

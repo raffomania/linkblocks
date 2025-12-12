@@ -10,3 +10,6 @@ development_cert
 
 # cargo-run-bin
 .bin/
+
+# JetBrains IDE
+.idea/
