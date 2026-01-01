@@ -106,7 +106,7 @@ pub async fn start(
         tracing::info!("Access the server at {base_url}");
 
         let config = RustlsConfig::from_pem_file(cert, key).await?;
-        axum_server::from_tcp_rustls(listener.into_std()?, config)
+        axum_server::from_tcp_rustls(listener.into_std()?, config)?
             .handle(handle)
             .serve(app.into_make_service())
             .await?;
@@ -115,7 +115,7 @@ pub async fn start(
         tracing::info!("Listening on {listening_on}");
         tracing::info!("Access the server at {base_url}");
 
-        axum_server::from_tcp(listener.into_std()?)
+        axum_server::from_tcp(listener.into_std()?)?
             .handle(handle)
             .serve(app.into_make_service())
             .await?;
@@ -124,7 +124,10 @@ pub async fn start(
     Ok(())
 }
 
-async fn shutdown_signal(handle: axum_server::Handle, graceful: bool) {
+async fn shutdown_signal<A>(handle: axum_server::Handle<A>, graceful: bool)
+where
+    A: axum_server::Address,
+{
     let ctrl_c = async {
         tokio::signal::ctrl_c()
             .await

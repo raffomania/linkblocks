@@ -1,5 +1,11 @@
 # linkblocks Changelog
 
+## Unreleased
+
+### Internals
+
+- Update all dependencies.
+
 ## 0.1.0
 
 _Released on 2025-11-23_

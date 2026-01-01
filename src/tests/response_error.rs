@@ -72,13 +72,11 @@ async fn into_option_does_not_convert_other_errs_to_none() {
         assert!(
             matches!(
                 &actual,
-                Err(ResponseError::NotAuthenticated)
-                    | Err(ResponseError::UrlParseError(_))
-                    | Err(ResponseError::FederationError(_))
+                Err(ResponseError::NotAuthenticated
+                    | ResponseError::UrlParseError(_)
+                    | ResponseError::FederationError(_))
             ),
-            "Expected {} error to be propagated, got {:?}",
-            expected_error_type,
-            actual
+            "Expected {expected_error_type} error to be propagated, got {actual:?}"
         );
     }
 }
