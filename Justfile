@@ -1,15 +1,32 @@
 set dotenv-load := true
 set export := true
 
+default:
+    just --list
+
+[group('Development')]
 watch *args: development-cert migrate-database
     cargo bin systemfd --no-pid -s ${LISTEN} -- cargo bin cargo-watch -- cargo run start --listenfd {{args}}
 
+[group('Development')]
 run *args: development-cert migrate-database
     cargo run -- {{args}}
 
-insert-demo-data: migrate-database
-    cargo run -- insert-demo-data
+[group('Codegen')]
+generate-database-info: start-database migrate-database
+    cargo bin sqlx-cli prepare -- --all-targets
 
+[group('Codegen')]
+generate-sbom:
+    cargo bin cargo-cyclonedx --format json --describe binaries
+    # Remove some fields that make the sbom non-reproducible.
+    # https://github.com/CycloneDX/cyclonedx-rust-cargo/issues/556
+    # https://github.com/CycloneDX/cyclonedx-rust-cargo/issues/514
+    jq --sort-keys '.components |= sort_by(.purl) | del(.serialNumber) | del(.metadata.timestamp) | del(..|select(type == "string" and test("^path\\+file")))' linkblocks_bin.cdx.json > linkblocks.cdx.json
+    rm linkblocks_bin.cdx.json
+
+
+[group('Database')]
 start-database:
     #!/usr/bin/env bash
     set -euxo pipefail
@@ -33,6 +50,7 @@ start-database:
 
     podman wait --condition=healthy linkblocks_postgres
 
+[group('OIDC')]
 start-rauthy:
     #!/usr/bin/env bash
     set -euxo pipefail
@@ -60,30 +78,34 @@ start-rauthy:
 
     podman start linkblocks_rauthy
 
+[group('OIDC')]
 stop-rauthy:
     podman stop linkblocks_rauthy
 
+[group('OIDC')]
 wipe-rauthy: stop-rauthy
     podman rm linkblocks_rauthy
 
+[group('Database')]
 stop-database:
     podman stop --ignore linkblocks_postgres
 
+[group('Database')]
 wipe-database: stop-database
     podman rm --ignore linkblocks_postgres
     # SQLX_OFFLINE: when migrating an empty db, checking queries against
     # it would fail during compilation
     SQLX_OFFLINE=true just migrate-database
 
+[group('Database')]
 migrate-database: start-database
     cargo run -- db migrate
 
+[group('Database')]
 exec-database-cli: start-database
     podman exec -ti -u postgres linkblocks_postgres psql ${DATABASE_NAME}
 
-generate-database-info: start-database migrate-database
-    cargo bin sqlx-cli prepare -- --all-targets
-
+[group('Testing')]
 start-test-database:
     #!/usr/bin/env bash
     set -euxo pipefail
@@ -111,16 +133,23 @@ start-test-database:
 
     podman wait --condition=healthy linkblocks_postgres
 
+[group('Testing')]
 test *args: start-test-database generate-database-info
     # SQLX_OFFLINE: Without it, `cargo test` would compile against the test db
     # which is always empty and only migrated inside the tests themselves.
     DATABASE_URL=${DATABASE_URL_TEST} SQLX_OFFLINE=true cargo test {{args}}
 
+[group('Development')]
 development-cert: (ensure-command "mkcert")
     mkdir -p development_cert
     test -f development_cert/localhost.crt || mkcert -cert-file development_cert/localhost.crt -key-file development_cert/localhost.key localhost linkblocks.localhost 127.0.0.1 ::1
 
+[group('Development')]
+insert-demo-data: migrate-database
+    cargo run -- insert-demo-data
+
 # Run most of the CI checks locally. Convenient to check for errors before pushing.
+[group('Development')]
 ci-dev: migrate-database start-test-database && generate-sbom generate-database-info
     #!/usr/bin/env bash
     set -euxo pipefail
@@ -136,7 +165,8 @@ ci-dev: migrate-database start-test-database && generate-sbom generate-database-
     just test
     just check-zizmor
 
-# Build a production-ready OCI container using podman.
+# Build a production-ready OCI container using podman. Used for local testing & debugging.
+[group('Testing')]
 build-podman-container target="release":
     #!/bin/sh
     [[ "{{target}}" == "debug" ]] && cargo_flag="" || cargo_flag="--{{target}}"
@@ -144,33 +174,32 @@ build-podman-container target="release":
 
     podman build --format docker --platform linux/amd64 --manifest linkblocks -f Containerfile target/{{target}}
 
+[group('Code Quality')]
 lint *args: reuse-lint
     cargo clippy {{args}} -- -D warnings
 
+[group('Code Quality')]
 lint-fix *args: reuse-lint
     cargo clippy --fix {{args}}
     cargo fix --allow-staged --all-targets
 
+[group('Code Quality')]
 reuse-lint: (ensure-command "reuse")
     reuse --root . lint
 
+[group('Code Quality')]
 format:
     cargo +nightly fmt --all
 
-generate-sbom:
-    cargo bin cargo-cyclonedx --format json --describe binaries
-    # Remove some fields that make the sbom non-reproducible.
-    # https://github.com/CycloneDX/cyclonedx-rust-cargo/issues/556
-    # https://github.com/CycloneDX/cyclonedx-rust-cargo/issues/514
-    jq --sort-keys '.components |= sort_by(.purl) | del(.serialNumber) | del(.metadata.timestamp) | del(..|select(type == "string" and test("^path\\+file")))' linkblocks_bin.cdx.json > linkblocks.cdx.json
-    rm linkblocks_bin.cdx.json
-
+[group('Setup')]
 install-git-hooks:
     ln -srf pre-commit.sh .git/hooks/pre-commit
 
 # Run extended checks that are not part of the normal CI pipeline.
-check-extended: verify-msrv build-podman-container check-example-docker-compose
+[group('Code Quality')]
+check-extended: verify-msrv build-podman-container check-example-docker-compose check-zizmor
 
+[group('Code Quality')]
 check-example-docker-compose:
     #!/usr/bin/env bash
 
@@ -181,13 +210,16 @@ check-example-docker-compose:
     docker-compose -f doc/docker-compose.yml down
 
 # Check GitHub Actions workflows for security problems.
+[group('Code Quality')]
 check-zizmor:
     RUST_LOG=INFO zizmor --strict-collection --pedantic .
 
+[group('Code Quality')]
 verify-msrv: (ensure-command "cargo-msrv")
     cargo msrv verify
 
 # Diagnose potential problems in the development environment.
+[group('Setup')]
 doctor:
     #!/usr/bin/env bash
 
